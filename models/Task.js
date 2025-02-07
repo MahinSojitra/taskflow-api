@@ -8,9 +8,10 @@ const TaskSchema = new mongoose.Schema({
     type: String,
     enum: ["active", "pending", "completed", "cancelled"],
     default: "pending",
+    required: true,
   },
-  tags: [{ type: String }],
-  createdAt: { type: Date, default: Date.now },
+  tags: { type: [String], required: true },
+  createdAt: { type: Date, default: Date.now, required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 });
 
