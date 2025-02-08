@@ -1,25 +1,36 @@
-const validateUser = (req, res, next) => {
-  if (!req.body) {
-    return res.status(400).json({ error: "Request body is missing" });
-  }
+const { validationResult, checkSchema } = require("express-validator");
 
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
-  }
-
-  if (!/^\S+@\S+\.\S+$/.test(email)) {
-    return res.status(400).json({ error: "Invalid email format" });
-  }
-
-  if (password.length < 6) {
-    return res
-      .status(400)
-      .json({ error: "Password must be at least 6 characters long" });
-  }
-
-  next();
+// ✅ Define Schema for User Validation
+const userValidationRules = {
+  email: {
+    notEmpty: {
+      errorMessage: "Email is required",
+    },
+    isEmail: {
+      errorMessage: "Invalid email format",
+    },
+  },
+  password: {
+    notEmpty: {
+      errorMessage: "Password is required",
+    },
+    isLength: {
+      options: { min: 6 },
+      errorMessage: "Password must be at least 6 characters long",
+    },
+  },
 };
+
+// ✅ Middleware to Validate User Requests
+const validateUser = [
+  checkSchema(userValidationRules),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+];
 
 module.exports = validateUser;
