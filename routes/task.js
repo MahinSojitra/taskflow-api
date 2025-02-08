@@ -1,7 +1,7 @@
 const express = require("express");
 const taskController = require("../controllers/taskController");
 const authenticate = require("../middlewares/auth");
-const validateRequest = require("../validations/requestValidator");
+const validateRequest = require("../middlewares/validateRequest");
 const errorHandler = require("../middlewares/errorHandler");
 
 const router = express.Router();
