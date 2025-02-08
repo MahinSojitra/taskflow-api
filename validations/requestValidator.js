@@ -1,4 +1,8 @@
 const validateUser = (req, res, next) => {
+  if (!req.body) {
+    return res.status(400).json({ error: "Request body is missing" });
+  }
+
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -10,9 +14,9 @@ const validateUser = (req, res, next) => {
   }
 
   if (password.length < 6) {
-    return res.status(400).json({
-      error: "Password must be at least 6 characters long",
-    });
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 6 characters long" });
   }
 
   next();
