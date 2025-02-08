@@ -1,18 +1,21 @@
-const validateUser = (data) => {
-  const { email, password } = data;
+const validateUser = (req, res, next) => {
+  const { email, password } = req.body;
 
   if (!email || !password) {
-    throw new Error("Email and password are required");
+    return res.status(400).json({ error: "Email and password are required" });
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    throw new Error("Invalid email format");
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    return res.status(400).json({ error: "Invalid email format" });
   }
 
   if (password.length < 6) {
-    throw new Error("Password must be at least 6 characters long");
+    return res.status(400).json({
+      error: "Password must be at least 6 characters long",
+    });
   }
+
+  next();
 };
 
-module.exports = { validateUser };
+module.exports = validateUser;
