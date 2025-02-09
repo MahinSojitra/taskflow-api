@@ -12,6 +12,9 @@ exports.registerUser = async (req, res, next) => {
 exports.getApiKey = async (req, res, next) => {
   try {
     const response = await userService.getApiKey(req.body);
+    if (!response.success) {
+      return res.status(401).json(response);
+    }
     res.json(response);
   } catch (error) {
     next(error);
@@ -21,6 +24,9 @@ exports.getApiKey = async (req, res, next) => {
 exports.regenerateApiKey = async (req, res, next) => {
   try {
     const response = await userService.regenerateApiKey(req.body);
+    if (!response.success) {
+      return res.status(401).json(response);
+    }
     res.json(response);
   } catch (error) {
     next(error);

@@ -13,8 +13,7 @@ const getAllTasks = async (userId, filters = {}) => {
 };
 
 const createTask = async (taskData) => {
-  const task = new Task(taskData);
-  return await task.save();
+  return await Task.create(taskData);
 };
 
 const updateTask = async (taskId, updatedData, userId) => {

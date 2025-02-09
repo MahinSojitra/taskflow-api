@@ -6,7 +6,7 @@ const validateTask = require("../validations/taskValidator");
 
 const router = express.Router();
 
-// Routes
+// Routes (Authenticated via API Key)
 router.get("/", authenticate, taskController.getAllTasks);
 router.post("/", authenticate, validateTask, taskController.createTask);
 router.put("/:id", authenticate, validateTask, taskController.updateTask);

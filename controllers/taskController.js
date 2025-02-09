@@ -1,11 +1,12 @@
 const taskService = require("../services/taskService");
 
+// 📌 Get All Tasks (Authenticated via API Key)
 exports.getAllTasks = async (req, res, next) => {
   try {
     const tasks = await taskService.getAllTasks(req.user._id, req.query);
     res.json({
       success: true,
-      message: "Tasks retrieved successfully",
+      message: "Tasks retrieved.",
       data: tasks,
     });
   } catch (error) {
@@ -13,6 +14,7 @@ exports.getAllTasks = async (req, res, next) => {
   }
 };
 
+// 📌 Create a New Task (Authenticated via API Key)
 exports.createTask = async (req, res, next) => {
   try {
     const task = await taskService.createTask({
@@ -21,7 +23,7 @@ exports.createTask = async (req, res, next) => {
     });
     res.status(201).json({
       success: true,
-      message: "Task created successfully",
+      message: "Task created.",
       data: task,
     });
   } catch (error) {
@@ -29,6 +31,7 @@ exports.createTask = async (req, res, next) => {
   }
 };
 
+// 📌 Update Task (Only if API Key matches)
 exports.updateTask = async (req, res, next) => {
   try {
     const task = await taskService.updateTask(
@@ -36,15 +39,18 @@ exports.updateTask = async (req, res, next) => {
       req.body,
       req.user._id
     );
+
     if (!task) {
       return res.status(403).json({
         success: false,
-        error: "You are not authorized to modify this task",
+        error: "Unauthorized: You do not have permission to update this task",
+        data: null,
       });
     }
+
     res.json({
       success: true,
-      message: "Task updated successfully",
+      message: "Task updated",
       data: task,
     });
   } catch (error) {
@@ -52,16 +58,23 @@ exports.updateTask = async (req, res, next) => {
   }
 };
 
+// 📌 Delete Task (Only if API Key matches)
 exports.deleteTask = async (req, res, next) => {
   try {
     const deleted = await taskService.deleteTask(req.params.id, req.user._id);
+
     if (!deleted) {
       return res.status(403).json({
         success: false,
-        error: "You are not authorized to delete this task",
+        error: "Unauthorized: You do not have permission to delete this task.",
       });
     }
-    res.status(204).send(); // No content
+
+    res.status(204).json({
+      success: true,
+      message: "Task deleted.",
+      data: deleted,
+    });
   } catch (error) {
     next(error);
   }
