@@ -1,6 +1,6 @@
 const express = require("express");
 const taskController = require("../controllers/taskController");
-const authenticate = require("../middlewares/auth");
+const authenticate = require("../middlewares/authenticate");
 const errorHandler = require("../middlewares/errorHandler");
 const validateTask = require("../validations/taskValidator");
 
