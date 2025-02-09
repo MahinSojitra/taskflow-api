@@ -1,85 +1,67 @@
-const Task = require("../models/Task");
+const taskService = require("../services/taskService");
 
-// 📌 Get All Tasks for User
 exports.getAllTasks = async (req, res, next) => {
   try {
-    const tasks = await Task.find({ userId: req.user._id });
-    res.json(tasks);
+    const tasks = await taskService.getAllTasks(req.user._id, req.query);
+    res.json({
+      success: true,
+      message: "Tasks retrieved successfully",
+      data: tasks,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-// 📌 Create a New Task
 exports.createTask = async (req, res, next) => {
   try {
-    const { title, description, dueDate, status, tags } = req.body;
-
-    if (!Array.isArray(tags)) {
-      return res
-        .status(400)
-        .json({ error: "Tags must be an array of strings" });
-    }
-
-    const newTask = new Task({
-      title,
-      description,
-      dueDate,
-      status,
-      tags,
+    const task = await taskService.createTask({
+      ...req.body,
       userId: req.user._id,
     });
-
-    await newTask.save();
-    res
-      .status(201)
-      .json({ message: "Task created successfully", task: newTask });
+    res.status(201).json({
+      success: true,
+      message: "Task created successfully",
+      data: task,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-// 📌 Update Task
 exports.updateTask = async (req, res, next) => {
   try {
-    const { title, description, dueDate, status, tags } = req.body;
-    const taskId = req.params.id;
-
-    if (!Array.isArray(tags)) {
-      return res
-        .status(400)
-        .json({ error: "Tags must be an array of strings" });
-    }
-
-    const updatedTask = await Task.findOneAndUpdate(
-      { _id: taskId, userId: req.user._id },
-      { title, description, dueDate, status, tags },
-      { new: true }
+    const task = await taskService.updateTask(
+      req.params.id,
+      req.body,
+      req.user._id
     );
-
-    if (!updatedTask) {
-      return res.status(404).json({ error: "Task not found" });
+    if (!task) {
+      return res.status(403).json({
+        success: false,
+        error: "You are not authorized to modify this task",
+      });
     }
-
-    res.json({ message: "Task updated successfully", task: updatedTask });
+    res.json({
+      success: true,
+      message: "Task updated successfully",
+      data: task,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-// 📌 Delete Task
 exports.deleteTask = async (req, res, next) => {
   try {
-    const deletedTask = await Task.findOneAndDelete({
-      _id: req.params.id,
-      userId: req.user._id,
-    });
-
-    if (!deletedTask) {
-      return res.status(404).json({ error: "Task not found" });
+    const deleted = await taskService.deleteTask(req.params.id, req.user._id);
+    if (!deleted) {
+      return res.status(403).json({
+        success: false,
+        error: "You are not authorized to delete this task",
+      });
     }
-
-    res.json({ message: "Task deleted successfully" });
+    res.status(204).send(); // No content
   } catch (error) {
     next(error);
   }

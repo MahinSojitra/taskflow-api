@@ -9,15 +9,7 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
   },
   password: { type: String, required: true, minlength: 6 },
-  apiKey: { type: String, required: true, unique: true, length: 64 },
-});
-
-// Pre-save Hook to Validate Data
-UserSchema.pre("save", function (next) {
-  if (!this.email || !this.password) {
-    return next(new Error("Email and password are required"));
-  }
-  next();
+  apiKey: { type: String, required: true, unique: true },
 });
 
 module.exports = mongoose.model("User", UserSchema);

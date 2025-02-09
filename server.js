@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
 const path = require("path");
+const morgan = require("morgan");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/user");
 const taskRoutes = require("./routes/task");
@@ -20,11 +21,27 @@ connectDB()
     process.exit(1);
   });
 
-// ✅ Middleware
-app.use(cors());
+// ✅ Middleware Setup
 app.use(express.json()); // Ensure JSON body parsing
-app.use(express.urlencoded({ extended: true })); // For URL-encoded form data
-app.use(helmet()); // Security headers
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
+
+// ✅ Security Middleware
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Disable for now (can be configured)
+    frameguard: { action: "deny" }, // Prevent Clickjacking
+    hidePoweredBy: true, // Hide X-Powered-By header
+  })
+);
+
+// ✅ CORS Configuration (Set allowed origins via .env)
+const allowedOrigins = process.env.CORS_ORIGINS?.split(",") || ["*"];
+app.use(cors({ origin: allowedOrigins, credentials: true }));
+
+// ✅ Logging Middleware (Only in Development Mode)
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 
 // ✅ API Routes
 app.use("/api/user", userRoutes);
@@ -37,8 +54,11 @@ app.get("/", (req, res) => {
 });
 
 // ✅ Handle Undefined Routes
-app.use((req, res, next) => {
-  res.status(404).json({ error: "Route not found" });
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: "Route not found",
+  });
 });
 
 // ✅ Global Error Handling Middleware

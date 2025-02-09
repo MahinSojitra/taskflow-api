@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-// Define Task Schema with Custom Messages
+// Task Schema Validation
 const taskSchema = Joi.object({
   title: Joi.string().min(3).max(100).required().messages({
     "string.empty": "Title is required",
@@ -14,22 +14,18 @@ const taskSchema = Joi.object({
     "string.max": "Description must not exceed 500 characters",
   }),
 
-  dueDate: Joi.date()
-    .iso()
-    .greater("now") // Ensures dueDate is in the future
-    .required()
-    .messages({
-      "date.base": "Due date must be a valid date",
-      "date.format": "Due date must be in ISO format (YYYY-MM-DD)",
-      "date.greater": "Due date must be in the future",
-    }),
+  dueDate: Joi.date().iso().greater("now").required().messages({
+    "date.base": "Due date must be a valid date",
+    "date.format": "Due date must be in ISO format (YYYY-MM-DD)",
+    "date.greater": "Due date must be in the future",
+  }),
 
   status: Joi.string()
-    .valid("pending", "in-progress", "completed")
+    .valid("pending", "active", "completed", "cancelled")
     .required()
     .messages({
       "any.only":
-        'Status must be one of "pending", "in-progress", or "completed"',
+        'Status must be one of "pending", "active", "completed", or "cancelled"',
     }),
 
   tags: Joi.array()
@@ -47,7 +43,7 @@ const taskSchema = Joi.object({
   }),
 });
 
-// Validation Middleware
+// Middleware for Task Validation
 const validateTask = (req, res, next) => {
   const { error } = taskSchema.validate(req.body, { abortEarly: false });
 
@@ -55,7 +51,7 @@ const validateTask = (req, res, next) => {
     return res.status(400).json({
       error: "Validation Failed",
       details: error.details.map(({ message, path }) => ({
-        field: path.join("."), // Show which field caused the error
+        field: path.join("."),
         message,
       })),
     });

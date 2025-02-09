@@ -4,72 +4,38 @@ const User = require("../models/User");
 
 const generateApiKey = () => crypto.randomBytes(32).toString("hex");
 
-const registerUser = async (email, password) => {
-  if (!email || !password) {
-    throw new Error("Email and password are required");
-  }
-
-  if (!/^\S+@\S+\.\S+$/.test(email)) {
-    throw new Error("Invalid email format");
-  }
-
-  if (password.length < 6) {
-    throw new Error("Password must be at least 6 characters long");
-  }
+const registerUser = async ({ email, password }) => {
+  if (!email || !password) throw new Error("Email and password are required");
 
   const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    return { message: "User already exists", apiKey: existingUser.apiKey };
-  }
+  if (existingUser) throw new Error("User already exists");
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = new User({
+  const newUser = await User.create({
     email,
     password: hashedPassword,
     apiKey: generateApiKey(),
   });
 
-  await newUser.save();
-  return { message: "User registered successfully", apiKey: newUser.apiKey };
+  return newUser;
 };
 
-const getApiKey = async (email, password) => {
-  if (!email || !password) {
-    throw new Error("Email and password are required");
-  }
-
+const getApiKey = async ({ email, password }) => {
   const user = await User.findOne({ email });
-  if (!user) {
-    throw new Error("User not found");
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    throw new Error("Invalid email or password");
   }
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    throw new Error("Invalid credentials");
-  }
-
-  return { apiKey: user.apiKey };
+  return user.apiKey;
 };
 
-const regenerateApiKey = async (email, password) => {
-  if (!email || !password) {
-    throw new Error("Email and password are required");
-  }
-
+const regenerateApiKey = async ({ email, password }) => {
   const user = await User.findOne({ email });
-  if (!user) {
-    throw new Error("User not found");
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    throw new Error("Invalid email or password");
   }
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    throw new Error("Invalid credentials");
-  }
-
   user.apiKey = generateApiKey();
   await user.save();
-
-  return { message: "API Key regenerated successfully", apiKey: user.apiKey };
+  return user.apiKey;
 };
 
 module.exports = { registerUser, getApiKey, regenerateApiKey };
