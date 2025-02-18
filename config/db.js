@@ -9,7 +9,7 @@ const connectDB = async () => {
   }
 
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+    const conn = await mongoose.connect(uri, {
       // Remove deprecated options
       // useNewUrlParser: true,
       // useUnifiedTopology: true
