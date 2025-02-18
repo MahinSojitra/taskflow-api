@@ -31,8 +31,8 @@ const registerUser = async ({ email, password, name }) => {
     name,
   });
 
-  const tokens = generateTokens(user._id);
-  user.refreshToken = tokens.refreshToken;
+  const { accessToken, refreshToken } = generateTokens(user._id);
+  user.refreshToken = refreshToken;
   await user.save();
 
   return {
@@ -45,7 +45,7 @@ const registerUser = async ({ email, password, name }) => {
         name: user.name,
         role: user.role,
       },
-      tokens,
+      tokens: { accessToken, refreshToken },
     },
   };
 };
@@ -95,25 +95,27 @@ const regenerateApiKey = async ({ email, password }) => {
 
 // Add more authentication-related functions...
 
-exports.refreshToken = async (refreshToken) => {
-  if (!refreshToken) {
+exports.refreshUserToken = async (oldRefreshToken) => {
+  if (!oldRefreshToken) {
     throw new Error("Refresh token is required.");
   }
 
-  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+  const decoded = jwt.verify(oldRefreshToken, process.env.JWT_REFRESH_SECRET);
   const user = await User.findById(decoded.id);
 
-  if (!user || user.refreshToken !== refreshToken) {
+  if (!user || user.refreshToken !== oldRefreshToken) {
     throw new Error("Invalid refresh token.");
   }
 
-  const tokens = generateTokens(user._id);
-  user.refreshToken = tokens.refreshToken;
+  const { accessToken, refreshToken } = generateTokens(user._id);
+  user.refreshToken = refreshToken;
   await user.save();
 
   return {
     success: true,
-    data: { tokens },
+    data: {
+      tokens: { accessToken, refreshToken },
+    },
   };
 };
 
@@ -164,6 +166,7 @@ exports.forgotPassword = async (email) => {
 
   // Here you would typically send an email with the reset token
   // For now, we'll just return success
+  return resetToken;
 };
 
 exports.resetPassword = async (token, newPassword) => {
@@ -188,7 +191,7 @@ module.exports = {
   registerUser,
   getApiKey,
   regenerateApiKey,
-  refreshToken,
+  refreshUserToken,
   logout,
   updateProfile,
   forgotPassword,
