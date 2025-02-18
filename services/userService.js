@@ -31,8 +31,8 @@ const registerUser = async ({ email, password, name }) => {
     name,
   });
 
-  const { accessToken, refreshToken } = generateTokens(user._id);
-  user.refreshToken = refreshToken;
+  const tokens = generateTokens(user._id);
+  user.refreshToken = tokens.refreshToken;
   await user.save();
 
   return {
@@ -45,7 +45,7 @@ const registerUser = async ({ email, password, name }) => {
         name: user.name,
         role: user.role,
       },
-      tokens: { accessToken, refreshToken },
+      tokens,
     },
   };
 };
