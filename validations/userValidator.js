@@ -12,12 +12,32 @@ const userSchema = Joi.object({
 });
 
 const validateUser = (req, res, next) => {
-  const { error } = userSchema.validate(req.body, { abortEarly: false });
-  if (error) {
-    return res
-      .status(400)
-      .json({ errors: error.details.map((err) => err.message) });
+  const { email, password } = req.body;
+
+  // Basic validation
+  if (req.path === "/register" && !req.body.name) {
+    return res.status(400).json({
+      success: false,
+      message: "Name is required.",
+    });
   }
+
+  if (!email || !email.includes("@")) {
+    return res.status(400).json({
+      success: false,
+      message: "Valid email is required.",
+    });
+  }
+
+  if (req.path !== "/forgot-password") {
+    if (!password || password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters.",
+      });
+    }
+  }
+
   next();
 };
 

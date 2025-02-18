@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const crypto = require("crypto");
 
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -94,4 +95,102 @@ const regenerateApiKey = async ({ email, password }) => {
 
 // Add more authentication-related functions...
 
-module.exports = { registerUser, getApiKey, regenerateApiKey };
+exports.refreshToken = async (refreshToken) => {
+  if (!refreshToken) {
+    throw new Error("Refresh token is required.");
+  }
+
+  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+  const user = await User.findById(decoded.id);
+
+  if (!user || user.refreshToken !== refreshToken) {
+    throw new Error("Invalid refresh token.");
+  }
+
+  const tokens = generateTokens(user._id);
+  user.refreshToken = tokens.refreshToken;
+  await user.save();
+
+  return {
+    success: true,
+    data: { tokens },
+  };
+};
+
+exports.logout = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error("User not found.");
+  }
+
+  user.refreshToken = null;
+  await user.save();
+};
+
+exports.updateProfile = async (userId, updateData) => {
+  const allowedUpdates = ["name", "email"];
+  const updates = Object.keys(updateData)
+    .filter((key) => allowedUpdates.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = updateData[key];
+      return obj;
+    }, {});
+
+  const user = await User.findByIdAndUpdate(userId, updates, {
+    new: true,
+    runValidators: true,
+  }).select("-password -refreshToken");
+
+  if (!user) {
+    throw new Error("User not found.");
+  }
+
+  return user;
+};
+
+exports.forgotPassword = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error("User not found.");
+  }
+
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  user.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  user.passwordResetExpires = Date.now() + 30 * 60 * 1000; // 30 minutes
+  await user.save();
+
+  // Here you would typically send an email with the reset token
+  // For now, we'll just return success
+};
+
+exports.resetPassword = async (token, newPassword) => {
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new Error("Invalid or expired reset token.");
+  }
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+};
+
+module.exports = {
+  registerUser,
+  getApiKey,
+  regenerateApiKey,
+  refreshToken,
+  logout,
+  updateProfile,
+  forgotPassword,
+  resetPassword,
+};
