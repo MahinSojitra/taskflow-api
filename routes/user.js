@@ -9,7 +9,7 @@ const router = express.Router();
 // ✅ Apply Validation Middleware
 router.post("/register", validateUser, userController.registerUser);
 router.post("/login", validateUser, userController.loginUser);
-router.post("/refresh-token", userController.refreshUserToken);
+router.post("/refresh-token", userController.refreshToken);
 router.post("/logout", protect, userController.logout);
 router.get("/profile", protect, userController.getProfile);
 router.put("/profile", protect, validateUser, userController.updateProfile);
