@@ -1,18 +1,19 @@
 const express = require("express");
 const taskController = require("../controllers/taskController");
-const authenticate = require("../middlewares/authenticate");
-const errorHandler = require("../middlewares/errorHandler");
+const { protect, authorize } = require("../middlewares/auth");
 const validateTask = require("../validations/taskValidator");
 
 const router = express.Router();
 
-// Routes (Authenticated via API Key)
-router.get("/", authenticate, taskController.getAllTasks);
-router.post("/", authenticate, validateTask, taskController.createTask);
-router.put("/:id", authenticate, validateTask, taskController.updateTask);
-router.delete("/:id", authenticate, taskController.deleteTask);
+router.use(protect); // Protect all task routes
 
-// Global Error Handler
-router.use(errorHandler);
+router.get("/", taskController.getAllTasks);
+router.post("/", validateTask, taskController.createTask);
+router.get("/:id", taskController.getTask);
+router.put("/:id", validateTask, taskController.updateTask);
+router.delete("/:id", taskController.deleteTask);
+
+// Admin only routes
+router.get("/all/tasks", authorize('admin'), taskController.getAllUsersTasks);
 
 module.exports = router;

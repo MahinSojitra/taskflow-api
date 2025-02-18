@@ -1,30 +1,50 @@
-const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 
-// Function to generate a secure API key
-const generateApiKey = () => crypto.randomBytes(32).toString("hex");
+const generateTokens = (userId) => {
+  const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
+  const refreshToken = jwt.sign(
+    { id: userId },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  return { accessToken, refreshToken };
+};
 
 // ✅ Register a New User
-const registerUser = async ({ email, password }) => {
-  if (!email || !password) throw new Error("Email and password are required");
-
+const registerUser = async ({ email, password, name }) => {
   const existingUser = await User.findOne({ email });
-  if (existingUser) throw new Error("User already exists");
+  if (existingUser) {
+    throw new Error("User already exists.");
+  }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({
+  const user = await User.create({
     email,
     password: hashedPassword,
-    apiKey: generateApiKey(),
+    name,
   });
+
+  const { accessToken, refreshToken } = generateTokens(user._id);
+  user.refreshToken = refreshToken;
+  await user.save();
 
   return {
     success: true,
-    message: "Account created, Store your API key securely.",
-    credentials: {
-      email: newUser.email,
-      apiKey: newUser.apiKey,
+    message: "Account created.",
+    data: {
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+      tokens: { accessToken, refreshToken },
     },
   };
 };
@@ -71,5 +91,7 @@ const regenerateApiKey = async ({ email, password }) => {
     },
   };
 };
+
+// Add more authentication-related functions...
 
 module.exports = { registerUser, getApiKey, regenerateApiKey };

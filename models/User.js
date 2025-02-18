@@ -9,7 +9,19 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
   },
   password: { type: String, required: true, minlength: 6 },
-  apiKey: { type: String, required: true, unique: true },
-});
+  name: { type: String, required: true, trim: true },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  refreshToken: String,
+  passwordResetToken: String,
+  passwordResetExpires: Date
+}, { timestamps: true });
 
 module.exports = mongoose.model("User", UserSchema);

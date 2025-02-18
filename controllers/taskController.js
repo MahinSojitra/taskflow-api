@@ -48,9 +48,9 @@ exports.updateTask = async (req, res, next) => {
       });
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
-      message: "Task updated",
+      message: "Task updated.",
       data: task,
     });
   } catch (error) {
@@ -70,10 +70,9 @@ exports.deleteTask = async (req, res, next) => {
       });
     }
 
-    res.status(204).json({
+    res.status(200).json({
       success: true,
       message: "Task deleted.",
-      data: deleted,
     });
   } catch (error) {
     next(error);
