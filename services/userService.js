@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const User = require("../models/User");
 
-// Helper function to generate tokens
+// Helper function to generate tokens (only used during login)
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "1h",
@@ -19,36 +19,23 @@ const generateTokens = (userId) => {
 };
 
 const userService = {
-  // User registration
-  registerUser: async ({ email, password, name }) => {
+  // User signup
+  signup: async ({ email, password, name }) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw new Error("User already exists.");
+      throw new Error("Email already registered.");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
+    await User.create({
       email,
       password: hashedPassword,
       name,
     });
 
-    const { accessToken, refreshToken } = generateTokens(user._id);
-    user.refreshToken = refreshToken;
-    await user.save();
-
     return {
       success: true,
-      message: "Account created.",
-      data: {
-        user: {
-          id: user._id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        },
-        tokens: { accessToken, refreshToken },
-      },
+      message: "Account created. Please login to access your account.",
     };
   },
 
@@ -56,7 +43,7 @@ const userService = {
   loginUser: async ({ email, password }) => {
     const user = await User.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new Error("Invalid credentials.");
+      throw new Error("Invalid email or password.");
     }
 
     const { accessToken, refreshToken } = generateTokens(user._id);
@@ -65,7 +52,7 @@ const userService = {
 
     return {
       success: true,
-      message: "Logged in.",
+      message: "Login successful.",
       data: {
         user: {
           id: user._id,

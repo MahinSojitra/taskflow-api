@@ -7,7 +7,7 @@ const errorHandler = require("../middlewares/errorHandler");
 const router = express.Router();
 
 // ✅ Apply Validation Middleware
-router.post("/register", validateUser, userController.registerUser);
+router.post("/signup", validateUser, userController.signup);
 router.post("/login", validateUser, userController.loginUser);
 router.post("/refresh-token", userController.refreshToken);
 router.post("/logout", protect, userController.logout);
