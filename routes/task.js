@@ -5,15 +5,17 @@ const validateTask = require("../validations/taskValidator");
 
 const router = express.Router();
 
-router.use(protect); // Protect all task routes
+// Protect all routes
+router.use(protect);
 
+// Regular user routes
 router.get("/", taskController.getAllTasks);
 router.post("/", validateTask, taskController.createTask);
 router.get("/:id", taskController.getTask);
 router.put("/:id", validateTask, taskController.updateTask);
 router.delete("/:id", taskController.deleteTask);
 
-// Admin only routes
-router.get("/all/tasks", authorize('admin'), taskController.getAllUsersTasks);
+// Admin only route
+router.get("/admin/all", authorize("admin"), taskController.getAllUsersTasks);
 
 module.exports = router;

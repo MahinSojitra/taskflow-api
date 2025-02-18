@@ -1,80 +1,107 @@
 const taskService = require("../services/taskService");
 
-// 📌 Get All Tasks (Authenticated via API Key)
-exports.getAllTasks = async (req, res, next) => {
-  try {
-    const tasks = await taskService.getAllTasks(req.user._id, req.query);
-    res.json({
-      success: true,
-      message: "Tasks retrieved.",
-      data: tasks,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 📌 Create a New Task (Authenticated via API Key)
-exports.createTask = async (req, res, next) => {
-  try {
-    const task = await taskService.createTask({
-      ...req.body,
-      userId: req.user._id,
-    });
-    res.status(201).json({
-      success: true,
-      message: "Task created.",
-      data: task,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 📌 Update Task (Only if API Key matches)
-exports.updateTask = async (req, res, next) => {
-  try {
-    const task = await taskService.updateTask(
-      req.params.id,
-      req.body,
-      req.user._id
-    );
-
-    if (!task) {
-      return res.status(403).json({
+const taskController = {
+  // Get all tasks for the current user
+  getAllTasks: async (req, res) => {
+    try {
+      const tasks = await taskService.getAllTasks(req.user.id);
+      return res.status(200).json({
+        success: true,
+        data: tasks,
+      });
+    } catch (error) {
+      return res.status(400).json({
         success: false,
-        error: "Unauthorized: You do not have permission to update this task",
-        data: null,
+        message: error.message,
       });
     }
+  },
 
-    res.status(200).json({
-      success: true,
-      message: "Task updated.",
-      data: task,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 📌 Delete Task (Only if API Key matches)
-exports.deleteTask = async (req, res, next) => {
-  try {
-    const deleted = await taskService.deleteTask(req.params.id, req.user._id);
-
-    if (!deleted) {
-      return res.status(403).json({
+  // Create a new task
+  createTask: async (req, res) => {
+    try {
+      const task = await taskService.createTask(req.user.id, req.body);
+      return res.status(201).json({
+        success: true,
+        message: "Task created.",
+        data: task,
+      });
+    } catch (error) {
+      return res.status(400).json({
         success: false,
-        error: "Unauthorized: You do not have permission to delete this task.",
+        message: error.message,
       });
     }
+  },
 
-    res.status(200).json({
-      success: true,
-      message: "Task deleted.",
-    });
-  } catch (error) {
-    next(error);
-  }
+  // Get a single task
+  getTask: async (req, res) => {
+    try {
+      const task = await taskService.getTask(req.user.id, req.params.id);
+      return res.status(200).json({
+        success: true,
+        data: task,
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  },
+
+  // Update a task
+  updateTask: async (req, res) => {
+    try {
+      const task = await taskService.updateTask(
+        req.user.id,
+        req.params.id,
+        req.body
+      );
+      return res.status(200).json({
+        success: true,
+        message: "Task updated.",
+        data: task,
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  },
+
+  // Delete a task
+  deleteTask: async (req, res) => {
+    try {
+      await taskService.deleteTask(req.user.id, req.params.id);
+      return res.status(200).json({
+        success: true,
+        message: "Task deleted.",
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  },
+
+  // Get all tasks (admin only)
+  getAllUsersTasks: async (req, res) => {
+    try {
+      const tasks = await taskService.getAllUsersTasks();
+      return res.status(200).json({
+        success: true,
+        data: tasks,
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  },
 };
+
+module.exports = taskController;
