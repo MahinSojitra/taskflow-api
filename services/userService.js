@@ -55,10 +55,8 @@ const userService = {
       message: "Signed in.",
       data: {
         user: {
-          id: user._id,
-          email: user.email,
           name: user.name,
-          role: user.role,
+          email: user.email,
         },
         tokens: { accessToken, refreshToken },
       },
@@ -158,6 +156,11 @@ const userService = {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save();
+  },
+
+  getAllUsers: async () => {
+    const users = await User.find().select("-password -refreshToken");
+    return users;
   },
 };
 

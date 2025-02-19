@@ -113,6 +113,18 @@ const userController = {
       next(error);
     }
   },
+
+  getAllUsers: async (req, res, next) => {
+    try {
+      const users = await userService.getAllUsers();
+      res.status(200).json({
+        success: true,
+        data: users,
+      });
+    } catch (error) {
+      next(new AppError(error.message, 400));
+    }
+  },
 };
 
 module.exports = userController;

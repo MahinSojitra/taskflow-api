@@ -33,6 +33,9 @@ router.put(
 router.post("/refresh-token", userController.refreshToken);
 router.post("/signout", userController.signout);
 
+// Admin routes
+router.get("/all", authorize("admin"), userController.getAllUsers);
+
 // Error handler
 router.use(errorHandler);
 

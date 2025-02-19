@@ -9,7 +9,19 @@ const taskController = {
       const tasks = await taskService.getAllTasks(req.user.id);
       res.status(200).json({
         success: true,
-        data: tasks,
+        data: {
+          tasks: tasks.map((task) => ({
+            id: task._id,
+            title: task.title,
+            description: task.description,
+            dueDate: task.dueDate,
+            status: task.status,
+            tags: task.tags,
+            createdAt: task.createdAt,
+            updatedAt: task.updatedAt,
+          })),
+          total: tasks.length,
+        },
       });
     } catch (error) {
       next(new AppError(error.message, 400));
@@ -22,7 +34,19 @@ const taskController = {
       const tasks = await taskService.getAllUsersTasks();
       res.status(200).json({
         success: true,
-        data: tasks,
+        data: {
+          tasks: tasks.map((task) => ({
+            id: task._id,
+            title: task.title,
+            description: task.description,
+            dueDate: task.dueDate,
+            status: task.status,
+            tags: task.tags,
+            createdAt: task.createdAt,
+            updatedAt: task.updatedAt,
+          })),
+          total: tasks.length,
+        },
       });
     } catch (error) {
       next(new AppError(error.message, 400));
@@ -36,7 +60,16 @@ const taskController = {
       res.status(201).json({
         success: true,
         message: "Task created.",
-        data: task,
+        data: {
+          id: task._id,
+          title: task.title,
+          description: task.description,
+          dueDate: task.dueDate,
+          status: task.status,
+          tags: task.tags,
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
+        },
       });
     } catch (error) {
       next(new AppError(error.message, 400));
@@ -52,7 +85,16 @@ const taskController = {
       }
       res.status(200).json({
         success: true,
-        data: task,
+        data: {
+          id: task._id,
+          title: task.title,
+          description: task.description,
+          dueDate: task.dueDate,
+          status: task.status,
+          tags: task.tags,
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
+        },
       });
     } catch (error) {
       next(new AppError(error.message, 400));
@@ -73,7 +115,16 @@ const taskController = {
       res.status(200).json({
         success: true,
         message: "Task updated.",
-        data: task,
+        data: {
+          id: task._id,
+          title: task.title,
+          description: task.description,
+          dueDate: task.dueDate,
+          status: task.status,
+          tags: task.tags,
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
+        },
       });
     } catch (error) {
       next(new AppError(error.message, 400));
@@ -90,6 +141,10 @@ const taskController = {
       res.status(200).json({
         success: true,
         message: "Task deleted.",
+        data: {
+          id: task._id,
+          title: task.title,
+        },
       });
     } catch (error) {
       next(new AppError(error.message, 400));

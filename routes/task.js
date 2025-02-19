@@ -12,7 +12,7 @@ const router = express.Router();
 router.use(protect);
 
 // Admin routes
-router.get("/admin/all", authorize("admin"), taskController.getAllUsersTasks);
+router.get("/all", authorize("admin"), taskController.getAllUsersTasks);
 
 // Regular task routes
 router.get("/", authorize("user", "admin"), taskController.getAllTasks);

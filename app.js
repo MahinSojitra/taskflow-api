@@ -37,19 +37,20 @@ app.use((req, res, next) => {
     // User routes
     "POST /api/users/signup": "Create new account",
     "POST /api/users/signin": "Sign in to account",
-    "GET /api/users/profile": "Get user profile (auth)",
-    "PUT /api/users/profile": "Update profile (auth)",
-    "POST /api/users/signout": "Sign out (auth)",
+    "GET /api/users/profile": "Get user profile",
+    "PUT /api/users/profile": "Update profile",
+    "POST /api/users/signout": "Sign out",
 
     // Task routes
-    "GET /api/tasks": "List all tasks (auth)",
-    "POST /api/tasks": "Create new task (auth)",
-    "GET /api/tasks/:id": "Get task details (auth)",
-    "PUT /api/tasks/:id": "Update task (auth)",
-    "DELETE /api/tasks/:id": "Delete task (auth)",
+    "GET /api/tasks": "List all tasks",
+    "POST /api/tasks": "Create new task",
+    "GET /api/tasks/:id": "Get task details",
+    "PUT /api/tasks/:id": "Update task",
+    "DELETE /api/tasks/:id": "Delete task",
 
     // Admin routes
-    "GET /api/tasks/admin/all": "List all users tasks (admin)",
+    "GET /api/users/all": "List all users (only admin can access)",
+    "GET /api/tasks/all": "List all users tasks (only admin can access)",
   };
 
   // Check if the route exists in our available routes
