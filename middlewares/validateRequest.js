@@ -6,13 +6,10 @@ const validateRequest = (schema) => {
     });
 
     if (error) {
-      const errorMessage = error.details
-        .map((detail) => detail.message)
-        .join(", ");
-
       return res.status(400).json({
         success: false,
-        message: errorMessage,
+        message: "Please check your input and try again",
+        errors: error.details.map((detail) => detail.message),
       });
     }
 

@@ -9,14 +9,16 @@ const userSchemas = {
       .max(50)
       .pattern(/^[a-zA-Z\s]+$/)
       .messages({
-        "string.empty": "Name is required.",
-        "string.min": "Name must be at least 2 characters long.",
-        "string.max": "Name cannot exceed 50 characters.",
-        "string.pattern.base": "Name can only contain letters and spaces.",
+        "string.empty": "Name cannot be empty",
+        "string.min": "Name must be at least 2 characters long",
+        "string.max": "Name cannot exceed 50 characters",
+        "string.pattern.base": "Name can only contain letters and spaces",
+        "any.required": "Name is required",
       }),
     email: Joi.string().required().email().messages({
-      "string.empty": "Email is required.",
-      "string.email": "Please provide a valid email address.",
+      "string.empty": "Email cannot be empty",
+      "string.email": "Please provide a valid email address",
+      "any.required": "Email is required",
     }),
     password: Joi.string()
       .required()
@@ -26,21 +28,24 @@ const userSchemas = {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{6,30}$/
       )
       .messages({
-        "string.empty": "Password is required.",
-        "string.min": "Password must be at least 6 characters long.",
-        "string.max": "Password cannot exceed 30 characters.",
+        "string.empty": "Password cannot be empty",
+        "string.min": "Password must be at least 6 characters long",
+        "string.max": "Password cannot exceed 30 characters",
         "string.pattern.base":
-          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*).",
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)",
+        "any.required": "Password is required",
       }),
   }),
 
   signin: Joi.object({
     email: Joi.string().required().email().messages({
-      "string.empty": "Email is required.",
-      "string.email": "Please provide a valid email address.",
+      "string.empty": "Email cannot be empty",
+      "string.email": "Please provide a valid email address",
+      "any.required": "Email is required",
     }),
     password: Joi.string().required().messages({
-      "string.empty": "Password is required.",
+      "string.empty": "Password cannot be empty",
+      "any.required": "Password is required",
     }),
   }),
 };
@@ -54,35 +59,41 @@ const taskSchemas = {
       .max(100)
       .pattern(/^[^<>{}]+$/)
       .messages({
-        "string.empty": "Title is required.",
-        "string.min": "Title must be at least 3 characters long.",
-        "string.max": "Title cannot exceed 100 characters.",
-        "string.pattern.base": "Title contains invalid characters.",
+        "string.empty": "Title cannot be empty",
+        "string.min": "Title must be at least 3 characters long",
+        "string.max": "Title cannot exceed 100 characters",
+        "string.pattern.base": "Title contains invalid characters",
+        "any.required": "Title is required",
       }),
     description: Joi.string()
       .max(500)
       .pattern(/^[^<>{}]+$/)
       .allow("")
       .messages({
-        "string.max": "Description cannot exceed 500 characters.",
-        "string.pattern.base": "Description contains invalid characters.",
+        "string.max": "Description cannot exceed 500 characters",
+        "string.pattern.base": "Description contains invalid characters",
       }),
     dueDate: Joi.date()
       .min("now")
       .max(new Date(Date.now() + 63072000000)) // 2 years from now
       .messages({
-        "date.base": "Please provide a valid date.",
-        "date.min": "Due date cannot be in the past.",
-        "date.max": "Due date cannot be more than 2 years in the future.",
+        "date.base": "Please provide a valid date",
+        "date.min": "Due date cannot be in the past",
+        "date.max": "Due date cannot be more than 2 years in the future",
+        "any.required": "Due date is required",
       }),
     priority: Joi.string().valid("low", "medium", "high").messages({
-      "any.only": "Priority must be either 'low', 'medium', or 'high'.",
+      "string.empty": "Priority cannot be empty",
+      "any.only": "Priority must be either 'low', 'medium', or 'high'",
+      "any.required": "Priority is required",
     }),
     status: Joi.string()
       .valid("pending", "active", "completed", "cancelled")
       .messages({
+        "string.empty": "Status cannot be empty",
         "any.only":
-          "Status must be either 'pending', 'active', 'completed', or 'cancelled'.",
+          "Status must be either 'pending', 'active', 'completed', or 'cancelled'",
+        "any.required": "Status is required",
       }),
   }),
 
@@ -92,34 +103,42 @@ const taskSchemas = {
       .max(100)
       .pattern(/^[^<>{}]+$/)
       .messages({
-        "string.min": "Title must be at least 3 characters long.",
-        "string.max": "Title cannot exceed 100 characters.",
-        "string.pattern.base": "Title contains invalid characters.",
+        "string.empty": "Title cannot be empty",
+        "string.min": "Title must be at least 3 characters long",
+        "string.max": "Title cannot exceed 100 characters",
+        "string.pattern.base": "Title contains invalid characters",
+        "any.required": "Title is required",
       }),
     description: Joi.string()
       .max(500)
       .pattern(/^[^<>{}]+$/)
       .allow("")
       .messages({
-        "string.max": "Description cannot exceed 500 characters.",
-        "string.pattern.base": "Description contains invalid characters.",
+        "string.max": "Description cannot exceed 500 characters",
+        "string.pattern.base": "Description contains invalid characters",
+        "any.required": "Description is required",
       }),
     dueDate: Joi.date()
       .min("now")
       .max(new Date(Date.now() + 63072000000))
       .messages({
-        "date.base": "Please provide a valid date.",
-        "date.min": "Due date cannot be in the past.",
-        "date.max": "Due date cannot be more than 2 years in the future.",
+        "date.base": "Please provide a valid date",
+        "date.min": "Due date cannot be in the past",
+        "date.max": "Due date cannot be more than 2 years in the future",
+        "any.required": "Due date is required",
       }),
     priority: Joi.string().valid("low", "medium", "high").messages({
-      "any.only": "Priority must be either 'low', 'medium', or 'high'.",
+      "string.empty": "Priority cannot be empty",
+      "any.only": "Priority must be either 'low', 'medium', or 'high'",
+      "any.required": "Priority is required",
     }),
     status: Joi.string()
       .valid("pending", "active", "completed", "cancelled")
       .messages({
+        "string.empty": "Status cannot be empty",
         "any.only":
-          "Status must be either 'pending', 'active', 'completed', or 'cancelled'.",
+          "Status must be either 'pending', 'active', 'completed', or 'cancelled'",
+        "any.required": "Status is required",
       }),
   }),
 };
