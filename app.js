@@ -22,11 +22,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// API routes
-app.use("/api/users", userRoutes);
-app.use("/api/tasks", taskRoutes);
-
-// 404 handler
+// 404 handler (place before API routes)
 app.use((req, res, next) => {
   // Handle /api route specifically
   if (req.path === "/api") {
@@ -58,18 +54,46 @@ app.use((req, res, next) => {
     "GET /api/tasks/admin/all": "List all users tasks (admin)",
   };
 
-  const similarRoute = Object.keys(availableRoutes).find((route) =>
-    route.toLowerCase().includes(req.path.toLowerCase())
+  // Check if the route exists in our available routes
+  const similarRoute = Object.keys(availableRoutes).find(
+    (route) =>
+      route.toLowerCase().includes(req.path.toLowerCase()) ||
+      req.path.toLowerCase().includes(route.split(" ")[1].toLowerCase())
   );
 
-  res.status(404).json({
-    success: false,
-    message: `Route ${req.method} ${req.path} not found`,
-    suggestion: similarRoute
-      ? `Did you mean ${similarRoute} ?`
-      : "Check documentation at /",
-  });
+  // If no similar route found, send 404
+  if (!similarRoute) {
+    return res.status(404).json({
+      success: false,
+      message: `Route ${req.method} ${req.path} not found`,
+      suggestion: "Check documentation at /",
+    });
+  }
+
+  // If similar route found, suggest it
+  if (req.path !== similarRoute.split(" ")[1]) {
+    return res.status(404).json({
+      success: false,
+      message: `Route ${req.method} ${req.path} not found`,
+      suggestion: `Did you mean ${similarRoute}?`,
+    });
+  }
+
+  // If route exists but method doesn't match
+  if (req.method !== similarRoute.split(" ")[0]) {
+    return res.status(405).json({
+      success: false,
+      message: `Method ${req.method} not allowed for ${req.path}`,
+      suggestion: `Use ${similarRoute.split(" ")[0]} instead`,
+    });
+  }
+
+  next();
 });
+
+// API routes
+app.use("/api/users", userRoutes);
+app.use("/api/tasks", taskRoutes);
 
 // Global error handler
 app.use(errorHandler);
