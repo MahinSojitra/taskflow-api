@@ -8,7 +8,7 @@ const morgan = require("morgan");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/user");
 const taskRoutes = require("./routes/task");
-const errorHandler = require("./middlewares/errorHandler");
+const { errorHandler } = require("./middlewares/errorHandler");
 
 dotenv.config();
 const app = express();
@@ -54,11 +54,54 @@ app.get("/", (req, res) => {
 });
 
 // ✅ Handle Undefined Routes
-app.use((req, res) => {
-  res.status(404).json({
+app.use((req, res, next) => {
+  const publicRoutes = {
+    "/api/user": {
+      "POST /signup": "Create a new account",
+      "POST /signin": "Sign in to your account",
+    },
+    "/api/task": {
+      "GET /": "Get all tasks (requires authentication)",
+      "POST /": "Create a new task (requires authentication)",
+      "GET /:id": "Get task by ID (requires authentication)",
+      "PUT /:id": "Update task (requires authentication)",
+      "DELETE /:id": "Delete task (requires authentication)",
+    },
+  };
+
+  const requestedPath = req.path.split("/").slice(0, 3).join("/");
+
+  const getSimilarRoutes = (path) => {
+    const allPaths = Object.keys(publicRoutes).flatMap((basePath) =>
+      Object.keys(publicRoutes[basePath]).map(
+        (route) => basePath + route.split(" ")[1]
+      )
+    );
+
+    return allPaths.filter(
+      (route) =>
+        route.includes(path) ||
+        path.includes(route) ||
+        route.toLowerCase().includes(path.toLowerCase())
+    );
+  };
+
+  const similarRoutes = getSimilarRoutes(req.path);
+
+  const errorMessage = {
     success: false,
+    status: "fail",
+    message: `Cannot ${req.method} ${req.path}`,
     error: "Route not found",
-  });
+    suggestions: {
+      message: "Available public endpoints:",
+      routes: similarRoutes.length ? similarRoutes : "No similar routes found",
+      note: "Some routes require authentication. Please refer to the API documentation for complete details.",
+      publicEndpoints: publicRoutes,
+    },
+  };
+
+  res.status(404).json(errorMessage);
 });
 
 // ✅ Global Error Handling Middleware
@@ -89,5 +132,12 @@ const shutdown = async (signal) => {
 // Handle termination signals
 process.on("SIGINT", () => shutdown("SIGINT"));
 process.on("SIGTERM", () => shutdown("SIGTERM"));
+
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (err) => {
+  console.log("UNHANDLED REJECTION! 💥 Shutting down...");
+  console.log(err.name, err.message);
+  process.exit(1);
+});
 
 module.exports = app; // For testing purposes
