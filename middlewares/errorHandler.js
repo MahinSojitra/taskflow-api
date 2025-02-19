@@ -29,7 +29,6 @@ const errorHandler = (err, req, res, next) => {
   if (err.isOperational) {
     return res.status(err.statusCode).json({
       success: false,
-      status: err.status,
       message: err.message,
     });
   }
