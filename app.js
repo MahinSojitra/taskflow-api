@@ -28,13 +28,7 @@ app.use("/api/tasks", taskRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
-  // Handle /api route specifically
   if (req.path === "/api") {
-    return res.redirect("/");
-  }
-
-  // Handle other non-API routes
-  if (!req.path.startsWith("/api")) {
     return res.redirect("/");
   }
 
