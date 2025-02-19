@@ -1,25 +1,41 @@
 const mongoose = require("mongoose");
 
-const connectDB = async () => {
-  const uri = process.env.MONGO_URI;
+let isConnected = false;
 
-  if (!uri) {
-    console.error("❌ MONGO_URI is not defined");
+const connectDB = async () => {
+  if (isConnected) {
     return;
   }
 
   try {
-    const conn = await mongoose.connect(uri, {
-      // Remove deprecated options
-      // useNewUrlParser: true,
-      // useUnifiedTopology: true
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 10000, // 10 seconds
+      socketTimeoutMS: 45000, // 45 seconds
+      maxPoolSize: 10,
+      retryWrites: true,
     });
 
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    isConnected = true;
+    console.log("✅ Database Connected");
   } catch (error) {
-    console.error(`Error: ${error.message}`);
-    process.exit(1);
+    console.error("❌ Database Connection Error");
+    throw error;
   }
 };
 
-module.exports = connectDB;
+mongoose.connection.on("connected", () => {
+  isConnected = true;
+});
+
+mongoose.connection.on("disconnected", () => {
+  isConnected = false;
+  connectDB(); // Auto reconnect
+});
+
+// Export both the connection status and connect function
+module.exports = {
+  connectDB,
+  isConnected: () => isConnected,
+};
