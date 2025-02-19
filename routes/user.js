@@ -4,6 +4,7 @@ const validateRequest = require("../middlewares/validateRequest");
 const { userSchemas } = require("../validations/validationSchemas");
 const { protect } = require("../middlewares/auth");
 const { errorHandler } = require("../middlewares/errorHandler");
+const authorize = require("../middlewares/authorize");
 
 const router = express.Router();
 
@@ -21,17 +22,15 @@ router.post(
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/reset-password", userController.resetPassword);
 
-// Protected routes
-router.use(protect);
-
-router.get("/profile", userController.getProfile);
+router.get("/profile", protect, userController.getProfile);
 router.put(
   "/profile",
+  protect,
   validateRequest(userSchemas.update),
   userController.updateProfile
 );
-router.post("/refresh-token", userController.refreshToken);
-router.post("/signout", userController.signout);
+router.post("/refresh-token", protect, userController.refreshToken);
+router.post("/signout", protect, userController.signout);
 
 // Admin routes
 router.get("/all", authorize("admin"), userController.getAllUsers);
