@@ -52,7 +52,7 @@ const userService = {
 
     return {
       success: true,
-      message: "Signed in successfully.",
+      message: "Signed in.",
       data: {
         user: {
           id: user._id,

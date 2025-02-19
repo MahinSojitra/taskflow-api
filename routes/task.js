@@ -1,7 +1,7 @@
 const express = require("express");
 const taskController = require("../controllers/taskController");
 const validateRequest = require("../middlewares/validateRequest");
-const { protect, authorize } = require("../middlewares/auth");
+const { protect } = require("../middlewares/auth");
 const { taskSchemas } = require("../validations/validationSchemas");
 const { errorHandler } = require("../middlewares/errorHandler");
 

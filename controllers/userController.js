@@ -37,7 +37,7 @@ const userController = {
       const user = await userService.updateProfile(req.user.id, req.body);
       res.status(200).json({
         success: true,
-        message: "Profile updated successfully.",
+        message: "Profile updated.",
         data: user,
       });
     } catch (error) {
@@ -71,7 +71,7 @@ const userController = {
       await userService.resetPassword(req.body.token, req.body.password);
       res.status(200).json({
         success: true,
-        message: "Password has been reset successfully.",
+        message: "Password has been reset.",
       });
     } catch (error) {
       next(new AppError(error.message, 400));
@@ -83,7 +83,7 @@ const userController = {
       await userService.signout(req.user.id);
       res.status(200).json({
         success: true,
-        message: "Signed out successfully.",
+        message: "Signed out.",
       });
     } catch (error) {
       next(new AppError(error.message, 400));

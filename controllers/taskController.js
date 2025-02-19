@@ -1,89 +1,75 @@
 const taskService = require("../services/taskService");
+const { AppError } = require("../middlewares/errorHandler");
 
 const taskController = {
   // Get all tasks
-  getAllTasks: async (req, res) => {
+  getAllTasks: async (req, res, next) => {
     try {
       const tasks = await taskService.getAllTasks(req.user.id);
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
         data: tasks,
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 400));
     }
   },
 
-  // Create a task
-  createTask: async (req, res) => {
+  // Create a new task
+  createTask: async (req, res, next) => {
     try {
       const task = await taskService.createTask(req.user.id, req.body);
-      return res.status(201).json({
+      res.status(201).json({
         success: true,
         message: "Task created.",
         data: task,
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 400));
     }
   },
 
   // Get a single task
-  getTask: async (req, res) => {
+  getTask: async (req, res, next) => {
     try {
       const task = await taskService.getTask(req.user.id, req.params.id);
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
         data: task,
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 400));
     }
   },
 
   // Update a task
-  updateTask: async (req, res) => {
+  updateTask: async (req, res, next) => {
     try {
       const task = await taskService.updateTask(
         req.user.id,
         req.params.id,
         req.body
       );
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
         message: "Task updated.",
         data: task,
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 400));
     }
   },
 
   // Delete a task
-  deleteTask: async (req, res) => {
+  deleteTask: async (req, res, next) => {
     try {
       await taskService.deleteTask(req.user.id, req.params.id);
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
         message: "Task deleted.",
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 400));
     }
   },
 };
