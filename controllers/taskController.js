@@ -21,7 +21,7 @@ const taskController = {
       const task = await taskService.createTask(req.user.id, req.body);
       res.status(201).json({
         success: true,
-        message: "Task created.",
+        message: "Task created successfully",
         data: task,
       });
     } catch (error) {
@@ -33,6 +33,9 @@ const taskController = {
   getTask: async (req, res, next) => {
     try {
       const task = await taskService.getTask(req.user.id, req.params.id);
+      if (!task) {
+        return next(new AppError("Task not found", 404));
+      }
       res.status(200).json({
         success: true,
         data: task,
@@ -50,9 +53,12 @@ const taskController = {
         req.params.id,
         req.body
       );
+      if (!task) {
+        return next(new AppError("Task not found", 404));
+      }
       res.status(200).json({
         success: true,
-        message: "Task updated.",
+        message: "Task updated successfully",
         data: task,
       });
     } catch (error) {
@@ -63,10 +69,13 @@ const taskController = {
   // Delete a task
   deleteTask: async (req, res, next) => {
     try {
-      await taskService.deleteTask(req.user.id, req.params.id);
+      const task = await taskService.deleteTask(req.user.id, req.params.id);
+      if (!task) {
+        return next(new AppError("Task not found", 404));
+      }
       res.status(200).json({
         success: true,
-        message: "Task deleted.",
+        message: "Task deleted successfully",
       });
     } catch (error) {
       next(new AppError(error.message, 400));
