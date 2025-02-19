@@ -1,9 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const { errorHandler, AppError } = require("./middlewares/errorHandler");
-const userRoutes = require("./routes/user");
-const taskRoutes = require("./routes/task");
-// ... other imports ...
+const path = require("path");
+const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 
@@ -12,64 +10,63 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, "public")));
+
+// Import routes
+const userRoutes = require("./routes/user");
+const taskRoutes = require("./routes/task");
+
+// Root route - Serve index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// API routes
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
 
-// 404 handler with suggestions (only public routes)
+// 404 handler
 app.use((req, res, next) => {
-  const publicRoutes = {
-    "/api/users": {
-      "POST /signup": "Create a new account",
-      "POST /signin": "Sign in to your account",
-    },
-    "/api/tasks": {
-      "GET /": "Get all tasks (requires authentication)",
-      "POST /": "Create a new task (requires authentication)",
-      "GET /:id": "Get task by ID (requires authentication)",
-      "PUT /:id": "Update task (requires authentication)",
-      "DELETE /:id": "Delete task (requires authentication)",
-    },
+  // Redirect non-API routes to root
+  if (!req.path.startsWith("/api")) {
+    return res.redirect("/");
+  }
+
+  // API routes error handling
+  const availableRoutes = {
+    // User routes
+    "POST /api/users/signup": "Create new account",
+    "POST /api/users/signin": "Sign in to account",
+    "GET /api/users/profile": "Get user profile (auth)",
+    "PUT /api/users/profile": "Update profile (auth)",
+    "POST /api/users/signout": "Sign out (auth)",
+
+    // Task routes
+    "GET /api/tasks": "List all tasks (auth)",
+    "POST /api/tasks": "Create new task (auth)",
+    "GET /api/tasks/:id": "Get task details (auth)",
+    "PUT /api/tasks/:id": "Update task (auth)",
+    "DELETE /api/tasks/:id": "Delete task (auth)",
+
+    // Admin routes
+    "GET /api/tasks/admin/all": "List all users tasks (admin)",
   };
 
-  // Get the base path from the requested URL
-  const requestedPath = req.path.split("/").slice(0, 3).join("/");
+  const similarRoute = Object.keys(availableRoutes).find((route) =>
+    route.toLowerCase().includes(req.path.toLowerCase())
+  );
 
-  // Find similar routes for suggestions
-  const getSimilarRoutes = (path) => {
-    const allPaths = Object.keys(publicRoutes).flatMap((basePath) =>
-      Object.keys(publicRoutes[basePath]).map(
-        (route) => basePath + route.split(" ")[1]
-      )
-    );
-
-    return allPaths.filter(
-      (route) =>
-        route.includes(path) ||
-        path.includes(route) ||
-        route.toLowerCase().includes(path.toLowerCase())
-    );
-  };
-
-  const similarRoutes = getSimilarRoutes(req.path);
-
-  const errorMessage = {
+  res.status(404).json({
     success: false,
-    status: "fail",
-    message: `Cannot ${req.method} ${req.path}`,
-    error: "Route not found",
-    suggestions: {
-      message: "Available public endpoints:",
-      routes: similarRoutes.length ? similarRoutes : "No similar routes found",
-      note: "Some routes require authentication. Please refer to the API documentation for complete details.",
-      publicEndpoints: publicRoutes,
-    },
-  };
-
-  res.status(404).json(errorMessage);
+    message: `Route ${req.method} ${req.path} not found`,
+    suggestion: similarRoute
+      ? `Did you mean ${similarRoute}?`
+      : "Check documentation at /",
+  });
 });
 
-// Global error handler - should be last middleware
+// Global error handler
 app.use(errorHandler);
 
 module.exports = app;
