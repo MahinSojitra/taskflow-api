@@ -35,16 +35,7 @@ const taskController = {
       res.status(200).json({
         success: true,
         data: {
-          tasks: tasks.map((task) => ({
-            id: task._id,
-            title: task.title,
-            description: task.description,
-            dueDate: task.dueDate,
-            status: task.status,
-            tags: task.tags,
-            createdAt: task.createdAt,
-            updatedAt: task.updatedAt,
-          })),
+          tasks: tasks,
           total: tasks.length,
         },
       });

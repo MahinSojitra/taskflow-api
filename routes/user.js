@@ -8,6 +8,9 @@ const authorize = require("../middlewares/authorize");
 
 const router = express.Router();
 
+// Admin routes
+router.get("/all", authorize("admin"), userController.getAllUsers);
+
 // Public routes
 router.post(
   "/signup",
@@ -22,18 +25,18 @@ router.post(
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/reset-password", userController.resetPassword);
 
-router.get("/profile", protect, userController.getProfile);
+// Protected routes
+router.use(protect);
+
+// Protected routes
+router.get("/profile", userController.getProfile);
 router.put(
   "/profile",
-  protect,
   validateRequest(userSchemas.update),
   userController.updateProfile
 );
-router.post("/refresh-token", protect, userController.refreshToken);
-router.post("/signout", protect, userController.signout);
-
-// Admin routes
-router.get("/all", authorize("admin"), userController.getAllUsers);
+router.post("/refresh-token", userController.refreshToken);
+router.post("/signout", userController.signout);
 
 // Error handler
 router.use(errorHandler);
