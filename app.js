@@ -22,7 +22,11 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// 404 handler (place before API routes)
+// API routes (place before 404 handler)
+app.use("/api/users", userRoutes);
+app.use("/api/tasks", taskRoutes);
+
+// 404 handler
 app.use((req, res, next) => {
   // Handle /api route specifically
   if (req.path === "/api") {
@@ -30,9 +34,9 @@ app.use((req, res, next) => {
   }
 
   // Handle other non-API routes
-  /* if (!req.path.startsWith("/api")) {
+  if (!req.path.startsWith("/api")) {
     return res.redirect("/");
-  } */
+  }
 
   // API routes error handling
   const availableRoutes = {
@@ -90,10 +94,6 @@ app.use((req, res, next) => {
 
   next();
 });
-
-// API routes
-app.use("/api/users", userRoutes);
-app.use("/api/tasks", taskRoutes);
 
 // Global error handler
 app.use(errorHandler);
