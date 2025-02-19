@@ -11,17 +11,12 @@ const router = express.Router();
 // Protect all routes
 router.use(protect);
 
-// Task routes with simplified middleware chain
-router
-  .route("/")
-  .get(taskController.getAllTasks)
-  .post(validateRequest(taskSchemas.create), taskController.createTask);
-
-router
-  .route("/:id")
-  .get(taskController.getTask)
-  .put(validateRequest(taskSchemas.update), taskController.updateTask)
-  .delete(taskController.deleteTask);
+// Basic CRUD routes
+router.get("/", taskController.getAllTasks);
+router.post("/", taskController.createTask);
+router.get("/:id", taskController.getTask);
+router.put("/:id", taskController.updateTask);
+router.delete("/:id", taskController.deleteTask);
 
 // Admin only route
 router.get("/admin/all", authorize("admin"), taskController.getAllUsersTasks);

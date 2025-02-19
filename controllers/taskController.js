@@ -1,9 +1,9 @@
 const taskService = require("../services/taskService");
-const { AppError } = require("../middlewares/errorHandler");
 
+// Task Controller
 const taskController = {
   // Get all tasks
-  getAllTasks: async (req, res, next) => {
+  getAllTasks: async (req, res) => {
     try {
       const tasks = await taskService.getAllTasks(req.user.id);
       res.status(200).json({
@@ -11,12 +11,15 @@ const taskController = {
         data: tasks,
       });
     } catch (error) {
-      next(new AppError(error.message, 400));
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
   },
 
-  // Create a new task
-  createTask: async (req, res, next) => {
+  // Create new task
+  createTask: async (req, res) => {
     try {
       const task = await taskService.createTask(req.user.id, req.body);
       res.status(201).json({
@@ -25,28 +28,37 @@ const taskController = {
         data: task,
       });
     } catch (error) {
-      next(new AppError(error.message, 400));
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
   },
 
-  // Get a single task
-  getTask: async (req, res, next) => {
+  // Get single task
+  getTask: async (req, res) => {
     try {
       const task = await taskService.getTask(req.user.id, req.params.id);
       if (!task) {
-        return next(new AppError("Task not found", 404));
+        return res.status(404).json({
+          success: false,
+          message: "Task not found",
+        });
       }
       res.status(200).json({
         success: true,
         data: task,
       });
     } catch (error) {
-      next(new AppError(error.message, 400));
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
   },
 
-  // Update a task
-  updateTask: async (req, res, next) => {
+  // Update task
+  updateTask: async (req, res) => {
     try {
       const task = await taskService.updateTask(
         req.user.id,
@@ -54,7 +66,10 @@ const taskController = {
         req.body
       );
       if (!task) {
-        return next(new AppError("Task not found", 404));
+        return res.status(404).json({
+          success: false,
+          message: "Task not found",
+        });
       }
       res.status(200).json({
         success: true,
@@ -62,23 +77,32 @@ const taskController = {
         data: task,
       });
     } catch (error) {
-      next(new AppError(error.message, 400));
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
   },
 
-  // Delete a task
-  deleteTask: async (req, res, next) => {
+  // Delete task
+  deleteTask: async (req, res) => {
     try {
       const task = await taskService.deleteTask(req.user.id, req.params.id);
       if (!task) {
-        return next(new AppError("Task not found", 404));
+        return res.status(404).json({
+          success: false,
+          message: "Task not found",
+        });
       }
       res.status(200).json({
         success: true,
         message: "Task deleted successfully",
       });
     } catch (error) {
-      next(new AppError(error.message, 400));
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
   },
 };
