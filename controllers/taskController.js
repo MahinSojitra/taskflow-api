@@ -35,7 +35,7 @@ const taskController = {
       const task = await taskService.createTask(req.user.id, req.body);
       res.status(201).json({
         success: true,
-        message: "Task created successfully",
+        message: "Task created.",
         data: task,
       });
     } catch (error) {
@@ -72,7 +72,7 @@ const taskController = {
       }
       res.status(200).json({
         success: true,
-        message: "Task updated successfully",
+        message: "Task updated.",
         data: task,
       });
     } catch (error) {
@@ -89,7 +89,7 @@ const taskController = {
       }
       res.status(200).json({
         success: true,
-        message: "Task deleted successfully",
+        message: "Task deleted.",
       });
     } catch (error) {
       next(new AppError(error.message, 400));
