@@ -3,6 +3,7 @@ class AppError extends Error {
   constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
+    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
     this.isOperational = true;
 
     Error.captureStackTrace(this, this.constructor);
@@ -18,7 +19,6 @@ const errorHandler = (err, req, res, next) => {
   if (process.env.NODE_ENV === "development") {
     return res.status(err.statusCode).json({
       success: false,
-      status: err.status,
       message: err.message,
       stack: err.stack,
       error: err,
