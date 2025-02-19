@@ -9,7 +9,7 @@ const authorize = require("../middlewares/authorize");
 const router = express.Router();
 
 // Admin routes
-router.get("/all", authorize("admin"), userController.getAllUsers);
+router.get("/all", protect, authorize("admin"), userController.getAllUsers);
 
 // Public routes
 router.post(
