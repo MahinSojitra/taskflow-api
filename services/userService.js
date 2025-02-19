@@ -39,8 +39,8 @@ const userService = {
     };
   },
 
-  // User login
-  loginUser: async ({ email, password }) => {
+  // User signin
+  signin: async ({ email, password }) => {
     const user = await User.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new Error("Invalid email or password.");
@@ -52,7 +52,7 @@ const userService = {
 
     return {
       success: true,
-      message: "Login successful.",
+      message: "Signed in successfully.",
       data: {
         user: {
           id: user._id,

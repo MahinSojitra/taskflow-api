@@ -1,7 +1,7 @@
 const taskService = require("../services/taskService");
 
 const taskController = {
-  // Get all tasks for the current user
+  // Get all tasks
   getAllTasks: async (req, res) => {
     try {
       const tasks = await taskService.getAllTasks(req.user.id);
@@ -17,7 +17,7 @@ const taskController = {
     }
   },
 
-  // Create a new task
+  // Create a task
   createTask: async (req, res) => {
     try {
       const task = await taskService.createTask(req.user.id, req.body);
@@ -78,22 +78,6 @@ const taskController = {
       return res.status(200).json({
         success: true,
         message: "Task deleted.",
-      });
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  },
-
-  // Get all tasks (admin only)
-  getAllUsersTasks: async (req, res) => {
-    try {
-      const tasks = await taskService.getAllUsersTasks();
-      return res.status(200).json({
-        success: true,
-        data: tasks,
       });
     } catch (error) {
       return res.status(400).json({

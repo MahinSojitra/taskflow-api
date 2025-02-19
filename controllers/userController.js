@@ -13,9 +13,9 @@ const userController = {
     }
   },
 
-  loginUser: async (req, res) => {
+  signin: async (req, res) => {
     try {
-      const result = await userService.loginUser(req.body);
+      const result = await userService.signin(req.body);
       return res.status(200).json(result);
     } catch (error) {
       return res.status(401).json({

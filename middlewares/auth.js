@@ -9,7 +9,7 @@ exports.protect = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Access denied. No token provided.",
+        message: "Please sign in to access this resource.",
       });
     }
 
@@ -29,7 +29,7 @@ exports.protect = async (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: "Invalid token.",
+      message: "Please sign in again.",
     });
   }
 };

@@ -1,18 +1,32 @@
 const express = require("express");
 const userController = require("../controllers/userController");
 const { protect } = require("../middlewares/auth");
-const validateUser = require("../validations/userValidator");
+const validateRequest = require("../middlewares/validateRequest");
 const errorHandler = require("../middlewares/errorHandler");
+const { userSchemas } = require("../validations/validationSchemas");
 
 const router = express.Router();
 
 // ✅ Apply Validation Middleware
-router.post("/signup", validateUser, userController.signup);
-router.post("/login", validateUser, userController.loginUser);
+router.post(
+  "/signup",
+  validateRequest(userSchemas.signup),
+  userController.signup
+);
+router.post(
+  "/signin",
+  validateRequest(userSchemas.signin),
+  userController.signin
+);
 router.post("/refresh-token", userController.refreshToken);
-router.post("/logout", protect, userController.logout);
+router.post("/signout", protect, userController.signout);
 router.get("/profile", protect, userController.getProfile);
-router.put("/profile", protect, validateUser, userController.updateProfile);
+router.put(
+  "/profile",
+  protect,
+  validateRequest(userSchemas.update),
+  userController.updateProfile
+);
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/reset-password", userController.resetPassword);
 
