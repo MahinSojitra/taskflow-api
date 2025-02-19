@@ -11,7 +11,10 @@ const router = express.Router();
 // Protect all routes
 router.use(protect);
 
-// Task routes
+// Admin routes
+router.get("/admin/all", authorize("admin"), taskController.getAllUsersTasks);
+
+// Regular task routes
 router.get("/", authorize("user", "admin"), taskController.getAllTasks);
 
 router.post(
@@ -31,9 +34,6 @@ router.put(
 );
 
 router.delete("/:id", authorize("user", "admin"), taskController.deleteTask);
-
-// Admin only route
-router.get("/admin/all", authorize("admin"), taskController.getAllUsersTasks);
 
 // Error handler
 router.use(errorHandler);

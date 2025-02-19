@@ -16,6 +16,19 @@ const taskController = {
     }
   },
 
+  // Get all users' tasks (admin only)
+  getAllUsersTasks: async (req, res, next) => {
+    try {
+      const tasks = await taskService.getAllUsersTasks();
+      res.status(200).json({
+        success: true,
+        data: tasks,
+      });
+    } catch (error) {
+      next(new AppError(error.message, 400));
+    }
+  },
+
   // Create new task
   createTask: async (req, res, next) => {
     try {
