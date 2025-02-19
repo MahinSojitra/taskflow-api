@@ -3,6 +3,7 @@ const taskController = require("../controllers/taskController");
 const validateRequest = require("../middlewares/validateRequest");
 const { protect, authorize } = require("../middlewares/auth");
 const { taskSchemas } = require("../validations/validationSchemas");
+const { errorHandler } = require("../middlewares/errorHandler");
 
 const router = express.Router();
 
@@ -26,5 +27,7 @@ router.delete("/:id", taskController.deleteTask);
 
 // Admin only route
 router.get("/admin/all", authorize("admin"), taskController.getAllUsersTasks);
+
+router.use(errorHandler);
 
 module.exports = router;

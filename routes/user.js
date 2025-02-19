@@ -2,7 +2,7 @@ const express = require("express");
 const userController = require("../controllers/userController");
 const { protect } = require("../middlewares/auth");
 const validateRequest = require("../middlewares/validateRequest");
-const errorHandler = require("../middlewares/errorHandler");
+const { errorHandler } = require("../middlewares/errorHandler");
 const { userSchemas } = require("../validations/validationSchemas");
 
 const router = express.Router();
