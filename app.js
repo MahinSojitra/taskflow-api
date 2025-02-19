@@ -12,24 +12,19 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
 
-// 404 handler with suggestions
+// 404 handler with suggestions (only public routes)
 app.use((req, res, next) => {
-  const availableRoutes = {
+  const publicRoutes = {
     "/api/users": {
       "POST /signup": "Create a new account",
       "POST /signin": "Sign in to your account",
-      "GET /profile": "Get user profile",
-      "PUT /profile": "Update user profile",
-      "POST /forgot-password": "Request password reset",
-      "POST /reset-password": "Reset password",
-      "POST /refresh-token": "Refresh access token",
     },
     "/api/tasks": {
-      "GET /": "Get all tasks",
-      "POST /": "Create a new task",
-      "GET /:id": "Get task by ID",
-      "PUT /:id": "Update task",
-      "DELETE /:id": "Delete task",
+      "GET /": "Get all tasks (requires authentication)",
+      "POST /": "Create a new task (requires authentication)",
+      "GET /:id": "Get task by ID (requires authentication)",
+      "PUT /:id": "Update task (requires authentication)",
+      "DELETE /:id": "Delete task (requires authentication)",
     },
   };
 
@@ -38,8 +33,8 @@ app.use((req, res, next) => {
 
   // Find similar routes for suggestions
   const getSimilarRoutes = (path) => {
-    const allPaths = Object.keys(availableRoutes).flatMap((basePath) =>
-      Object.keys(availableRoutes[basePath]).map(
+    const allPaths = Object.keys(publicRoutes).flatMap((basePath) =>
+      Object.keys(publicRoutes[basePath]).map(
         (route) => basePath + route.split(" ")[1]
       )
     );
@@ -60,12 +55,10 @@ app.use((req, res, next) => {
     message: `Cannot ${req.method} ${req.path}`,
     error: "Route not found",
     suggestions: {
-      message: "Here are some similar available routes:",
+      message: "Available public endpoints:",
       routes: similarRoutes.length ? similarRoutes : "No similar routes found",
-      availableEndpoints: {
-        message: "All available endpoints:",
-        ...availableRoutes,
-      },
+      note: "Some routes require authentication. Please refer to the API documentation for complete details.",
+      publicEndpoints: publicRoutes,
     },
   };
 

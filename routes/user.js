@@ -1,13 +1,13 @@
 const express = require("express");
 const userController = require("../controllers/userController");
-const { protect } = require("../middlewares/auth");
 const validateRequest = require("../middlewares/validateRequest");
-const { errorHandler } = require("../middlewares/errorHandler");
 const { userSchemas } = require("../validations/validationSchemas");
+const { protect } = require("../middlewares/auth");
+const { errorHandler } = require("../middlewares/errorHandler");
 
 const router = express.Router();
 
-// ✅ Apply Validation Middleware
+// Public routes
 router.post(
   "/signup",
   validateRequest(userSchemas.signup),
@@ -18,19 +18,22 @@ router.post(
   validateRequest(userSchemas.signin),
   userController.signin
 );
-router.post("/refresh-token", userController.refreshToken);
-router.post("/signout", protect, userController.signout);
-router.get("/profile", protect, userController.getProfile);
-router.put(
-  "/profile",
-  protect,
-  validateRequest(userSchemas.update),
-  userController.updateProfile
-);
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/reset-password", userController.resetPassword);
 
-// ✅ Use Global Error Handler
+// Protected routes
+router.use(protect);
+
+router.get("/profile", userController.getProfile);
+router.put(
+  "/profile",
+  validateRequest(userSchemas.update),
+  userController.updateProfile
+);
+router.post("/refresh-token", userController.refreshToken);
+router.post("/signout", userController.signout);
+
+// Error handler
 router.use(errorHandler);
 
 module.exports = router;

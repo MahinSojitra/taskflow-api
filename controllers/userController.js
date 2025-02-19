@@ -1,123 +1,92 @@
 const userService = require("../services/userService");
+const { AppError } = require("../middlewares/errorHandler");
 
 const userController = {
-  signup: async (req, res) => {
+  signup: async (req, res, next) => {
     try {
       const result = await userService.signup(req.body);
-      return res.status(201).json(result);
+      res.status(201).json(result);
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 400));
     }
   },
 
-  signin: async (req, res) => {
+  signin: async (req, res, next) => {
     try {
       const result = await userService.signin(req.body);
-      return res.status(200).json(result);
+      res.status(200).json(result);
     } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 401));
     }
   },
 
-  refreshToken: async (req, res) => {
+  getProfile: async (req, res, next) => {
     try {
-      const { refreshToken } = req.body;
-      const result = await userService.refreshToken(refreshToken);
-      return res.status(200).json(result);
-    } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  },
-
-  logout: async (req, res) => {
-    try {
-      await userService.logout(req.user.id);
-      return res.status(200).json({
+      const user = await userService.getProfile(req.user.id);
+      res.status(200).json({
         success: true,
-        message: "Logged out.",
+        data: user,
       });
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 400));
     }
   },
 
-  getProfile: async (req, res) => {
+  updateProfile: async (req, res, next) => {
     try {
-      const user = req.user;
-      return res.status(200).json({
+      const user = await userService.updateProfile(req.user.id, req.body);
+      res.status(200).json({
         success: true,
-        data: {
-          id: user._id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        },
+        message: "Profile updated successfully.",
+        data: user,
       });
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 400));
     }
   },
 
-  updateProfile: async (req, res) => {
+  refreshToken: async (req, res, next) => {
     try {
-      const result = await userService.updateProfile(req.user.id, req.body);
-      return res.status(200).json({
-        success: true,
-        message: "Profile updated.",
-        data: result,
-      });
+      const result = await userService.refreshToken(req.body.refreshToken);
+      res.status(200).json(result);
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 401));
     }
   },
 
-  forgotPassword: async (req, res) => {
+  forgotPassword: async (req, res, next) => {
     try {
-      const { email } = req.body;
-      await userService.forgotPassword(email);
-      return res.status(200).json({
+      await userService.forgotPassword(req.body.email);
+      res.status(200).json({
         success: true,
-        message: "Password reset email sent.",
+        message: "Password reset instructions sent to your email.",
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
+      next(new AppError(error.message, 400));
     }
   },
 
-  resetPassword: async (req, res) => {
+  resetPassword: async (req, res, next) => {
     try {
-      const { token, password } = req.body;
-      await userService.resetPassword(token, password);
-      return res.status(200).json({
+      await userService.resetPassword(req.body.token, req.body.password);
+      res.status(200).json({
         success: true,
-        message: "Password reset.",
+        message: "Password has been reset successfully.",
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
+      next(new AppError(error.message, 400));
+    }
+  },
+
+  signout: async (req, res, next) => {
+    try {
+      await userService.signout(req.user.id);
+      res.status(200).json({
+        success: true,
+        message: "Signed out successfully.",
       });
+    } catch (error) {
+      next(new AppError(error.message, 400));
     }
   },
 
