@@ -32,7 +32,7 @@ const userSchemas = {
         "string.min": "Password must be at least 6 characters long",
         "string.max": "Password cannot exceed 30 characters",
         "string.pattern.base":
-          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)",
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character [!, @, #, $, %, ^, &, *]",
         "any.required": "Password is required",
       }),
   }),
@@ -47,6 +47,36 @@ const userSchemas = {
       "string.empty": "Password cannot be empty",
       "any.required": "Password is required",
     }),
+  }),
+
+  forgotPassword: Joi.object({
+    email: Joi.string().required().email().messages({
+      "string.empty": "Email cannot be empty",
+      "string.email": "Please provide a valid email address",
+      "any.required": "Email is required",
+    }),
+  }),
+
+  resetPassword: Joi.object({
+    token: Joi.string().required().messages({
+      "string.empty": "Token cannot be empty",
+      "any.required": "Token is required",
+    }),
+    password: Joi.string()
+      .required()
+      .min(6)
+      .max(30)
+      .pattern(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{6,30}$/
+      )
+      .messages({
+        "string.empty": "Password cannot be empty",
+        "string.min": "Password must be at least 6 characters long",
+        "string.max": "Password cannot exceed 30 characters",
+        "string.pattern.base":
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character [!, @, #, $, %, ^, &, *]",
+        "any.required": "Password is required",
+      }),
   }),
 };
 

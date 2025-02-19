@@ -17,26 +17,53 @@ router.post(
   validateRequest(userSchemas.signup),
   userController.signup
 );
+
 router.post(
   "/signin",
   validateRequest(userSchemas.signin),
   userController.signin
 );
-router.post("/forgot-password", userController.forgotPassword);
-router.post("/reset-password", userController.resetPassword);
 
-// Protected routes
-router.use(protect);
+router.post(
+  "/forgot-password",
+  validateRequest(userSchemas.forgotPassword),
+  userController.forgotPassword
+);
 
-// Protected routes
-router.get("/profile", userController.getProfile);
+router.post(
+  "/reset-password",
+  validateRequest(userSchemas.resetPassword),
+  userController.resetPassword
+);
+
+router.get(
+  "/profile",
+  protect,
+  authorize("user", "admin"),
+  userController.getProfile
+);
+
 router.put(
   "/profile",
+  protect,
+  authorize("user", "admin"),
   validateRequest(userSchemas.update),
   userController.updateProfile
 );
-router.post("/refresh-token", userController.refreshToken);
-router.post("/signout", userController.signout);
+
+router.post(
+  "/refresh-token",
+  protect,
+  authorize("user", "admin"),
+  userController.refreshToken
+);
+
+router.post(
+  "/signout",
+  protect,
+  authorize("user", "admin"),
+  userController.signout
+);
 
 // Error handler
 router.use(errorHandler);
