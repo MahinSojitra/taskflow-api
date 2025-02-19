@@ -66,7 +66,7 @@ app.use((req, res, next) => {
     success: false,
     message: `Route ${req.method} ${req.path} not found`,
     suggestion: similarRoute
-      ? `Did you mean ${similarRoute}?`
+      ? `Did you mean ${similarRoute} ?`
       : "Check documentation at /",
   });
 });
