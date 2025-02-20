@@ -47,10 +47,40 @@ body.dark-mode .text-muted {
   transition: all 0.2s ease-in-out;
 }
 
-/* .theme-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 8px rgba(25, 135, 84, 0.4);
-} */
+/* Small Screen Theme Toggle Button */
+@media (max-width: 768px) {
+  .theme-toggle {
+    top: auto;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background-color: var(--light-bg);
+    border: 2px dashed var(--success);
+  }
+
+  body.dark-mode .theme-toggle {
+    background-color: var(--dark-bg);
+  }
+
+  .theme-toggle i {
+    font-size: 1.2rem;
+  }
+}
+
+/* Ensure content doesn't overlap with floating button on small screens */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-bottom: 80px !important;
+  }
+}
+
+/* Tooltip position adjustment for small screens */
+@media (max-width: 768px) {
+  .tooltip {
+    margin-bottom: 60px;
+  }
+}
 
 .theme-toggle:active {
   transform: scale(0.95);
@@ -65,7 +95,7 @@ body.dark-mode .text-muted {
 /* Dark mode specific styles */
 body.dark-mode .theme-toggle {
   border-color: var(--success);
-  background: transparent;
+  background: var(--dark-bg);
 }
 
 body.dark-mode .theme-toggle i {
@@ -81,9 +111,9 @@ body.dark-mode .theme-toggle i {
   0% {
     transform: rotate(0deg) scale(1);
   }
-  50% {
+  /* 50% {
     transform: rotate(180deg) scale(1.2);
-  }
+  } */
   100% {
     transform: rotate(360deg) scale(1);
   }
@@ -198,4 +228,32 @@ body.dark-mode .btn-copy-success {
 
 body.dark-mode .text-muted {
   color: #8b949e !important;
+}
+
+/* Tooltip Styles */
+.tooltip {
+  --bs-tooltip-bg: rgba(0, 0, 0, 0.8);
+  --bs-tooltip-color: #fff;
+  opacity: 1 !important;
+}
+
+/* Dark Mode Tooltip */
+body.dark-mode .tooltip {
+  --bs-tooltip-bg: rgba(255, 255, 255, 0.8);
+  --bs-tooltip-color: #000;
+}
+
+/* Custom Tooltip Animation */
+.tooltip.show {
+  opacity: 1 !important;
+  animation: tooltipFade 0.2s ease-in-out;
+}
+
+@keyframes tooltipFade {
+  from {
+    opacity: 0 !important;
+  }
+  to {
+    opacity: 1 !important;
+  }
 }
