@@ -24,22 +24,19 @@ class DatabaseConnection {
       this.isConnected = false;
       this.connection = null;
 
-      // Connect with robust options
+      // Connect with supported options
       const conn = await mongoose.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        keepAlive: true,
-        keepAliveInitialDelay: 300000, // 5 minutes
-        connectTimeoutMS: 30000, // 30 seconds
-        socketTimeoutMS: 45000, // 45 seconds
         maxPoolSize: 50,
         minPoolSize: 10,
         serverSelectionTimeoutMS: 30000,
-        heartbeatFrequencyMS: 10000, // 10 seconds
+        socketTimeoutMS: 45000,
+        family: 4,
+        heartbeatFrequencyMS: 10000,
         autoIndex: true,
         retryWrites: true,
         w: "majority",
-        maxIdleTimeMS: 60000, // 1 minute
       });
 
       // Cache connection
