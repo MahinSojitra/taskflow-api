@@ -118,6 +118,7 @@ function copyToClipboard(button, text) {
 
     // Update tooltip
     button.setAttribute("data-bs-title", "Copied!");
+    button.setAttribute("disabled", "disabled");
 
     // Reinitialize tooltip
     const tooltip = bootstrap.Tooltip.getInstance(button);
@@ -130,6 +131,7 @@ function copyToClipboard(button, text) {
 
     // Reset after 1.5 seconds
     setTimeout(() => {
+      button.removeAttribute("disabled");
       icon.classList.replace("bi-clipboard-check-fill", "bi-clipboard");
       button.classList.remove("btn-copy-success");
       button.setAttribute("data-bs-title", "Copy to clipboard");
@@ -138,6 +140,6 @@ function copyToClipboard(button, text) {
         trigger: "hover focus",
         animation: true,
       });
-    }, 1500);
+    }, 4000);
   });
 }
