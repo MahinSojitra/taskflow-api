@@ -10,58 +10,62 @@ class ThemeManager {
     // Initialize tooltips
     this.initializeTooltips();
 
-    // Remove theme-pending class to show content
+    // Remove theme-pending class
     document.body.classList.remove("theme-pending");
 
-    // Check for saved theme preference
+    // Check for saved theme or use system preference
     this.loadSavedTheme();
 
     // Add click event listener
     this.themeToggle.addEventListener("click", () => this.toggleTheme());
-
-    // Add keyboard accessibility
-    this.themeToggle.addEventListener("keypress", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        this.toggleTheme();
-      }
-    });
   }
 
-  initializeTooltips() {
-    // Dispose existing tooltips
-    this.disposeTooltips();
-
-    // Initialize new tooltips
-    const tooltipTriggerList = document.querySelectorAll(
-      '[data-bs-toggle="tooltip"]'
-    );
-    this.tooltips = [...tooltipTriggerList].map(
-      (el) =>
-        new bootstrap.Tooltip(el, {
-          trigger: "hover focus",
-          animation: true,
-          delay: { show: 100, hide: 100 },
-        })
-    );
-  }
-
-  disposeTooltips() {
-    this.tooltips.forEach((tooltip) => {
-      if (tooltip) tooltip.dispose();
-    });
-    this.tooltips = [];
+  getSystemTheme() {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   }
 
   loadSavedTheme() {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    if (savedTheme === "dark") {
+    const savedTheme = localStorage.getItem("theme");
+    const systemTheme = this.getSystemTheme();
+
+    // Use saved theme if exists, otherwise use system theme
+    const themeToUse = savedTheme || systemTheme;
+
+    if (themeToUse === "dark") {
       document.body.classList.add("dark-mode");
       this.icon.classList.replace("bi-sun-fill", "bi-moon-fill");
       this.themeToggle.setAttribute("data-bs-title", "Switch to Light Mode");
     } else {
       this.themeToggle.setAttribute("data-bs-title", "Switch to Dark Mode");
     }
+
+    // Listen for system theme changes
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
+        if (!localStorage.getItem("theme")) {
+          // Only update if user hasn't set a preference
+          if (e.matches) {
+            document.body.classList.add("dark-mode");
+            this.icon.classList.replace("bi-sun-fill", "bi-moon-fill");
+            this.themeToggle.setAttribute(
+              "data-bs-title",
+              "Switch to Light Mode"
+            );
+          } else {
+            document.body.classList.remove("dark-mode");
+            this.icon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            this.themeToggle.setAttribute(
+              "data-bs-title",
+              "Switch to Dark Mode"
+            );
+          }
+          this.initializeTooltips();
+        }
+      });
+
     this.initializeTooltips();
 
     // Add transition class after initial load
@@ -95,9 +99,34 @@ class ThemeManager {
       this.icon.classList.remove("theme-icon-rotate");
     }, 500);
   }
+
+  initializeTooltips() {
+    // Dispose existing tooltips
+    this.disposeTooltips();
+
+    // Initialize new tooltips
+    const tooltipTriggerList = document.querySelectorAll(
+      '[data-bs-toggle="tooltip"]'
+    );
+    this.tooltips = [...tooltipTriggerList].map(
+      (el) =>
+        new bootstrap.Tooltip(el, {
+          trigger: "hover focus",
+          animation: true,
+          delay: { show: 100, hide: 100 },
+        })
+    );
+  }
+
+  disposeTooltips() {
+    this.tooltips.forEach((tooltip) => {
+      if (tooltip) tooltip.dispose();
+    });
+    this.tooltips = [];
+  }
 }
 
-// Initialize theme manager when DOM is loaded
+// Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   new ThemeManager();
 });
