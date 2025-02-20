@@ -33,10 +33,12 @@ class DatabaseConnection {
         serverSelectionTimeoutMS: 30000,
         socketTimeoutMS: 45000,
         family: 4,
-        heartbeatFrequencyMS: 10000,
-        autoIndex: true,
+        directConnection: false,
         retryWrites: true,
         w: "majority",
+        ssl: true,
+        authSource: "admin",
+        replicaSet: "atlas-4g7cgb-shard-0",
       });
 
       // Cache connection
@@ -70,6 +72,12 @@ class DatabaseConnection {
 
       return this.connection;
     } catch (error) {
+      if (error.message.includes("IP whitelist")) {
+        console.error(
+          "🔒 IP Whitelist Error: Please add Vercel IP ranges to MongoDB Atlas"
+        );
+        console.error("Add these IPs: 76.76.21.0/24, 76.76.21.21");
+      }
       return this.handleError(error);
     }
   }
