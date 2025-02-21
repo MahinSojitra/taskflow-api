@@ -114,13 +114,18 @@ const taskSchemas = {
         "date.max": "Due date cannot be more than 2 years in the future",
       }),
     tags: Joi.array()
-      .items(Joi.string().pattern(/^#[a-zA-Z0-9_]+$/))
+      .items(
+        Joi.string()
+          .pattern(/^#[a-zA-Z0-9_]+$/)
+          .message(
+            "All tags must start with # and contain only letters, numbers, and underscores"
+          )
+      )
       .min(1)
       .required()
       .messages({
         "array.min": "At least one tag is required",
-        "string.pattern.base":
-          "Tags must start with # and contain only letters, numbers, and underscores",
+        "array.base": "Tags must be an array",
         "any.required": "Tags are required",
       }),
     status: Joi.string()
@@ -144,12 +149,14 @@ const taskSchemas = {
         "string.pattern.base": "Title contains invalid characters",
       }),
     description: Joi.string()
+      .required()
       .max(500)
       .pattern(/^[^<>{}]+$/)
-      .allow("")
       .messages({
+        "string.empty": "Description cannot be empty",
         "string.max": "Description cannot exceed 500 characters",
         "string.pattern.base": "Description contains invalid characters",
+        "any.required": "Description is required",
       }),
     dueDate: Joi.date()
       .min("now")
@@ -160,12 +167,17 @@ const taskSchemas = {
         "date.max": "Due date cannot be more than 2 years in the future",
       }),
     tags: Joi.array()
-      .items(Joi.string().pattern(/^#[a-zA-Z0-9_]+$/))
+      .items(
+        Joi.string()
+          .pattern(/^#[a-zA-Z0-9_]+$/)
+          .message(
+            "All tags must start with # and contain only letters, numbers, and underscores"
+          )
+      )
       .min(1)
       .messages({
         "array.min": "At least one tag is required",
-        "string.pattern.base":
-          "Tags must start with # and contain only letters, numbers, and underscores",
+        "array.base": "Tags must be an array",
       }),
     status: Joi.string()
       .valid("pending", "active", "completed", "cancelled")
