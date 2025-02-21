@@ -172,3 +172,28 @@ function copyToClipboard(button, text) {
     }, 4000);
   });
 }
+
+// Tab icon toggle
+document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tab) => {
+  tab.addEventListener("show.bs.tab", (event) => {
+    // Remove fill from all icons
+    document.querySelectorAll(".nav-link i").forEach((icon) => {
+      icon.className = icon.className.replace("-fill", "");
+    });
+
+    // Add fill to active tab icon
+    const icon = event.target.querySelector("i");
+    if (icon) {
+      if (event.target.id === "users-tab") {
+        icon.classList.replace("bi-people", "bi-people-fill");
+      } else if (event.target.id === "tasks-tab") {
+        icon.classList.replace(
+          "bi-journal-bookmark",
+          "bi-journal-bookmark-fill"
+        );
+      } else if (event.target.id === "admin-tab") {
+        icon.classList.replace("bi-person-badge", "bi-person-badge-fill");
+      }
+    }
+  });
+});

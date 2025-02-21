@@ -8,7 +8,7 @@
       type="image/png"
       href="./assets/images/taskflow-light.png"
     />
-    <title>Welcome | TaskFlow</title>
+    <title>Documentation | TaskFlow</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -22,91 +22,708 @@
   <body
     class="d-flex flex-column justify-content-center align-items-center min-vh-100 text-center px-3 py-4 theme-pending"
   >
-    <!-- Theme Toggle Button -->
-    <button
-      class="theme-toggle"
-      id="themeToggle"
-      data-bs-toggle="tooltip"
-      data-bs-placement="left"
-      data-bs-title="Toggle Theme"
-      aria-label="Toggle theme"
-    >
-      <i class="bi bi-sun-fill"></i>
-    </button>
+    <!-- Main Content Wrapper -->
+    <div class="d-flex flex-column min-vh-100">
+      <!-- Theme Toggle Button -->
+      <button
+        class="theme-toggle"
+        id="themeToggle"
+        data-bs-toggle="tooltip"
+        data-bs-placement="left"
+        data-bs-title="Toggle Theme"
+        aria-label="Toggle theme"
+      >
+        <i class="bi bi-sun-fill"></i>
+      </button>
 
-    <!-- Main Content Container -->
-    <div class="container-fluid px-md-5">
-      <div class="row justify-content-center">
+      <!-- Main Content -->
+      <main class="flex-grow-1 container-fluid px-md-5 py-4">
         <!-- Welcome Card -->
-        <div class="col-12 col-sm-11 col-md-10 col-lg-8 col-xl-7">
-          <div class="card p-4 p-sm-5 mb-3 border-2">
-            <code class="fw-bold mb-0 fs-2 fs-md-1 text-success"
-              >Welcome to TaskFlow API</code
-            >
-            <code class="text-muted"
-              >A simple and efficient task management API</code
-            >
-            <code class="mt-4 text-muted small">
-              TaskFlow API is a powerful and easy-to-use API designed to help
-              you manage your tasks efficiently. It provides endpoints for user
-              authentication, task creation, updates, and more.
-            </code>
-          </div>
-        </div>
-
-        <!-- API Info Card -->
-        <div class="col-12 col-sm-11 col-md-10 col-lg-8 col-xl-7">
-          <div class="card p-4 rounded border-2">
-            <code class="fw-bold mb-0 fs-4 text-dark">Create an Account</code>
-            <code class="text-muted mb-4">Start using TaskFlow API</code>
-
-            <!-- API Endpoint -->
-            <div class="endpoint-container mb-3 w-100">
-              <!-- Method Badge -->
-              <div
-                class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+        <div class="row justify-content-center">
+          <!-- Welcome Card -->
+          <div class="col-12 col-sm-11 col-md-10 col-lg-8 col-xl-7">
+            <div class="card p-4 p-sm-5 mb-3 border-2">
+              <code class="fw-bold mb-0 fs-2 fs-md-1 text-success"
+                >Welcome to TaskFlow API</code
               >
-                <span class="badge text-bg-success me-2 px-2 py-1">POST</span>
-                <span class="text-muted small">Signup</span>
+              <code class="text-muted"
+                >A simple and efficient task management API</code
+              >
+              <code class="mt-4 text-muted small">
+                TaskFlow API is a powerful and easy-to-use API designed to help
+                you manage your tasks efficiently. It provides endpoints for
+                user authentication, task creation, updates, and more.
+              </code>
+            </div>
+          </div>
+
+          <!-- API Info Card -->
+          <div class="col-12 col-sm-11 col-md-10 col-lg-8 col-xl-7">
+            <div class="card p-4 rounded border-2">
+              <code class="fw-bold mb-0 fs-4 text-dark">Create an Account</code>
+              <code class="text-muted mb-4">Start using TaskFlow API</code>
+
+              <div class="endpoint-container mb-4 w-100">
+                <div
+                  class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                >
+                  <span class="badge text-bg-success me-2 px-2 py-1">POST</span>
+                  <span class="text-muted small">Sign Up</span>
+                </div>
+                <div class="endpoint-url d-flex align-items-center px-3 py-2">
+                  <code class="flex-grow-1 text-break text-start">
+                    <a
+                      href="api/users/signup"
+                      class="text-decoration-none endpoint-link"
+                    >
+                      https://taskflowapi.vercel.app/api/users/signup
+                    </a>
+                  </code>
+                  <button
+                    class="btn btn-sm btn-copy ms-2"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-title="Copy to clipboard"
+                    onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/signup')"
+                  >
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                </div>
+                <div class="px-3 pt-2">
+                  <code class="text-muted text-start d-block small mb-2">
+                    <i class="bi bi-arrow-right me-2"></i>
+                    Create a new user account with name, email, and password. No
+                    authentication required.
+                  </code>
+                </div>
               </div>
 
-              <!-- URL Container -->
-              <div class="endpoint-url d-flex align-items-center px-3 py-2">
-                <code class="flex-grow-1 text-break text-start">
+              <code class="text-success fw-bold text-center fs-6 mb-0">
+                Happy task managing with TaskFlow API! 🎉
+              </code>
+            </div>
+          </div>
+
+          <!-- API Documentation -->
+          <div class="col-12 col-sm-11 col-md-10 col-lg-8 col-xl-7">
+            <div class="card p-4 mt-3 rounded border-2">
+              <code class="fw-bold mb-0 fs-4 text-dark">API Documentation</code>
+              <code class="text-muted">
+                Check out the documentation for the API endpoints.
+              </code>
+
+              <!-- Tabs Navigation -->
+              <ul class="nav nav-underline mb-3 mt-3">
+                <li class="nav-item">
                   <a
-                    href="api/users/signup"
-                    class="text-decoration-none endpoint-link"
+                    class="nav-link active"
+                    id="users-tab"
+                    data-bs-toggle="tab"
+                    href="#users"
+                    role="tab"
                   >
-                    https://taskflowapi.vercel.app/api/users/signup
+                    <i class="bi bi-people-fill"></i> Users
                   </a>
-                </code>
-                <button
-                  class="btn btn-sm btn-copy ms-2"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  data-bs-title="Copy to clipboard"
-                  onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/signup')"
-                  title="Copy to clipboard"
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    id="tasks-tab"
+                    data-bs-toggle="tab"
+                    href="#tasks"
+                    role="tab"
+                  >
+                    <i class="bi bi-journal-bookmark"></i> Tasks
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    id="admin-tab"
+                    data-bs-toggle="tab"
+                    href="#admin"
+                    role="tab"
+                  >
+                    <i class="bi bi-person-badge"></i> Admin
+                  </a>
+                </li>
+              </ul>
+
+              <!-- Tabs Content -->
+              <div class="tab-content">
+                <!-- Users Tab -->
+                <div
+                  class="tab-pane fade show active"
+                  id="users"
+                  role="tabpanel"
                 >
-                  <i class="bi bi-clipboard"></i>
-                </button>
+                  <!-- Signin Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-success me-2 px-2 py-1"
+                        >POST</span
+                      >
+                      <span class="text-muted small">Sign In</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/users/signin"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/users/signin
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/signin')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Sign in with email and password to receive
+                        authentication tokens.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Get Profile Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-primary me-2 px-2 py-1"
+                        >GET</span
+                      >
+                      <span class="text-muted small">Get Profile</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/users/profile"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/users/profile
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/profile')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Get current user's profile information. Requires
+                        authentication.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Update Profile Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-warning me-2 px-2 py-1"
+                        >PUT</span
+                      >
+                      <span class="text-muted small">Update Profile</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/users/profile"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/users/profile
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/profile')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Update user profile information. Requires
+                        authentication.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Forgot Password Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-success me-2 px-2 py-1"
+                        >POST</span
+                      >
+                      <span class="text-muted small">Forgot Password</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/users/forgot-password"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/users/forgot-password
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/forgot-password')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Request a password reset link. Sends reset instructions
+                        to registered email.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Reset Password Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-success me-2 px-2 py-1"
+                        >POST</span
+                      >
+                      <span class="text-muted small">Reset Password</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/users/reset-password"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/users/reset-password
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/reset-password')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Reset password using the token received via email.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Refresh Token Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-success me-2 px-2 py-1"
+                        >POST</span
+                      >
+                      <span class="text-muted small">Refresh Token</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/users/refresh-token"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/users/refresh-token
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/refresh-token')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Get a new access token using the refresh token. Requires
+                        authentication.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Sign Out Endpoint -->
+                  <div class="endpoint-container w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-success me-2 px-2 py-1"
+                        >POST</span
+                      >
+                      <span class="text-muted small">Sign Out</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/users/signout"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/users/signout
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/signout')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Sign out the current user and invalidate tokens.
+                        Requires authentication.
+                      </code>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tasks Tab -->
+                <div class="tab-pane fade" id="tasks" role="tabpanel">
+                  <!-- Get All Tasks Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-primary me-2 px-2 py-1"
+                        >GET</span
+                      >
+                      <span class="text-muted small">Get All Tasks</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/tasks"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/tasks
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/tasks')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Get all tasks for the authenticated user. Supports
+                        pagination and filtering.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Create Task Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-success me-2 px-2 py-1"
+                        >POST</span
+                      >
+                      <span class="text-muted small">Create Task</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/tasks"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/tasks
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/tasks')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Create a new task with title, description, priority, and
+                        due date. Requires authentication.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Get Single Task Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-primary me-2 px-2 py-1"
+                        >GET</span
+                      >
+                      <span class="text-muted small">Get Task</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/tasks/:id"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/tasks/:id
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/tasks/:id')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Get details of a specific task by ID. Requires
+                        authentication.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Update Task Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-warning me-2 px-2 py-1"
+                        >PUT</span
+                      >
+                      <span class="text-muted small">Update Task</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/tasks/:id"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/tasks/:id
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/tasks/:id')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Update task details including title, description,
+                        status, and priority. Requires authentication.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Delete Task Endpoint -->
+                  <div class="endpoint-container w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-danger me-2 px-2 py-1"
+                        >DELETE</span
+                      >
+                      <span class="text-muted small">Delete Task</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/tasks/:id"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/tasks/:id
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/tasks/:id')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Permanently delete a task. This action cannot be undone.
+                        Requires authentication.
+                      </code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="admin" role="tabpanel">
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-primary me-2 px-2 py-1"
+                        >GET</span
+                      >
+                      <span class="text-muted small">Get All Users</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/users/all"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/users/all
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/all')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Get a list of all registered users. Requires admin
+                        authentication.
+                      </code>
+                    </div>
+                  </div>
+
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-primary me-2 px-2 py-1"
+                        >GET</span
+                      >
+                      <span class="text-muted small">Get All Users Tasks</span>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/tasks/all"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/tasks/all
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/tasks/all')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Get all tasks from all users. Requires admin
+                        authentication.
+                      </code>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-
-            <!-- API Description -->
-            <code class="text-muted text-start d-block small mb-4">
-              <i class="bi bi-arrow-right me-2"></i>
-              Provide an name, email and password along with the request body to
-              create an account.
-            </code>
-
-            <!-- Footer -->
-            <code class="text-success fw-bold text-center fs-6 mb-0">
-              Happy task managing with TaskFlow API! 🎉
-            </code>
           </div>
         </div>
-      </div>
+      </main>
     </div>
 
     <!-- Theme Script -->
