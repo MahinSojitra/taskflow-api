@@ -114,10 +114,13 @@ const taskSchemas = {
         "date.max": "Due date cannot be more than 2 years in the future",
       }),
     tags: Joi.array()
-      .items(Joi.string().pattern(/^#[a-zA-Z0-9]+$/))
+      .items(Joi.string())
       .min(1)
       .required()
       .custom((value, helpers) => {
+        if (!Array.isArray(value)) return helpers.error("array.base");
+        if (value.length === 0) return helpers.error("array.min");
+
         const invalidTags = value.filter(
           (tag) => !tag.match(/^#[a-zA-Z0-9]+$/)
         );
@@ -172,9 +175,12 @@ const taskSchemas = {
         "date.max": "Due date cannot be more than 2 years in the future",
       }),
     tags: Joi.array()
-      .items(Joi.string().pattern(/^#[a-zA-Z0-9]+$/))
+      .items(Joi.string())
       .min(1)
       .custom((value, helpers) => {
+        if (!Array.isArray(value)) return helpers.error("array.base");
+        if (value.length === 0) return helpers.error("array.min");
+
         const invalidTags = value.filter(
           (tag) => !tag.match(/^#[a-zA-Z0-9]+$/)
         );
