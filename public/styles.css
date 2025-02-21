@@ -320,3 +320,108 @@ body.dark-mode pre.language-json {
 body.dark-mode .endpoint-container .px-3 {
   border-color: #30363d;
 }
+
+/* Info Icon Styles */
+.bi-info-circle {
+  color: var(--bs-gray-600);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-size: 1rem;
+}
+
+.bi-info-circle:hover {
+  color: var(--success);
+}
+
+/* Popover Styles */
+.popover {
+  --bs-popover-max-width: 300px;
+  --bs-popover-border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  border: 1px solid var(--bs-gray-300);
+  background: var(--bs-white);
+}
+
+.popover-header {
+  background: var(--bs-gray-100);
+  color: var(--bs-gray-900);
+  border-bottom: 1px solid var(--bs-gray-300);
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.5rem 0.75rem;
+}
+
+.popover-body {
+  padding: 0.75rem;
+  color: var(--bs-gray-700);
+  background: var(--bs-white);
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* Dark Mode Styles */
+body.dark-mode .popover {
+  background: var(--dark-bg);
+  border: 1px solid var(--border-dark);
+}
+
+body.dark-mode .popover-header {
+  background: var(--dark-bg);
+  color: var(--bs-gray-200);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+body.dark-mode .popover-body {
+  color: var(--bs-gray-300);
+  background: var(--dark-bg);
+}
+
+/* Arrow Colors */
+.popover .popover-arrow::before {
+  border-left-color: var(--bs-gray-300);
+}
+
+.popover .popover-arrow::after {
+  border-left-color: var(--bs-white);
+}
+
+body.dark-mode .popover .popover-arrow::before {
+  border-left-color: var(--border-light);
+}
+
+body.dark-mode .popover .popover-arrow::after {
+  border-left-color: var(--dark-bg);
+}
+
+/* Popover Content Styles */
+.popover-content {
+  font-size: 0.8125rem;
+}
+
+.popover-content ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.popover-content ul li {
+  margin-bottom: 0.25rem;
+}
+
+.popover-content ul li:last-child {
+  margin-bottom: 0;
+}
+
+.popover-content i {
+  font-size: 0.875rem;
+}
+
+/* Dark mode adjustments */
+body.dark-mode .popover-content {
+  color: var(--bs-gray-300);
+}
+
+body.dark-mode .popover-content i.text-primary {
+  color: #3b82f6 !important;
+}
+
+body.dark-mode .popover-content i.text-success {
+  color: #22c55e !important;
+}

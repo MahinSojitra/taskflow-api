@@ -63,12 +63,24 @@
               <code class="fw-bold mb-0 fs-4 text-dark">Create an Account</code>
               <code class="text-muted mb-4">Start using TaskFlow API</code>
 
+              <!-- Signup Endpoint -->
               <div class="endpoint-container mb-4 w-100">
                 <div
                   class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
                 >
                   <span class="badge text-bg-success me-2 px-2 py-1">POST</span>
-                  <span class="text-muted small">Sign Up</span>
+                  <span class="text-muted small">Create Account</span>
+                  <i
+                    class="bi bi-info-circle-fill text-success ms-2"
+                    data-bs-toggle="popover"
+                    data-bs-placement="left"
+                    data-bs-trigger="click"
+                    data-bs-title="Information"
+                    data-bs-html="true"
+                    data-bs-content="
+                      <p class='mb-0'>name, email, password should be provided in the body of the request to create a new account.</p>
+                    "
+                  ></i>
                 </div>
                 <div class="endpoint-url d-flex align-items-center px-3 py-2">
                   <code class="flex-grow-1 text-break text-start">
@@ -157,7 +169,7 @@
                   id="users"
                   role="tabpanel"
                 >
-                  <!-- Signin Endpoint -->
+                  <!-- Login Endpoint -->
                   <div class="endpoint-container mb-4 w-100">
                     <div
                       class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
@@ -166,6 +178,17 @@
                         >POST</span
                       >
                       <span class="text-muted small">Sign In</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                      <p class='mb-0'>email, password should be provided in the body of the request for a smooth sign in.</p>
+                    "
+                      ></i>
                     </div>
                     <div
                       class="endpoint-url d-flex align-items-center px-3 py-2"
@@ -206,6 +229,17 @@
                         >GET</span
                       >
                       <span class="text-muted small">Get Profile</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>Authentication token must be included in the request header to access profile information.</p>
+                        "
+                      ></i>
                     </div>
                     <div
                       class="endpoint-url d-flex align-items-center px-3 py-2"
@@ -246,6 +280,17 @@
                         >PUT</span
                       >
                       <span class="text-muted small">Update Profile</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>Authentication required. Provide updated profile information in the request body to modify your profile.</p>
+                        "
+                      ></i>
                     </div>
                     <div
                       class="endpoint-url d-flex align-items-center px-3 py-2"
@@ -448,6 +493,17 @@
                         >GET</span
                       >
                       <span class="text-muted small">Get All Tasks</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>Authentication required. Optional query parameters for pagination and filtering can be included.</p>
+                        "
+                      ></i>
                     </div>
                     <div
                       class="endpoint-url d-flex align-items-center px-3 py-2"
@@ -488,6 +544,17 @@
                         >POST</span
                       >
                       <span class="text-muted small">Create Task</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>Authentication required. Provide title, description, and optional due date in the request body to create a new task.</p>
+                        "
+                      ></i>
                     </div>
                     <div
                       class="endpoint-url d-flex align-items-center px-3 py-2"
@@ -568,6 +635,17 @@
                         >PUT</span
                       >
                       <span class="text-muted small">Update Task</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>Authentication required. Provide task ID and updated information in the request body to modify the task.</p>
+                        "
+                      ></i>
                     </div>
                     <div
                       class="endpoint-url d-flex align-items-center px-3 py-2"
@@ -608,6 +686,17 @@
                         >DELETE</span
                       >
                       <span class="text-muted small">Delete Task</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>Authentication required. Provide task ID to permanently delete the task. This action cannot be undone.</p>
+                        "
+                      ></i>
                     </div>
                     <div
                       class="endpoint-url d-flex align-items-center px-3 py-2"

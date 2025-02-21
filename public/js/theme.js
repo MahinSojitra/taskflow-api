@@ -197,3 +197,50 @@ document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tab) => {
     }
   });
 });
+
+// Initialize popovers with dark mode support
+document.addEventListener("DOMContentLoaded", function () {
+  const popoverTriggerList = [].slice.call(
+    document.querySelectorAll('[data-bs-toggle="popover"]')
+  );
+  const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    const popover = new bootstrap.Popover(popoverTriggerEl, {
+      container: "body",
+      trigger: "click",
+    });
+
+    // Close other popovers when opening a new one
+    popoverTriggerEl.addEventListener("click", function () {
+      popoverList.forEach((p) => {
+        if (p._element !== popoverTriggerEl) {
+          p.hide();
+        }
+      });
+    });
+
+    // Close popover when clicking outside
+    document.addEventListener("click", function (e) {
+      if (!popoverTriggerEl.contains(e.target)) {
+        popover.hide();
+      }
+    });
+
+    return popover;
+  });
+
+  // Update popover theme when dark mode changes
+  const observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      if (mutation.attributeName === "class") {
+        const isDarkMode = document.body.classList.contains("dark-mode");
+        document.querySelectorAll(".popover").forEach((popover) => {
+          popover.classList.toggle("dark-mode", isDarkMode);
+        });
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    attributes: true,
+  });
+});
