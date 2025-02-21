@@ -5,6 +5,7 @@
   --dark-text: #ffffff;
   --success: #198754;
   --border-dark: #a0a0a0;
+  --border-dark-popover: #4d4d4d;
   --border-light: white;
   --transition: all 0.4s ease-in-out;
 }
@@ -360,13 +361,13 @@ body.dark-mode .endpoint-container .px-3 {
 /* Dark Mode Styles */
 body.dark-mode .popover {
   background: var(--dark-bg);
-  border: 1px solid var(--border-dark);
+  border: 1px solid var(--border-dark-popover);
 }
 
 body.dark-mode .popover-header {
   background: var(--dark-bg);
   color: var(--bs-gray-200);
-  border-bottom: 1px solid var(--border-dark);
+  border-bottom: 1px solid var(--border-dark-popover);
 }
 
 body.dark-mode .popover-body {
@@ -384,7 +385,7 @@ body.dark-mode .popover-body {
 }
 
 body.dark-mode .popover .popover-arrow::before {
-  border-left-color: var(--border-light);
+  border-left-color: var(--border-dark-popover);
 }
 
 body.dark-mode .popover .popover-arrow::after {

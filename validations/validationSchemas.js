@@ -96,34 +96,39 @@ const taskSchemas = {
         "any.required": "Title is required",
       }),
     description: Joi.string()
+      .required()
       .max(500)
       .pattern(/^[^<>{}]+$/)
-      .allow("")
       .messages({
+        "string.empty": "Description cannot be empty",
         "string.max": "Description cannot exceed 500 characters",
         "string.pattern.base": "Description contains invalid characters",
+        "any.required": "Description is required",
       }),
     dueDate: Joi.date()
       .min("now")
-      .max(new Date(Date.now() + 63072000000)) // 2 years from now
+      .max(new Date(Date.now() + 63072000000))
       .messages({
         "date.base": "Please provide a valid date",
         "date.min": "Due date cannot be in the past",
         "date.max": "Due date cannot be more than 2 years in the future",
-        "any.required": "Due date is required",
       }),
-    priority: Joi.string().valid("low", "medium", "high").messages({
-      "string.empty": "Priority cannot be empty",
-      "any.only": "Priority must be either 'low', 'medium', or 'high'",
-      "any.required": "Priority is required",
-    }),
+    tags: Joi.array()
+      .items(Joi.string().pattern(/^#[a-zA-Z0-9_]+$/))
+      .min(1)
+      .required()
+      .messages({
+        "array.min": "At least one tag is required",
+        "string.pattern.base":
+          "Tags must start with # and contain only letters, numbers, and underscores",
+        "any.required": "Tags are required",
+      }),
     status: Joi.string()
       .valid("pending", "active", "completed", "cancelled")
       .messages({
         "string.empty": "Status cannot be empty",
         "any.only":
           "Status must be either 'pending', 'active', 'completed', or 'cancelled'",
-        "any.required": "Status is required",
       }),
   }),
 
@@ -137,7 +142,6 @@ const taskSchemas = {
         "string.min": "Title must be at least 3 characters long",
         "string.max": "Title cannot exceed 100 characters",
         "string.pattern.base": "Title contains invalid characters",
-        "any.required": "Title is required",
       }),
     description: Joi.string()
       .max(500)
@@ -146,7 +150,6 @@ const taskSchemas = {
       .messages({
         "string.max": "Description cannot exceed 500 characters",
         "string.pattern.base": "Description contains invalid characters",
-        "any.required": "Description is required",
       }),
     dueDate: Joi.date()
       .min("now")
@@ -155,20 +158,21 @@ const taskSchemas = {
         "date.base": "Please provide a valid date",
         "date.min": "Due date cannot be in the past",
         "date.max": "Due date cannot be more than 2 years in the future",
-        "any.required": "Due date is required",
       }),
-    priority: Joi.string().valid("low", "medium", "high").messages({
-      "string.empty": "Priority cannot be empty",
-      "any.only": "Priority must be either 'low', 'medium', or 'high'",
-      "any.required": "Priority is required",
-    }),
+    tags: Joi.array()
+      .items(Joi.string().pattern(/^#[a-zA-Z0-9_]+$/))
+      .min(1)
+      .messages({
+        "array.min": "At least one tag is required",
+        "string.pattern.base":
+          "Tags must start with # and contain only letters, numbers, and underscores",
+      }),
     status: Joi.string()
       .valid("pending", "active", "completed", "cancelled")
       .messages({
         "string.empty": "Status cannot be empty",
         "any.only":
           "Status must be either 'pending', 'active', 'completed', or 'cancelled'",
-        "any.required": "Status is required",
       }),
   }),
 };

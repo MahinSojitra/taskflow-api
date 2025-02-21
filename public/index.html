@@ -78,7 +78,7 @@
                     data-bs-title="Information"
                     data-bs-html="true"
                     data-bs-content="
-                      <p class='mb-0'>name, email, password should be provided in the body of the request to create a new account.</p>
+                      <p class='mb-0'>Create your account by providing your name (2-50 characters, letters only), a valid email, and a strong password (6-30 characters with uppercase, lowercase, number, and special character). No authentication needed to get started!</p>
                     "
                   ></i>
                 </div>
@@ -186,8 +186,8 @@
                         data-bs-title="Information"
                         data-bs-html="true"
                         data-bs-content="
-                      <p class='mb-0'>email, password should be provided in the body of the request for a smooth sign in.</p>
-                    "
+                          <p class='mb-0'>Quick and smooth sign in - just provide your registered email and password to access your workspace!</p>
+                        "
                       ></i>
                     </div>
                     <div
@@ -237,7 +237,7 @@
                         data-bs-title="Information"
                         data-bs-html="true"
                         data-bs-content="
-                          <p class='mb-0'>Authentication token must be included in the request header to access profile information.</p>
+                          <p class='mb-0'>Access your profile details securely. Just include your authentication token, and we'll fetch your information instantly!</p>
                         "
                       ></i>
                     </div>
@@ -288,7 +288,7 @@
                         data-bs-title="Information"
                         data-bs-html="true"
                         data-bs-content="
-                          <p class='mb-0'>Authentication required. Provide updated profile information in the request body to modify your profile.</p>
+                          <p class='mb-0'>Keep your profile fresh! Update your name or other details while maintaining our security standards. Authentication required for your privacy!</p>
                         "
                       ></i>
                     </div>
@@ -501,7 +501,7 @@
                         data-bs-title="Information"
                         data-bs-html="true"
                         data-bs-content="
-                          <p class='mb-0'>Authentication required. Optional query parameters for pagination and filtering can be included.</p>
+                          <p class='mb-0'>View all your tasks with their titles, descriptions, due dates, and tags! Filter by status or specific #tags to find exactly what you're looking for. Authentication required!</p>
                         "
                       ></i>
                     </div>
@@ -552,7 +552,7 @@
                         data-bs-title="Information"
                         data-bs-html="true"
                         data-bs-content="
-                          <p class='mb-0'>Authentication required. Provide title, description, and optional due date in the request body to create a new task.</p>
+                          <p class='mb-0'>Create a new task with a title (3-100 chars), description (max 500 chars), due date (future date within 2 years), at least one #tag (e.g., #work, #personal), and status (pending/active/completed/cancelled). Authentication required!</p>
                         "
                       ></i>
                     </div>
@@ -595,6 +595,17 @@
                         >GET</span
                       >
                       <span class="text-muted small">Get Task</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>Retrieve detailed information about a specific task using its ID. Authentication required to access your task details!</p>
+                        "
+                      ></i>
                     </div>
                     <div
                       class="endpoint-url d-flex align-items-center px-3 py-2"
@@ -643,7 +654,7 @@
                         data-bs-title="Information"
                         data-bs-html="true"
                         data-bs-content="
-                          <p class='mb-0'>Authentication required. Provide task ID and updated information in the request body to modify the task.</p>
+                          <p class='mb-0'>Update your task's title, description (max 500 chars), due date, tags (minimum one #tag required), or status. Keep your tasks organized with meaningful descriptions! Authentication required!</p>
                         "
                       ></i>
                     </div>
@@ -694,7 +705,7 @@
                         data-bs-title="Information"
                         data-bs-html="true"
                         data-bs-content="
-                          <p class='mb-0'>Authentication required. Provide task ID to permanently delete the task. This action cannot be undone.</p>
+                          <p class='mb-0'>Remove a task permanently using its ID. This action cannot be undone, so make sure you've selected the right task. Authentication required!</p>
                         "
                       ></i>
                     </div>
