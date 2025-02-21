@@ -114,19 +114,24 @@ const taskSchemas = {
         "date.max": "Due date cannot be more than 2 years in the future",
       }),
     tags: Joi.array()
-      .items(
-        Joi.string()
-          .pattern(/^#[a-zA-Z0-9_]+$/)
-          .message(
-            "All tags must start with # and contain only letters, numbers, and underscores"
-          )
-      )
+      .items(Joi.string().pattern(/^#[a-zA-Z0-9]+$/))
       .min(1)
       .required()
+      .custom((value, helpers) => {
+        const invalidTags = value.filter(
+          (tag) => !tag.match(/^#[a-zA-Z0-9]+$/)
+        );
+        if (invalidTags.length > 0) {
+          return helpers.error("array.tagFormat");
+        }
+        return value;
+      })
       .messages({
         "array.min": "At least one tag is required",
         "array.base": "Tags must be an array",
         "any.required": "Tags are required",
+        "array.tagFormat":
+          "All tags must start with # and contain only letters and numbers",
       }),
     status: Joi.string()
       .valid("pending", "active", "completed", "cancelled")
@@ -167,17 +172,22 @@ const taskSchemas = {
         "date.max": "Due date cannot be more than 2 years in the future",
       }),
     tags: Joi.array()
-      .items(
-        Joi.string()
-          .pattern(/^#[a-zA-Z0-9_]+$/)
-          .message(
-            "All tags must start with # and contain only letters, numbers, and underscores"
-          )
-      )
+      .items(Joi.string().pattern(/^#[a-zA-Z0-9]+$/))
       .min(1)
+      .custom((value, helpers) => {
+        const invalidTags = value.filter(
+          (tag) => !tag.match(/^#[a-zA-Z0-9]+$/)
+        );
+        if (invalidTags.length > 0) {
+          return helpers.error("array.tagFormat");
+        }
+        return value;
+      })
       .messages({
         "array.min": "At least one tag is required",
         "array.base": "Tags must be an array",
+        "array.tagFormat":
+          "All tags must start with # and contain only letters and numbers",
       }),
     status: Joi.string()
       .valid("pending", "active", "completed", "cancelled")
