@@ -122,12 +122,7 @@ const getPasswordResetTemplate = (otp) => {
           <img
             src="${logoDark}"
             alt="TaskFlow Logo"
-            class="logo logo-light"
-          />
-          <img
-            src="${logoLight}"
-            alt="TaskFlow Logo Dark"
-            class="logo logo-dark"
+            class="logo"
           />
           <span class="brand-name">Task Flow</span>
         </div>
