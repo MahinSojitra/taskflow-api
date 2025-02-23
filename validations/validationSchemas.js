@@ -58,11 +58,22 @@ const userSchemas = {
   }),
 
   resetPassword: Joi.object({
-    token: Joi.string().required().messages({
-      "string.empty": "Token cannot be empty",
-      "any.required": "Token is required",
+    email: Joi.string().required().email().messages({
+      "string.empty": "Email cannot be empty",
+      "string.email": "Please provide a valid email address",
+      "any.required": "Email is required",
     }),
-    password: Joi.string()
+    otp: Joi.string()
+      .required()
+      .length(6)
+      .pattern(/^[0-9]+$/)
+      .messages({
+        "string.empty": "OTP cannot be empty",
+        "string.length": "OTP must be 6 digits",
+        "string.pattern.base": "OTP must contain only numbers",
+        "any.required": "OTP is required",
+      }),
+    newPassword: Joi.string()
       .required()
       .min(6)
       .max(30)
@@ -70,12 +81,12 @@ const userSchemas = {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{6,30}$/
       )
       .messages({
-        "string.empty": "Password cannot be empty",
-        "string.min": "Password must be at least 6 characters long",
-        "string.max": "Password cannot exceed 30 characters",
+        "string.empty": "New password cannot be empty",
+        "string.min": "New password must be at least 6 characters long",
+        "string.max": "New password cannot exceed 30 characters",
         "string.pattern.base":
-          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character [!, @, #, $, %, ^, &, *]",
-        "any.required": "Password is required",
+          "New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character [!, @, #, $, %, ^, &, *]",
+        "any.required": "New password is required",
       }),
   }),
 };

@@ -2,8 +2,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const User = require("../models/User");
+const { sendPasswordResetEmail } = require("./emailService");
 
-// Helper function to generate tokens (only used during login)
+// Helper function to generate tokens
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "1h",
@@ -23,7 +24,12 @@ const userService = {
   signup: async ({ email, password, name }) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw new Error("Email already registered.");
+      return {
+        success: false,
+        message:
+          "This email is already registered. Please use a different email or try logging in.",
+        statusCode: 409,
+      };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -35,7 +41,9 @@ const userService = {
 
     return {
       success: true,
-      message: "Account created. Please login to access your account.",
+      message:
+        "Account created successfully! Please login to access your account.",
+      statusCode: 201,
     };
   },
 
@@ -43,7 +51,12 @@ const userService = {
   signin: async ({ email, password }) => {
     const user = await User.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new Error("Invalid email or password.");
+      return {
+        success: false,
+        message:
+          "The email or password you entered is incorrect. Please try again.",
+        statusCode: 401,
+      };
     }
 
     const { accessToken, refreshToken } = generateTokens(user._id);
@@ -52,7 +65,8 @@ const userService = {
 
     return {
       success: true,
-      message: "Signed in.",
+      message: "Welcome back! You've successfully signed in.",
+      statusCode: 200,
       data: {
         user: {
           name: user.name,
@@ -66,37 +80,68 @@ const userService = {
   // Token refresh
   refreshToken: async (oldRefreshToken) => {
     if (!oldRefreshToken) {
-      throw new Error("Refresh token is required.");
+      return {
+        success: false,
+        message: "No refresh token provided. Please login again.",
+        statusCode: 400,
+      };
     }
 
-    const decoded = jwt.verify(oldRefreshToken, process.env.JWT_REFRESH_SECRET);
-    const user = await User.findById(decoded.id);
+    try {
+      const decoded = jwt.verify(
+        oldRefreshToken,
+        process.env.JWT_REFRESH_SECRET
+      );
+      const user = await User.findById(decoded.id);
 
-    if (!user || user.refreshToken !== oldRefreshToken) {
-      throw new Error("Invalid refresh token.");
+      if (!user || user.refreshToken !== oldRefreshToken) {
+        return {
+          success: false,
+          message: "Invalid or expired refresh token. Please login again.",
+          statusCode: 401,
+        };
+      }
+
+      const { accessToken, refreshToken } = generateTokens(user._id);
+      user.refreshToken = refreshToken;
+      await user.save();
+
+      return {
+        success: true,
+        message: "Token refreshed successfully.",
+        statusCode: 200,
+        data: {
+          tokens: { accessToken, refreshToken },
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Invalid or expired refresh token. Please login again.",
+        statusCode: 401,
+      };
     }
-
-    const { accessToken, refreshToken } = generateTokens(user._id);
-    user.refreshToken = refreshToken;
-    await user.save();
-
-    return {
-      success: true,
-      data: {
-        tokens: { accessToken, refreshToken },
-      },
-    };
   },
 
   // User logout
   signout: async (userId) => {
     const user = await User.findById(userId);
     if (!user) {
-      throw new Error("User not found.");
+      return {
+        success: false,
+        message: "We couldn't find your account. Please login again.",
+        statusCode: 404,
+      };
     }
 
     user.refreshToken = null;
     await user.save();
+
+    return {
+      success: true,
+      message: "You've been successfully signed out. Have a great day!",
+      statusCode: 200,
+    };
   },
 
   // Update profile
@@ -115,52 +160,111 @@ const userService = {
     }).select("-password -refreshToken");
 
     if (!user) {
-      throw new Error("User not found.");
+      return {
+        success: false,
+        message: "We couldn't find your account. Please login again.",
+        statusCode: 404,
+      };
     }
 
-    return user;
+    return {
+      success: true,
+      message: "Your profile has been updated successfully!",
+      statusCode: 200,
+      data: user,
+    };
   },
 
   // Password reset request
   forgotPassword: async (email) => {
     const user = await User.findOne({ email });
+
+    // Always return a generic message for security
+    const genericMessage =
+      "If an account exists with this email, you will receive a password reset OTP shortly.";
+
     if (!user) {
-      throw new Error("User not found.");
+      return {
+        success: false,
+        message: genericMessage,
+        statusCode: 200, // Use 200 even for not found for security
+      };
     }
 
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    user.passwordResetToken = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
-    user.passwordResetExpires = Date.now() + 30 * 60 * 1000; // 30 minutes
-    await user.save();
+    try {
+      // Generate 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    return resetToken; // In production, send this via email
+      // Save OTP and expiry
+      user.passwordResetOTP = await bcrypt.hash(otp, 10);
+      user.passwordResetOTPExpires = Date.now() + 30 * 60 * 1000; // 30 minutes
+      await user.save();
+
+      await sendPasswordResetEmail(email, otp);
+
+      return {
+        success: true,
+        message: genericMessage,
+        statusCode: 200,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          "We're having trouble sending the reset email. Please try again later.",
+        statusCode: 500,
+      };
+    }
   },
 
   // Reset password
-  resetPassword: async (token, newPassword) => {
-    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-
+  resetPassword: async (email, otp, newPassword) => {
     const user = await User.findOne({
-      passwordResetToken: hashedToken,
-      passwordResetExpires: { $gt: Date.now() },
+      email,
+      passwordResetOTPExpires: { $gt: Date.now() },
     });
 
     if (!user) {
-      throw new Error("Invalid or expired reset token.");
+      return {
+        success: false,
+        message:
+          "Password reset failed. Please request a new OTP and try again.",
+        statusCode: 400,
+      };
     }
 
+    const isValidOTP = await bcrypt.compare(otp, user.passwordResetOTP);
+    if (!isValidOTP) {
+      return {
+        success: false,
+        message:
+          "The OTP you entered is incorrect. Please check and try again.",
+        statusCode: 400,
+      };
+    }
+
+    // Update password
     user.password = await bcrypt.hash(newPassword, 10);
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
+    user.passwordResetOTP = undefined;
+    user.passwordResetOTPExpires = undefined;
     await user.save();
+
+    return {
+      success: true,
+      message:
+        "Your password has been reset successfully! You can now login with your new password.",
+      statusCode: 200,
+    };
   },
 
   getAllUsers: async () => {
     const users = await User.find().select("-password -refreshToken");
-    return users;
+    return {
+      success: true,
+      message: "Users retrieved successfully.",
+      statusCode: 200,
+      data: users,
+    };
   },
 };
 
