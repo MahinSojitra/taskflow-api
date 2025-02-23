@@ -45,7 +45,7 @@ const sendPasswordResetEmail = async (email, otp) => {
       from: `"TaskFlow" <${process.env.ORGANIZATION_EMAIL}>`,
       to: email,
       subject: "Reset Your TaskFlow Password",
-      html: getPasswordResetTemplate(otp, LOGO_BASE64),
+      html: getPasswordResetTemplate(otp),
     };
 
     try {
