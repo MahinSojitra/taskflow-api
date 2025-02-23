@@ -71,26 +71,25 @@ const getPasswordResetTemplate = (otp) => {
           color: black;
         }
 
-        /* Dark mode styles */
         @media (prefers-color-scheme: dark) {
           body {
-            background-color: #121212; /* Dark background */
-            color: #e8eaed; /* Light text */
+            background-color: #121212;
+            color: #e8eaed;
           }
           .container {
-            background-color: #1f1f1f; /* Dark container background */
+            background-color: #1f1f1f;
           }
           .content {
-            background-color: #333; /* Dark card background */
-            color: #e8eaed; /* Light text on card */
+            background-color: #333;
+            color: #e8eaed;
           }
           .otp {
-            background-color: #1a1a1a; /* Dark OTP background */
+            background-color: #1a1a1a;
             border-color: #5f6368;
-            color: #1a73e8; /* Light blue OTP code */
+            color: #1a73e8;
           }
           .footer {
-            color: #9aa0a6; /* Light gray footer text */
+            color: #9aa0a6;
           }
           .copyright {
             color: white;
@@ -102,11 +101,10 @@ const getPasswordResetTemplate = (otp) => {
             display: block;
           }
           .brand-name {
-            color: #e8eaed; /* Light text for dark mode */
+            color: #e8eaed;
           }
         }
 
-        /* Light mode styles */
         @media (prefers-color-scheme: light) {
           .logo-light {
             display: block;
@@ -124,12 +122,12 @@ const getPasswordResetTemplate = (otp) => {
       <div class="container">
         <div class="header">
           <img
-            src="./public/assets/images/taskflow-dark.png"
+            src="${LOGO_DARK}"
             alt="TaskFlow Logo"
             class="logo logo-light"
           />
           <img
-            src="./public/assets/images/taskflow-light.png"
+            src="${LOGO_LIGHT}"
             alt="TaskFlow Logo Dark"
             class="logo logo-dark"
           />
