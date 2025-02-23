@@ -14,7 +14,18 @@ const transporter = nodemailer.createTransport({
 
 const sendPasswordResetEmail = async (email, otp) => {
   try {
-    await transporter.verify();
+    // Verify email configuration first
+    try {
+      await transporter.verify();
+    } catch (verifyError) {
+      console.error("Email configuration error:", verifyError);
+      return {
+        success: false,
+        message: "Email service configuration error. Please contact support.",
+        error: "Configuration verification failed",
+        statusCode: 503,
+      };
+    }
 
     const mailOptions = {
       from: `"TaskFlow" <${process.env.EMAIL_USER}>`,
@@ -23,26 +34,77 @@ const sendPasswordResetEmail = async (email, otp) => {
       html: getPasswordResetTemplate(otp, LOGO_BASE64),
     };
 
-    await transporter.sendMail(mailOptions);
-    return {
-      success: true,
-      message: "Password reset email sent successfully",
-    };
-  } catch (error) {
-    console.error("Email sending error:", error);
-
-    if (error.code === "EAUTH") {
+    try {
+      await transporter.sendMail(mailOptions);
       return {
-        success: false,
-        message: "Email service configuration error. Please contact support.",
-        error: "Authentication failed",
+        success: true,
+        message: "Password reset email sent successfully",
+        statusCode: 200,
       };
-    }
+    } catch (sendError) {
+      console.error("Email sending error:", sendError);
 
+      // Handle specific error cases
+      switch (sendError.code) {
+        case "EAUTH":
+          return {
+            success: false,
+            message:
+              "Email service authentication failed. Please contact support.",
+            error: "Authentication failed",
+            statusCode: 503,
+          };
+
+        case "ESOCKET":
+          return {
+            success: false,
+            message:
+              "Unable to connect to email service. Please try again later.",
+            error: "Connection failed",
+            statusCode: 503,
+          };
+
+        case "ECONNECTION":
+          return {
+            success: false,
+            message: "Email service connection error. Please try again later.",
+            error: "Connection error",
+            statusCode: 503,
+          };
+
+        case "ETIMEDOUT":
+          return {
+            success: false,
+            message: "Email service timeout. Please try again later.",
+            error: "Request timeout",
+            statusCode: 504,
+          };
+
+        case "EENVELOPE":
+          return {
+            success: false,
+            message: "Invalid email address provided.",
+            error: "Invalid recipient",
+            statusCode: 400,
+          };
+
+        default:
+          return {
+            success: false,
+            message:
+              "Failed to send password reset email. Please try again later.",
+            error: sendError.message,
+            statusCode: 500,
+          };
+      }
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error);
     return {
       success: false,
-      message: "Failed to send password reset email. Please try again later.",
+      message: "An unexpected error occurred. Please try again later.",
       error: error.message,
+      statusCode: 500,
     };
   }
 };

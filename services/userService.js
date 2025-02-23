@@ -179,39 +179,39 @@ const userService = {
   forgotPassword: async (email) => {
     const user = await User.findOne({ email });
 
-    // Always return a generic message for security
-    const genericMessage =
-      "If an account exists with this email, you will receive a password reset OTP shortly.";
-
     if (!user) {
       return {
         success: false,
-        message: genericMessage,
-        statusCode: 200, // Use 200 even for not found for security
+        message:
+          "No account exists with this email address. Please check and try again.",
+        statusCode: 404,
       };
     }
 
-    try {
-      // Generate 6-digit OTP
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-      // Save OTP and expiry
+    // Try to send email and get response
+    const emailResult = await sendPasswordResetEmail(email, otp);
+
+    // If email sending failed, return the error response directly
+    if (!emailResult.success) {
+      return emailResult;
+    }
+
+    // Only save OTP if email was sent successfully
+    try {
       user.passwordResetOTP = await bcrypt.hash(otp, 10);
       user.passwordResetOTPExpires = Date.now() + 30 * 60 * 1000; // 30 minutes
       await user.save();
 
-      await sendPasswordResetEmail(email, otp);
-
-      return {
-        success: true,
-        message: genericMessage,
-        statusCode: 200,
-      };
+      // Return the successful email service response
+      return emailResult;
     } catch (error) {
       return {
         success: false,
-        message:
-          "We're having trouble sending the reset email. Please try again later.",
+        message: "Failed to save reset token. Please try again.",
+        error: error.message,
         statusCode: 500,
       };
     }
@@ -252,7 +252,7 @@ const userService = {
     return {
       success: true,
       message:
-        "Your password has been reset successfully! You can now login with your new password.",
+        "Your password has been reset! You can now login with your new password.",
       statusCode: 200,
     };
   },
