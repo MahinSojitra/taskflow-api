@@ -1,4 +1,4 @@
-const getPasswordResetTemplate = (otp) => {
+const getPasswordResetTemplate = (otp, logoUrl) => {
   return `
     <!DOCTYPE html>
     <html>
@@ -50,7 +50,7 @@ const getPasswordResetTemplate = (otp) => {
     <body>
       <div class="container">
         <div class="header">
-          <img src="cid:logo" alt="TaskFlow Logo" class="logo">
+          <img src="${logoUrl}" alt="TaskFlow Logo" class="logo">
         </div>
         <div class="content">
           <h2>Password Reset Request</h2>
