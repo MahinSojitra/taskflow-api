@@ -26,7 +26,7 @@ const getPasswordResetTemplate = (otp) => {
         }
         .header {
           text-align: center;
-          padding: 20px 0;
+          padding: 20px 0px 10px 0px;
           display: flex;
           align-items: center;
           justify-content: start;
@@ -34,7 +34,7 @@ const getPasswordResetTemplate = (otp) => {
         .logo {
           width: 50px; /* Adjust logo size */
           height: auto;
-          margin-right: 6px;
+          margin-right: 4px;
         }
         .brand-name {
           font-size: 24px;
