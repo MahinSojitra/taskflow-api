@@ -13,14 +13,14 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// Import routes
-const userRoutes = require("./routes/user");
-const taskRoutes = require("./routes/task");
-
 // Root route - Serve index.html
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+
+// Import routes
+const userRoutes = require("./routes/user");
+const taskRoutes = require("./routes/task");
 
 // API routes (place before 404 handler)
 app.use("/api/users", userRoutes);
