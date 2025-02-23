@@ -4,31 +4,45 @@ const { getPasswordResetTemplate } = require("../utils/emailTemplates");
 // Base64 encoded logo
 const LOGO_BASE64 = "data:image/png;base64,YOUR_BASE64_ENCODED_IMAGE"; // Replace with your actual base64 encoded image
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const createTransporter = () => {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.ORGANIZATION_EMAIL,
+      pass: process.env.ORGANIZATION_EMAIL_PASSWORD,
+    },
+  });
+};
 
 const sendPasswordResetEmail = async (email, otp) => {
   try {
-    // Verify email configuration first
+    const transporter = createTransporter();
+
+    if (!transporter) {
+      return {
+        success: false,
+        message:
+          "Email service is not configured properly. Please contact support.",
+        error: "Missing email credentials",
+        statusCode: 503,
+      };
+    }
+
+    // Verify email configuration
     try {
       await transporter.verify();
     } catch (verifyError) {
       console.error("Email configuration error:", verifyError);
       return {
         success: false,
-        message: "Email service configuration error. Please contact support.",
-        error: "Configuration verification failed",
+        message: "Email service configuration error. Please check credentials.",
+        error: verifyError.message,
         statusCode: 503,
       };
     }
 
     const mailOptions = {
-      from: `"TaskFlow" <${process.env.EMAIL_USER}>`,
+      from: `"TaskFlow" <${process.env.ORGANIZATION_EMAIL}>`,
       to: email,
       subject: "Reset Your TaskFlow Password",
       html: getPasswordResetTemplate(otp, LOGO_BASE64),
@@ -50,7 +64,7 @@ const sendPasswordResetEmail = async (email, otp) => {
           return {
             success: false,
             message:
-              "Email service authentication failed. Please contact support.",
+              "Invalid email credentials. Please check email configuration.",
             error: "Authentication failed",
             statusCode: 503,
           };
