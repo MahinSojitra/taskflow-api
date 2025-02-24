@@ -49,6 +49,7 @@ const userService = {
   // User signin
   signin: async ({ email, password }) => {
     const user = await User.findOne({ email });
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return {
         success: false,
@@ -58,7 +59,29 @@ const userService = {
       };
     }
 
+    // If the user already has a refresh token, return the same tokens
+    if (user.refreshToken) {
+      return {
+        success: true,
+        message:
+          "Looks like you're already signed in! No need to knock twice, your session is still active.",
+        statusCode: 200,
+        data: {
+          user: {
+            name: user.name,
+            email: user.email,
+          },
+          tokens: {
+            accessToken: user.accessToken, // Return the existing access token
+            refreshToken: user.refreshToken, // Return the existing refresh token
+          },
+        },
+      };
+    }
+
+    // Generate new tokens only if the user is signing in for the first time or refreshToken is missing
     const { accessToken, refreshToken } = generateTokens(user._id);
+    user.accessToken = accessToken; // Store the access token
     user.refreshToken = refreshToken;
     await user.save();
 
