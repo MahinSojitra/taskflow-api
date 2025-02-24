@@ -1,49 +1,37 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const { connectDB } = require("./config/db");
+const http = require("http");
 const app = require("./app");
+const connectDB = require("./config/db");
 
-// Load environment variables
-dotenv.config();
+// ✅ Set the port dynamically for deployment or fallback to 5000
+const PORT = process.env.PORT || 5000;
 
-class ServerManager {
-  constructor() {
-    this.server = null;
-  }
+// ✅ Function to start the server
+const startServer = async () => {
+  try {
+    // ✅ Connect to the database
+    await connectDB();
+    console.log("✅ Database Connected Successfully");
 
-  async initialize() {
-    try {
-      // Ensure a stable database connection before starting the server
-      await connectDB();
+    // ✅ Start the server
+    const server = http.createServer(app);
+    server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
-      const PORT = process.env.PORT || 3000;
-      this.server = app.listen(PORT, () => {
-        console.log(`🚀 Server running on port ${PORT}`);
-      });
+    // ✅ Handle unhandled rejections
+    process.on("unhandledRejection", (err) => {
+      console.error("❌ Unhandled Rejection:", err.message);
+      server.close(() => process.exit(1));
+    });
 
-      this.server.on("error", this.handleServerError.bind(this));
-
-      // Graceful shutdown handlers
-      process.on("SIGTERM", () => this.shutdown("SIGTERM"));
-      process.on("SIGINT", () => this.shutdown("SIGINT"));
-    } catch (error) {
-      console.error("❌ Server failed to start:", error);
+    // ✅ Handle uncaught exceptions
+    process.on("uncaughtException", (err) => {
+      console.error("❌ Uncaught Exception:", err.message);
       process.exit(1);
-    }
+    });
+  } catch (error) {
+    console.error("❌ Server failed to start:", error.message);
+    process.exit(1);
   }
+};
 
-  async shutdown(signal) {
-    console.log(`🛑 Received ${signal}. Shutting down server...`);
-    if (this.server) {
-      await new Promise((resolve) => this.server.close(resolve));
-      console.log("✅ Server shut down gracefully.");
-    }
-    process.exit(0);
-  }
-}
-
-// Start server
-const serverManager = new ServerManager();
-serverManager.initialize();
-
-module.exports = app;
+// ✅ Start the server
+startServer();
