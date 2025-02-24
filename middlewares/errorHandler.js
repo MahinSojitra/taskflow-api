@@ -19,26 +19,31 @@ const errorHandler = (err, req, res, next) => {
   if (process.env.NODE_ENV === "development") {
     return res.status(err.statusCode).json({
       success: false,
+      status: err.status,
       message: err.message,
       stack: err.stack,
       error: err,
     });
   }
 
-  // Production error response
+  // Production error response (hide stack traces)
   if (err.isOperational) {
     return res.status(err.statusCode).json({
       success: false,
+      status: err.status,
       message: err.message,
     });
   }
 
-  // Programming or unknown errors: don't leak error details
+  // Log unexpected errors
   console.error("ERROR 💥", err);
+
+  // Generic response for unhandled errors
   return res.status(500).json({
     success: false,
     status: "error",
-    message: "Something went wrong!",
+    message:
+      "Something went wrong! Please try again later or contact support if the issue persists.",
   });
 };
 

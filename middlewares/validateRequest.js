@@ -8,7 +8,8 @@ const validateRequest = (schema) => {
     if (error) {
       return res.status(400).json({
         success: false,
-        message: "Please check your input and try again",
+        message:
+          "Oops! Something seems off. Please review your input and give it another try.",
         errors: error.details.map((detail) => detail.message),
       });
     }

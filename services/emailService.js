@@ -52,7 +52,8 @@ const sendPasswordResetEmail = async (email, otp) => {
       await transporter.sendMail(mailOptions);
       return {
         success: true,
-        message: "Password reset email sent successfully",
+        message:
+          "We've sent your password reset email. If you don’t see it in your inbox, be sure to check your spam folder.",
         statusCode: 200,
       };
     } catch (sendError) {
@@ -106,7 +107,7 @@ const sendPasswordResetEmail = async (email, otp) => {
           return {
             success: false,
             message:
-              "Failed to send password reset email. Please try again later.",
+              "Could not send the password reset email. Please try again later or contact support if the issue persists.",
             error: sendError.message,
             statusCode: 500,
           };
@@ -116,7 +117,8 @@ const sendPasswordResetEmail = async (email, otp) => {
     console.error("Unexpected error:", error);
     return {
       success: false,
-      message: "An unexpected error occurred. Please try again later.",
+      message:
+        "Something went wrong! Please try again later or contact support if the issue persists.",
       error: error.message,
       statusCode: 500,
     };

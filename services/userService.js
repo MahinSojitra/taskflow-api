@@ -27,7 +27,7 @@ const userService = {
       return {
         success: false,
         message:
-          "This email is already registered. Please use a different email or try logging in.",
+          "This email is already in use. Sign in to your account or pick a different email to proceed with Sign Up.",
         statusCode: 409,
       };
     }
@@ -41,8 +41,7 @@ const userService = {
 
     return {
       success: true,
-      message:
-        "Account created successfully! Please login to access your account.",
+      message: "You're good to go! Sign in and start exploring our services.",
       statusCode: 201,
     };
   },
@@ -54,7 +53,7 @@ const userService = {
       return {
         success: false,
         message:
-          "The email or password you entered is incorrect. Please try again.",
+          "We couldn't verify your credentials. Please ensure your email and password are correct. If you've forgotten your password, you can reset it to regain access.",
         statusCode: 401,
       };
     }
@@ -65,7 +64,7 @@ const userService = {
 
     return {
       success: true,
-      message: "Welcome back! You've successfully signed in.",
+      message: "You've signed in. Glad to have you back.",
       statusCode: 200,
       data: {
         user: {
@@ -82,7 +81,7 @@ const userService = {
     if (!oldRefreshToken) {
       return {
         success: false,
-        message: "No refresh token provided. Please login again.",
+        message: "No refresh token detected. Please sign in again to continue.",
         statusCode: 400,
       };
     }
@@ -97,7 +96,8 @@ const userService = {
       if (!user || user.refreshToken !== oldRefreshToken) {
         return {
           success: false,
-          message: "Invalid or expired refresh token. Please login again.",
+          message:
+            "Your session has expired or the refresh token provided is invalid. Please log in again to restore access and continue using our services.",
           statusCode: 401,
         };
       }
@@ -108,7 +108,8 @@ const userService = {
 
       return {
         success: true,
-        message: "Token refreshed successfully.",
+        message:
+          "Your token has been refreshed. You can continue using our services without interruption.",
         statusCode: 200,
         data: {
           tokens: { accessToken, refreshToken },
@@ -117,7 +118,8 @@ const userService = {
     } catch (error) {
       return {
         success: false,
-        message: "Invalid or expired refresh token. Please login again.",
+        message:
+          "Something went wrong. Please try again later or contact support if the issue persists.",
         statusCode: 401,
       };
     }
@@ -129,8 +131,17 @@ const userService = {
     if (!user) {
       return {
         success: false,
-        message: "We couldn't find your account. Please login again.",
+        message:
+          "We couldn't find your account. Please sign up or check your details and try again.",
         statusCode: 404,
+      };
+    }
+
+    if (!user.refreshToken) {
+      return {
+        success: false,
+        message: "You're not signed in. Please sign in first to continue.",
+        statusCode: 400,
       };
     }
 
@@ -139,7 +150,7 @@ const userService = {
 
     return {
       success: true,
-      message: "You've been successfully signed out. Have a great day!",
+      message: "You've been signed out. Have a great day!",
       statusCode: 200,
     };
   },
@@ -162,14 +173,16 @@ const userService = {
     if (!user) {
       return {
         success: false,
-        message: "We couldn't find your account. Please login again.",
+        message:
+          "We couldn't find your account. Please sign up or check your details and try again.",
         statusCode: 404,
       };
     }
 
     return {
       success: true,
-      message: "Your profile has been updated successfully!",
+      message:
+        "Your profile has been updated. All changes have been saved and are now in effect.",
       statusCode: 200,
       data: user,
     };
@@ -183,7 +196,7 @@ const userService = {
       return {
         success: false,
         message:
-          "No account exists with this email address. Please check and try again.",
+          "We couldn't find an account with this email address. Please verify and try again.",
         statusCode: 404,
       };
     }
@@ -202,7 +215,7 @@ const userService = {
     // Only save OTP if email was sent successfully
     try {
       user.passwordResetOTP = await bcrypt.hash(otp, 10);
-      user.passwordResetOTPExpires = Date.now() + 30 * 60 * 1000; // 30 minutes
+      user.passwordResetOTPExpires = Date.now() + 30 * 60 * 1000;
       await user.save();
 
       // Return the successful email service response
@@ -210,7 +223,8 @@ const userService = {
     } catch (error) {
       return {
         success: false,
-        message: "Failed to save reset token. Please try again.",
+        message:
+          "Unable to save the reset token. Please try again or contact support if the issue persists.",
         error: error.message,
         statusCode: 500,
       };
@@ -228,7 +242,7 @@ const userService = {
       return {
         success: false,
         message:
-          "Password reset failed. Please request a new OTP and try again.",
+          "We couldn't complete your password reset. Please request a fresh OTP and try again.",
         statusCode: 400,
       };
     }
@@ -238,7 +252,7 @@ const userService = {
       return {
         success: false,
         message:
-          "The OTP you entered is incorrect. Please check and try again.",
+          "Incorrect OTP. Please re-enter the correct code and continue.",
         statusCode: 400,
       };
     }
@@ -252,7 +266,7 @@ const userService = {
     return {
       success: true,
       message:
-        "Your password has been reset! You can now login with your new password.",
+        "Your password has been updated. You can now sign in with your new password.",
       statusCode: 200,
     };
   },
@@ -261,7 +275,8 @@ const userService = {
     const users = await User.find().select("-password -refreshToken");
     return {
       success: true,
-      message: "Users retrieved successfully.",
+      message:
+        "User's data has been retrieved. Manage responsibly to safeguard sensitive user information.",
       statusCode: 200,
       data: users,
     };
