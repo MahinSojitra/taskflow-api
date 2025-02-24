@@ -168,6 +168,7 @@ const userService = {
       };
     }
 
+    user.accessToken = null;
     user.refreshToken = null;
     await user.save();
 
