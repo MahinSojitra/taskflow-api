@@ -45,7 +45,7 @@ const protect = async (req, res, next) => {
 
       if (!session) {
         throw new AppError(
-          "Your session has ended. Don't worry - just sign in again to continue where you left off!",
+          "Looks like your session has ended! Sign back in to restore access and pick up right where you left off.",
           401
         );
       }
