@@ -5,7 +5,6 @@ const User = require("../models/User");
 const { sendPasswordResetEmail } = require("./emailService");
 const mongoose = require("mongoose");
 
-// Helper function to generate secure session ID
 const generateSessionId = () => {
   return crypto.randomBytes(32).toString("hex");
 };
@@ -395,7 +394,7 @@ const userService = {
   },
 
   // Add this new method to userService
-  getActiveSessions: async (userId, currentSessionId) => {
+  getActiveSessions: async (userId, currentSessionId, clientTimeZone) => {
     const user = await User.findById(userId);
 
     if (!user) {
@@ -406,36 +405,44 @@ const userService = {
       };
     }
 
-    const formatDate = (date) => {
-      const formatted = new Date(date).toLocaleString("en-US", {
-        weekday: "long", // "Wednesday"
-        month: "long", // "February"
-        day: "numeric", // "28"
-        year: "numeric", // "2024"
-        hour: "numeric", // "3"
-        minute: "numeric", // "45"
-        hour12: true, //
-        timeZone: "Asia/Kolkata",
-      });
+    const formatDate = (date, timeZone = "Asia/Kolkata") => {
+      try {
+        const options = {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+          timeZone,
+        };
 
-      // Split into components
-      const [weekdayAndDate, timeStr] = formatted.split(" at ");
-      const [weekday, month, day, year] = weekdayAndDate
-        .split(/[,\s]+/)
-        .filter(Boolean);
-      const time = timeStr ? timeStr.trim() : "";
+        const formatted = new Date(date).toLocaleString("en-US", options);
 
-      // Reconstruct in desired format
-      return `${weekday}, ${month} ${day}, ${year} | ${time}`;
+        // Split into components
+        const [weekdayAndDate, timeStr] = formatted.split(" at ");
+        const [weekday, month, day, year] = weekdayAndDate
+          .split(/[,\s]+/)
+          .filter(Boolean);
+        const time = timeStr ? timeStr.trim() : "";
+
+        // Reconstruct in desired format
+        return `${weekday}, ${month} ${day}, ${year} | ${time}`;
+      } catch (error) {
+        // Fallback to IST if timezone is invalid
+        console.error(`Invalid timezone: ${timeZone}, falling back to IST`);
+        return formatDate(date, "Asia/Kolkata");
+      }
     };
 
     const activeSessions = user.sessions
       .filter((session) => session.isValid)
       .map((session) => ({
-        device: session.deviceInfo,
-        ip: session.ipAddress,
+        deviceInfo: session.deviceInfo,
+        ipAddress: session.ipAddress,
         current: session._id === currentSessionId,
-        lastActive: formatDate(session.lastActive),
+        lastActive: formatDate(session.lastActive, clientTimeZone),
       }));
 
     return {

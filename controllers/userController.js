@@ -95,9 +95,12 @@ const userController = {
   },
 
   getActiveSessions: async (req, res) => {
+    const clientTimeZone = req.headers["x-timezone"];
+
     const result = await userService.getActiveSessions(
       req.user.id,
-      req.sessionId
+      req.sessionId,
+      clientTimeZone
     );
 
     res.status(result.statusCode).json({
