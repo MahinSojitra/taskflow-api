@@ -413,12 +413,15 @@ const userService = {
         hour12: true, // true for AM/PM
       });
 
-      // Split the date and time
-      const [dayPart, timePart] = formatted.split(",");
-      const datePart = dayPart + "," + formatted.split(",")[1]; // Includes the year
+      // Split into components
+      const [weekdayAndDate, timeStr] = formatted.split(" at ");
+      const [weekday, month, day, year] = weekdayAndDate
+        .split(/[,\s]+/)
+        .filter(Boolean);
+      const time = timeStr ? timeStr.trim() : "";
 
-      // Format with the separator
-      return `${datePart} | ${timePart.trim()}`;
+      // Reconstruct in desired format
+      return `${weekday}, ${month} ${day}, ${year} | ${time}`;
     };
 
     const activeSessions = user.sessions
