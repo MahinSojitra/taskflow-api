@@ -5,6 +5,11 @@ const User = require("../models/User");
 const { sendPasswordResetEmail } = require("./emailService");
 const mongoose = require("mongoose");
 
+// Helper function to generate secure session ID
+const generateSessionId = () => {
+  return crypto.randomBytes(32).toString("hex");
+};
+
 // Helper function to generate tokens
 const generateTokens = (userId, sessionId) => {
   const accessToken = jwt.sign(
@@ -60,7 +65,7 @@ const userService = {
   },
 
   // User signin
-  signin: async ({ email, password, deviceInfo = "Unknown Device" }) => {
+  signin: async ({ email, password, deviceInfo }) => {
     const user = await User.findOne({ email });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -72,9 +77,13 @@ const userService = {
       };
     }
 
-    // Check for existing valid session from the same device
+    // Simplified device matching using the standardized device info
     const existingSession = user.sessions.find(
-      (session) => session.deviceInfo === deviceInfo && session.isValid
+      (session) =>
+        session.deviceInfo.name === deviceInfo.name &&
+        session.deviceInfo.client.name === deviceInfo.client.name &&
+        session.deviceInfo.os.name === deviceInfo.os.name &&
+        session.isValid
     );
 
     if (existingSession) {
@@ -102,15 +111,15 @@ const userService = {
       };
     }
 
-    // Create a new session if no existing session found
-    const sessionId = new mongoose.Types.ObjectId();
+    // Create a new session with secure session ID
+    const sessionId = generateSessionId();
     const { accessToken, refreshToken } = generateTokens(user._id, sessionId);
 
-    // Add new session
+    // Add new session with the deviceInfo directly
     user.sessions.push({
       _id: sessionId,
       refreshToken,
-      accessToken, // Store the access token as well
+      accessToken,
       deviceInfo,
       lastActive: new Date(),
       isValid: true,

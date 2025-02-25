@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const SessionSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    required: true,
+  },
   refreshToken: {
     type: String,
     required: true,
@@ -10,8 +14,25 @@ const SessionSchema = new mongoose.Schema({
     required: true,
   },
   deviceInfo: {
-    type: String,
-    required: true,
+    name: {
+      type: String,
+      default: "Unknown Device",
+    },
+    type: {
+      type: String,
+      default: "Unknown",
+    },
+    os: {
+      name: String,
+      version: String,
+    },
+    client: {
+      name: String,
+      version: String,
+      type: String,
+    },
+    brand: String,
+    model: String,
   },
   lastActive: {
     type: Date,

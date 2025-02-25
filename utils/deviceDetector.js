@@ -1,52 +1,85 @@
 const DeviceDetector = require("device-detector-js");
 const detector = new DeviceDetector();
 
+const getDefaultDeviceInfo = () => ({
+  name: "Unknown Device",
+  type: "Unknown",
+  os: { name: "Unknown", version: null },
+  client: { name: "Unknown", version: null, type: "Unknown" },
+  brand: null,
+  model: null,
+});
+
 const getDeviceInfo = (userAgent) => {
   if (!userAgent) {
-    return "Unknown Device";
+    return getDefaultDeviceInfo();
   }
 
   try {
     const device = detector.parse(userAgent);
-    let deviceInfo = "";
 
-    // Get Device Type
-    if (device.device) {
-      // Get Brand and Model
-      if (device.device.brand) {
-        deviceInfo += device.device.brand;
-        if (device.device.model) {
-          deviceInfo += ` ${device.device.model}`;
-        }
-      }
-
-      // Get Device Type
-      if (device.device.type) {
-        deviceInfo += ` (${device.device.type})`;
-      }
+    // Handle special cases like Postman
+    if (userAgent.includes("Postman")) {
+      return {
+        name: "Postman Desktop",
+        type: "API Client",
+        os: {
+          name: device.os?.name || "Unknown",
+          version: device.os?.version || null,
+        },
+        client: {
+          name: "Postman",
+          version: userAgent.split("/")[1] || "Unknown",
+          type: "API Testing Tool",
+        },
+        brand: "Postman",
+        model: "Desktop",
+      };
     }
 
-    // Get OS Info
-    if (device.os && device.os.name) {
-      deviceInfo += ` - ${device.os.name}`;
-      if (device.os.version) {
-        deviceInfo += ` ${device.os.version}`;
-      }
-    }
-
-    // Get Browser Info
-    if (device.client && device.client.name) {
-      deviceInfo += ` - ${device.client.name}`;
-      if (device.client.version) {
-        deviceInfo += ` ${device.client.version}`;
-      }
-    }
-
-    return deviceInfo.trim() || "Unknown Device";
+    // For regular devices
+    return {
+      name: formatDeviceName(device),
+      type: device.device?.type || "Desktop",
+      os: {
+        name: device.os?.name || "Unknown",
+        version: device.os?.version || null,
+      },
+      client: {
+        name: device.client?.name || "Unknown",
+        version: device.client?.version || null,
+        type: device.client?.type || "browser",
+      },
+      brand: device.device?.brand || null,
+      model: device.device?.model || null,
+    };
   } catch (error) {
     console.error("Error detecting device:", error);
-    return "Unknown Device";
+    return getDefaultDeviceInfo();
   }
+};
+
+const formatDeviceName = (device) => {
+  if (!device) return "Unknown Device";
+
+  const brand = device.device?.brand;
+  const model = device.device?.model;
+  const clientName = device.client?.name;
+  const osName = device.os?.name;
+
+  if (brand && model) {
+    return `${brand} ${model}`.trim();
+  }
+
+  if (clientName && osName) {
+    return `${clientName} on ${osName}`.trim();
+  }
+
+  if (osName) {
+    return `${osName} Device`.trim();
+  }
+
+  return "Unknown Device";
 };
 
 module.exports = { getDeviceInfo };
