@@ -51,12 +51,7 @@ router.put(
   userController.updateProfile
 );
 
-router.post(
-  "/refresh",
-  protect,
-  authorize("user", "admin"),
-  userController.refreshToken
-);
+router.post("/refresh", userController.refreshToken);
 
 router.post(
   "/signout",

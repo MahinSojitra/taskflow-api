@@ -53,7 +53,10 @@ const userController = {
   },
 
   refreshToken: async (req, res) => {
-    const result = await userService.refreshToken(req.body.refreshToken);
+    const refreshToken =
+      req.body.refreshToken || req.headers["x-refresh-token"];
+    const result = await userService.refreshToken(refreshToken);
+
     res.status(result.statusCode).json({
       success: result.success,
       message: result.message,

@@ -150,7 +150,8 @@ const userService = {
     if (!oldRefreshToken) {
       return {
         success: false,
-        message: "No refresh token detected. Please sign in again to continue.",
+        message:
+          "Looks like your session ticket is missing. Mind signing in again? It's like getting a fresh VIP pass to continue using our services.",
         statusCode: 400,
       };
     }
@@ -170,7 +171,7 @@ const userService = {
         return {
           success: false,
           message:
-            "Your session has expired or the refresh token provided is invalid. Please log in again to restore access and continue using our services.",
+            "Your session has expired or is no longer valid. Time for a quick sign-in to get back to the action!",
           statusCode: 401,
         };
       }
@@ -186,12 +187,12 @@ const userService = {
       return {
         success: true,
         message:
-          "Your token has been refreshed. You can continue using our services without interruption.",
+          "Your session has been renewed. Enjoy using our services again!",
         statusCode: 200,
         data: {
           tokens: {
             accessToken,
-            refreshToken: oldRefreshToken, // Keep the same refresh token
+            refreshToken: oldRefreshToken,
           },
         },
       };
@@ -199,7 +200,7 @@ const userService = {
       return {
         success: false,
         message:
-          "Something went wrong. Please try again later or contact support if the issue persists.",
+          "Something's not quite right with your session. Let's start fresh with a new sign-in!",
         statusCode: 401,
       };
     }
