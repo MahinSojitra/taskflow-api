@@ -434,6 +434,7 @@ const userService = {
       .filter((session) => session.isValid)
       .map((session) => ({
         deviceInfo: session.deviceInfo,
+        ipAddress: session.ipAddress,
         current: session._id === currentSessionId,
         lastActive: formatDate(session.lastActive),
       }));
