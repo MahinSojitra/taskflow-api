@@ -33,7 +33,7 @@ const protect = async (req, res, next) => {
       const user = await User.findById(decoded.id);
       if (!user) {
         throw new AppError(
-          "We couldn't find your account. It might have been deleted or deactivated. Need help? Our support team is here for you.",
+          "We couldn't find your account. It might have been deleted or deactivated.",
           401
         );
       }
