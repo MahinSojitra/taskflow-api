@@ -23,16 +23,16 @@ const SessionSchema = new mongoose.Schema({
       default: "Unknown",
     },
     os: {
-      name: String,
-      version: String,
+      name: { type: String, default: "Unknown" },
+      version: { type: String, default: null },
     },
     client: {
-      name: String,
-      version: String,
-      type: String,
+      name: { type: String, default: "Unknown" },
+      version: { type: String, default: null },
+      type: { type: String, default: "Unknown" },
     },
-    brand: String,
-    model: String,
+    brand: { type: String, default: null },
+    model: { type: String, default: null },
   },
   lastActive: {
     type: Date,
@@ -71,10 +71,7 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: {
-        values: ["user", "admin"],
-        message: "Role must be either 'user' or 'admin'.",
-      },
+      enum: ["user", "admin"],
       default: "user",
     },
     isVerified: {
