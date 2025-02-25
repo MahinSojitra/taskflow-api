@@ -51,7 +51,7 @@ const protect = async (req, res, next) => {
       }
 
       // Update session's last active timestamp
-      session.lastActive = new Date();
+      session.lastActive = new Date(Date.now());
       await user.save();
 
       // Attach user and session info to request

@@ -93,7 +93,7 @@ const userService = {
 
     if (existingSession) {
       // Update last active time for existing session
-      existingSession.lastActive = new Date();
+      existingSession.lastActive = new Date(Date.now());
       await user.save();
 
       return {
@@ -126,7 +126,7 @@ const userService = {
       accessToken,
       deviceInfo,
       ipAddress,
-      lastActive: new Date(),
+      lastActive: new Date(Date.now()),
       isValid: true,
     });
     await user.save();
@@ -181,7 +181,7 @@ const userService = {
 
       // Update the session with new access token
       session.accessToken = accessToken;
-      session.lastActive = new Date();
+      session.lastActive = new Date(Date.now());
       await user.save();
 
       return {
@@ -224,7 +224,7 @@ const userService = {
     if (session) {
       // Keep the session but mark it as invalid and clear sensitive data
       session.isValid = false;
-      session.lastActive = new Date();
+      session.lastActive = new Date(Date.now());
       // Keep the tokens but invalidate them by setting to a constant value
       session.accessToken = "SIGNED_OUT";
       session.refreshToken = "SIGNED_OUT";
@@ -253,7 +253,7 @@ const userService = {
     // Invalidate all sessions but keep them for history
     user.sessions.forEach((session) => {
       session.isValid = false;
-      session.lastActive = new Date();
+      session.lastActive = new Date(Date.now());
       session.accessToken = "SIGNED_OUT";
       session.refreshToken = "SIGNED_OUT";
     });
