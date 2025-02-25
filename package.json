@@ -12,6 +12,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.0",
     "morgan": "^1.10.0",
+    "net": "^1.0.2",
     "nodemailer": "^6.10.0",
     "rate-limiter-flexible": "^4.0.0"
   }

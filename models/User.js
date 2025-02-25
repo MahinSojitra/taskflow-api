@@ -34,6 +34,21 @@ const SessionSchema = new mongoose.Schema({
     brand: { type: String, default: null },
     model: { type: String, default: null },
   },
+  ipAddress: {
+    ipv4: {
+      type: String,
+      default: null,
+    },
+    ipv6: {
+      type: String,
+      default: null,
+    },
+    type: {
+      type: String,
+      enum: ["ipv4", "ipv6", "unknown"],
+      default: "unknown",
+    },
+  },
   lastActive: {
     type: Date,
     default: Date.now,

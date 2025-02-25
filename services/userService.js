@@ -65,24 +65,29 @@ const userService = {
   },
 
   // User signin
-  signin: async ({ email, password, deviceInfo }) => {
+  signin: async ({ email, password, deviceInfo, ipAddress }) => {
     const user = await User.findOne({ email });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return {
         success: false,
         message:
-          "We couldn't verify your credentials. Please ensure your email and password are correct. If you've forgotten your password, you can reset it to regain access.",
+          "We couldn't verify your credentials. Please ensure your email and password are correct.",
         statusCode: 401,
       };
     }
 
-    // Simplified device matching using the standardized device info
+    // Simplified device matching using the standardized device info and IP
     const existingSession = user.sessions.find(
       (session) =>
         session.deviceInfo.name === deviceInfo.name &&
         session.deviceInfo.client.name === deviceInfo.client.name &&
         session.deviceInfo.os.name === deviceInfo.os.name &&
+        session.ipAddress.type === ipAddress.type &&
+        ((ipAddress.type === "ipv4" &&
+          session.ipAddress.ipv4 === ipAddress.ipv4) ||
+          (ipAddress.type === "ipv6" &&
+            session.ipAddress.ipv6 === ipAddress.ipv6)) &&
         session.isValid
     );
 
@@ -115,12 +120,13 @@ const userService = {
     const sessionId = generateSessionId();
     const { accessToken, refreshToken } = generateTokens(user._id, sessionId);
 
-    // Add new session with the deviceInfo directly
+    // Add new session with the deviceInfo and ipAddress
     user.sessions.push({
       _id: sessionId,
       refreshToken,
       accessToken,
       deviceInfo,
+      ipAddress,
       lastActive: new Date(),
       isValid: true,
     });
