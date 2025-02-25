@@ -110,7 +110,6 @@ const userService = {
             accessToken: existingSession.accessToken,
             refreshToken: existingSession.refreshToken,
           },
-          sessionId: existingSession._id,
           isExistingSession: true,
         },
       };
@@ -142,7 +141,6 @@ const userService = {
           email: user.email,
         },
         tokens: { accessToken, refreshToken },
-        sessionId: sessionId,
         isExistingSession: false,
       },
     };
@@ -433,8 +431,8 @@ const userService = {
     const activeSessions = user.sessions
       .filter((session) => session.isValid)
       .map((session) => ({
-        deviceInfo: session.deviceInfo,
-        ipAddress: session.ipAddress,
+        device: session.deviceInfo,
+        ip: session.ipAddress,
         current: session._id === currentSessionId,
         lastActive: formatDate(session.lastActive),
       }));
