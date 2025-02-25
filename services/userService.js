@@ -215,12 +215,15 @@ const userService = {
       };
     }
 
-    // Invalidate specific session
-    const session = user.sessions.id(sessionId);
+    // Find and invalidate specific session
+    const session = user.sessions.find((s) => s._id === sessionId);
     if (session) {
+      // Keep the session but mark it as invalid and clear sensitive data
       session.isValid = false;
-      session.accessToken = undefined;
-      session.refreshToken = undefined;
+      session.lastActive = new Date();
+      // Keep the tokens but invalidate them by setting to a constant value
+      session.accessToken = "SIGNED_OUT";
+      session.refreshToken = "SIGNED_OUT";
       await user.save();
     }
 
@@ -243,12 +246,14 @@ const userService = {
       };
     }
 
-    // Invalidate all sessions and clear their tokens
+    // Invalidate all sessions but keep them for history
     user.sessions.forEach((session) => {
       session.isValid = false;
-      session.accessToken = undefined;
-      session.refreshToken = undefined;
+      session.lastActive = new Date();
+      session.accessToken = "SIGNED_OUT";
+      session.refreshToken = "SIGNED_OUT";
     });
+
     await user.save();
 
     return {
