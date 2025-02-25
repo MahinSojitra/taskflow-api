@@ -1,5 +1,28 @@
 const mongoose = require("mongoose");
 
+const SessionSchema = new mongoose.Schema({
+  refreshToken: {
+    type: String,
+    required: true,
+  },
+  accessToken: {
+    type: String,
+    required: true,
+  },
+  deviceInfo: {
+    type: String,
+    required: true,
+  },
+  lastActive: {
+    type: Date,
+    default: Date.now,
+  },
+  isValid: {
+    type: Boolean,
+    default: true,
+  },
+});
+
 const UserSchema = new mongoose.Schema(
   {
     email: {
@@ -37,8 +60,7 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    accessToken: String,
-    refreshToken: String,
+    sessions: [SessionSchema],
     passwordResetToken: String,
     passwordResetExpires: Date,
     passwordResetOTP: String,

@@ -65,6 +65,21 @@ router.post(
   userController.signout
 );
 
+// New session management routes
+router.post(
+  "/signout-all",
+  protect,
+  authorize("user", "admin"),
+  userController.signoutAllDevices
+);
+
+router.get(
+  "/sessions",
+  protect,
+  authorize("user", "admin"),
+  userController.getActiveSessions
+);
+
 // Error handler
 router.use(errorHandler);
 

@@ -24,7 +24,21 @@ exports.protect = async (req, res, next) => {
       });
     }
 
+    // Verify session validity
+    const session = user.sessions.id(decoded.sessionId);
+    if (!session || !session.isValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Please sign in to access this resource.",
+      });
+    }
+
+    // Update session activity
+    session.lastActive = new Date();
+    await user.save();
+
     req.user = user;
+    req.sessionId = decoded.sessionId;
     next();
   } catch (error) {
     return res.status(401).json({

@@ -3,17 +3,30 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const User = require("../models/User");
 const { sendPasswordResetEmail } = require("./emailService");
+const mongoose = require("mongoose");
 
 // Helper function to generate tokens
-const generateTokens = (userId) => {
-  const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
+const generateTokens = (userId, sessionId) => {
+  const accessToken = jwt.sign(
+    {
+      id: userId,
+      sessionId: sessionId,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1h",
+    }
+  );
 
   const refreshToken = jwt.sign(
-    { id: userId },
+    {
+      id: userId,
+      sessionId: sessionId,
+    },
     process.env.JWT_REFRESH_SECRET,
-    { expiresIn: "7d" }
+    {
+      expiresIn: "7d",
+    }
   );
 
   return { accessToken, refreshToken };
@@ -47,7 +60,7 @@ const userService = {
   },
 
   // User signin
-  signin: async ({ email, password }) => {
+  signin: async ({ email, password, deviceInfo = "Unknown Device" }) => {
     const user = await User.findOne({ email });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -59,8 +72,16 @@ const userService = {
       };
     }
 
-    // If the user already has a refresh token, return the same tokens
-    if (user.refreshToken) {
+    // Check for existing valid session from the same device
+    const existingSession = user.sessions.find(
+      (session) => session.deviceInfo === deviceInfo && session.isValid
+    );
+
+    if (existingSession) {
+      // Update last active time for existing session
+      existingSession.lastActive = new Date();
+      await user.save();
+
       return {
         success: true,
         message:
@@ -72,17 +93,28 @@ const userService = {
             email: user.email,
           },
           tokens: {
-            accessToken: user.accessToken, // Return the existing access token
-            refreshToken: user.refreshToken, // Return the existing refresh token
+            accessToken: existingSession.accessToken,
+            refreshToken: existingSession.refreshToken,
           },
+          sessionId: existingSession._id,
+          isExistingSession: true,
         },
       };
     }
 
-    // Generate new tokens only if the user is signing in for the first time or refreshToken is missing
-    const { accessToken, refreshToken } = generateTokens(user._id);
-    user.accessToken = accessToken; // Store the access token
-    user.refreshToken = refreshToken;
+    // Create a new session if no existing session found
+    const sessionId = new mongoose.Types.ObjectId();
+    const { accessToken, refreshToken } = generateTokens(user._id, sessionId);
+
+    // Add new session
+    user.sessions.push({
+      _id: sessionId,
+      refreshToken,
+      accessToken, // Store the access token as well
+      deviceInfo,
+      lastActive: new Date(),
+      isValid: true,
+    });
     await user.save();
 
     return {
@@ -95,6 +127,8 @@ const userService = {
           email: user.email,
         },
         tokens: { accessToken, refreshToken },
+        sessionId: sessionId,
+        isExistingSession: false,
       },
     };
   },
@@ -116,7 +150,11 @@ const userService = {
       );
       const user = await User.findById(decoded.id);
 
-      if (!user || user.refreshToken !== oldRefreshToken) {
+      const session = user.sessions.find(
+        (s) => s.refreshToken === oldRefreshToken && s.isValid
+      );
+
+      if (!session) {
         return {
           success: false,
           message:
@@ -125,8 +163,12 @@ const userService = {
         };
       }
 
-      const { accessToken, refreshToken } = generateTokens(user._id);
-      user.refreshToken = refreshToken;
+      // Generate new access token only
+      const { accessToken } = generateTokens(user._id, session._id);
+
+      // Update the session with new access token
+      session.accessToken = accessToken;
+      session.lastActive = new Date();
       await user.save();
 
       return {
@@ -135,7 +177,10 @@ const userService = {
           "Your token has been refreshed. You can continue using our services without interruption.",
         statusCode: 200,
         data: {
-          tokens: { accessToken, refreshToken },
+          tokens: {
+            accessToken,
+            refreshToken: oldRefreshToken, // Keep the same refresh token
+          },
         },
       };
     } catch (error) {
@@ -149,32 +194,57 @@ const userService = {
   },
 
   // User logout
-  signout: async (userId) => {
+  signout: async (userId, sessionId) => {
     const user = await User.findById(userId);
+
     if (!user) {
       return {
         success: false,
         message:
-          "We couldn't find your account. Please sign up or check your details and try again.",
-        statusCode: 404,
+          "Unable to sign out as no active session was found. You might have already signed out or your session has expired.",
+        statusCode: 401,
       };
     }
 
-    if (!user.refreshToken) {
-      return {
-        success: false,
-        message: "You're not signed in. Please sign in first to continue.",
-        statusCode: 400,
-      };
+    // Invalidate specific session
+    const session = user.sessions.id(sessionId);
+    if (session) {
+      session.isValid = false;
+      session.accessToken = undefined;
+      session.refreshToken = undefined;
+      await user.save();
     }
-
-    user.accessToken = null;
-    user.refreshToken = null;
-    await user.save();
 
     return {
       success: true,
       message: "You've been signed out. Have a great day!",
+      statusCode: 200,
+    };
+  },
+
+  signoutAllDevices: async (userId) => {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return {
+        success: false,
+        message:
+          "Unable to sign out as no active sessions were found. You might have already signed out or your sessions have expired.",
+        statusCode: 401,
+      };
+    }
+
+    // Invalidate all sessions and clear their tokens
+    user.sessions.forEach((session) => {
+      session.isValid = false;
+      session.accessToken = undefined;
+      session.refreshToken = undefined;
+    });
+    await user.save();
+
+    return {
+      success: true,
+      message: "You've been signed out from all devices. Have a great day!",
       statusCode: 200,
     };
   },

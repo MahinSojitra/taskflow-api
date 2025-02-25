@@ -1,5 +1,6 @@
 const userService = require("../services/userService");
 const { AppError } = require("../middlewares/errorHandler");
+const { getDeviceInfo } = require("../utils/deviceDetector");
 
 const userController = {
   signup: async (req, res) => {
@@ -11,7 +12,18 @@ const userController = {
   },
 
   signin: async (req, res) => {
-    const result = await userService.signin(req.body);
+    const deviceInfo = getDeviceInfo(req.headers["user-agent"]);
+
+    const result = await userService.signin({
+      ...req.body,
+      deviceInfo,
+    });
+
+    // Add a custom header if it's an existing session
+    if (result.data?.isExistingSession) {
+      res.setHeader("X-Session-Status", "existing");
+    }
+
     res.status(result.statusCode).json({
       success: result.success,
       message: result.message,
@@ -64,10 +76,34 @@ const userController = {
   },
 
   signout: async (req, res) => {
-    const result = await userService.signout(req.user.id);
+    const result = await userService.signout(req.user.id, req.sessionId);
     res.status(result.statusCode).json({
       success: result.success,
       message: result.message,
+    });
+  },
+
+  signoutAllDevices: async (req, res) => {
+    const result = await userService.signoutAllDevices(req.user.id);
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+    });
+  },
+
+  getActiveSessions: async (req, res) => {
+    const activeSessions = req.user.sessions
+      .filter((session) => session.isValid)
+      .map((session) => ({
+        deviceInfo: session.deviceInfo,
+        lastActive: session.lastActive,
+        current: session._id.toString() === req.sessionId.toString(),
+      }));
+
+    res.status(200).json({
+      success: true,
+      message: "Your currently active sessions have been retrieved.",
+      data: activeSessions,
     });
   },
 
