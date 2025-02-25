@@ -2,12 +2,16 @@ const DeviceDetector = require("device-detector-js");
 const detector = new DeviceDetector();
 
 const getDefaultDeviceInfo = () => ({
-  name: "Unknown Device",
-  type: "Unknown",
-  os: { name: "Unknown", version: null },
-  client: { name: "Unknown", version: null, type: "Unknown" },
-  brand: null,
-  model: null,
+  name: "Generic Device",
+  type: "Unknown Device Type",
+  os: { name: "Unknown OS", version: "N/A" },
+  client: {
+    name: "Unknown Application",
+    version: "N/A",
+    type: "Unknown Client",
+  },
+  brand: "Unknown Brand",
+  model: "Unknown Model",
 });
 
 const getDeviceInfo = (userAgent) => {
@@ -18,40 +22,34 @@ const getDeviceInfo = (userAgent) => {
   try {
     const device = detector.parse(userAgent);
 
-    // Handle special cases like Postman
-    if (userAgent.includes("Postman")) {
-      return {
-        name: "Postman Desktop",
-        type: "API Client",
-        os: {
-          name: device.os?.name || "Unknown",
-          version: device.os?.version || null,
-        },
-        client: {
-          name: "Postman",
-          version: userAgent.split("/")[1] || "Unknown",
-          type: "API Testing Tool",
-        },
-        brand: "Postman",
-        model: "Desktop",
-      };
-    }
+    const brand =
+      device.device?.brand ||
+      device.vendor ||
+      extractBrand(userAgent) ||
+      "Unknown Brand";
+    const model =
+      device.device?.model || extractModel(userAgent) || "Unknown Model";
+    const osName = device.os?.name || extractOS(userAgent) || "Unknown OS";
+    const osVersion = device.os?.version || "N/A";
+    const clientName = device.client?.name || "Unknown Application";
+    const clientVersion = device.client?.version || "N/A";
+    const clientType = device.client?.type || "Unknown Client";
+    const deviceType = device.device?.type || "Unknown Device Type";
 
-    // For regular devices
     return {
-      name: formatDeviceName(device),
-      type: device.device?.type || "Desktop",
+      name: formatDeviceName(brand, model, osName),
+      type: deviceType,
       os: {
-        name: device.os?.name || "Unknown",
-        version: device.os?.version || null,
+        name: osName,
+        version: osVersion,
       },
       client: {
-        name: device.client?.name || "Unknown",
-        version: device.client?.version || null,
-        type: device.client?.type || "browser",
+        name: clientName,
+        version: clientVersion,
+        type: clientType,
       },
-      brand: device.device?.brand || null,
-      model: device.device?.model || null,
+      brand: brand,
+      model: model,
     };
   } catch (error) {
     console.error("Error detecting device:", error);
@@ -59,27 +57,26 @@ const getDeviceInfo = (userAgent) => {
   }
 };
 
-const formatDeviceName = (device) => {
-  if (!device) return "Unknown Device";
-
-  const brand = device.device?.brand;
-  const model = device.device?.model;
-  const clientName = device.client?.name;
-  const osName = device.os?.name;
-
-  if (brand && model) {
+const formatDeviceName = (brand, model, osName) => {
+  if (brand !== "Unknown Brand" && model !== "Unknown Model")
     return `${brand} ${model}`.trim();
-  }
+  if (osName !== "Unknown OS") return `${osName} Device`.trim();
+  return "Generic Device";
+};
 
-  if (clientName && osName) {
-    return `${clientName} on ${osName}`.trim();
-  }
+const extractBrand = (userAgent) => {
+  const match = userAgent.match(/\(([^;]+);/);
+  return match ? match[1].split(" ")[0] : "Unknown Brand";
+};
 
-  if (osName) {
-    return `${osName} Device`.trim();
-  }
+const extractModel = (userAgent) => {
+  const match = userAgent.match(/\(([^;]+);/);
+  return match ? match[1].split(" ").slice(1).join(" ") : "Unknown Model";
+};
 
-  return "Unknown Device";
+const extractOS = (userAgent) => {
+  const match = userAgent.match(/\(([^;]+);/);
+  return match ? match[1].split(";")[0] : "Unknown OS";
 };
 
 module.exports = { getDeviceInfo };
