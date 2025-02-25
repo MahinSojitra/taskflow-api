@@ -10,11 +10,10 @@ const protect = async (req, res, next) => {
 
     // More detailed token extraction and validation
     if (authHeader) {
-      // Check if it's a Bearer token
       if (authHeader.startsWith("Bearer ")) {
         token = authHeader.split(" ")[1];
       } else {
-        token = authHeader; // Try using the header value directly
+        token = authHeader;
       }
     }
 
@@ -63,12 +62,12 @@ const protect = async (req, res, next) => {
       // More specific JWT error handling
       if (jwtError.name === "JsonWebTokenError") {
         throw new AppError(
-          "Something's not right with your sign-in status. Please sign in again to continue.",
+          "Your access token appears to be invalid. Please sign in again to get a new token.",
           401
         );
       } else if (jwtError.name === "TokenExpiredError") {
         throw new AppError(
-          "Your session has timed out for your security. A quick sign-in will get you right back to what you were doing.",
+          "Your access token has expired. Please sign in again to refresh your access.",
           401
         );
       }
