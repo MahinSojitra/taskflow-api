@@ -52,7 +52,7 @@ router.put(
 );
 
 router.post(
-  "/refresh-token",
+  "/refresh",
   protect,
   authorize("user", "admin"),
   userController.refreshToken
