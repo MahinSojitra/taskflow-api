@@ -1,10 +1,14 @@
 const net = require("net");
+const requestIp = require("request-ip");
 
-const formatIpAddress = (ip) => {
-  if (!ip) return { type: "unknown" };
+const getClientIpDetails = (req) => {
+  // Get client IP using request-ip package
+  const clientIp = requestIp.getClientIp(req);
+
+  if (!clientIp) return { type: "unknown" };
 
   // Remove any prefix for IPv4-mapped IPv6 addresses
-  const cleanIP = ip.replace(/^::ffff:/, "");
+  const cleanIP = clientIp.replace(/^::ffff:/, "");
 
   // Check if it's a valid IPv4 address
   if (net.isIPv4(cleanIP)) {
@@ -16,10 +20,10 @@ const formatIpAddress = (ip) => {
   }
 
   // Check if it's a valid IPv6 address
-  if (net.isIPv6(ip)) {
+  if (net.isIPv6(clientIp)) {
     return {
       ipv4: null,
-      ipv6: ip,
+      ipv6: clientIp,
       type: "ipv6",
     };
   }
@@ -32,4 +36,4 @@ const formatIpAddress = (ip) => {
   };
 };
 
-module.exports = { formatIpAddress };
+module.exports = { getClientIpDetails };

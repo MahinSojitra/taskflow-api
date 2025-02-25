@@ -1,7 +1,7 @@
 const userService = require("../services/userService");
 const { AppError } = require("../middlewares/errorHandler");
 const { getDeviceInfo } = require("../utils/deviceDetector");
-const { formatIpAddress } = require("../utils/ipAddress");
+const { getClientIpDetails } = require("../utils/clientIpUtils");
 
 const userController = {
   signup: async (req, res) => {
@@ -14,8 +14,7 @@ const userController = {
 
   signin: async (req, res) => {
     const deviceInfo = getDeviceInfo(req.headers["user-agent"]);
-    const rawIp = req.ip || req.connection.remoteAddress;
-    const ipAddress = formatIpAddress(rawIp);
+    const ipAddress = getClientIpDetails(req);
 
     const result = await userService.signin({
       ...req.body,
