@@ -92,18 +92,15 @@ const userController = {
   },
 
   getActiveSessions: async (req, res) => {
-    const activeSessions = req.user.sessions
-      .filter((session) => session.isValid)
-      .map((session) => ({
-        deviceInfo: session.deviceInfo,
-        lastActive: session.lastActive,
-        current: session._id.toString() === req.sessionId.toString(),
-      }));
+    const result = await userService.getActiveSessions(
+      req.user.id,
+      req.sessionId
+    );
 
-    res.status(200).json({
-      success: true,
-      message: "Your currently active sessions have been retrieved.",
-      data: activeSessions,
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+      data: result.data,
     });
   },
 

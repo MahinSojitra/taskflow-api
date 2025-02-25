@@ -389,6 +389,53 @@ const userService = {
       data: users,
     };
   },
+
+  // Add this new method to userService
+  getActiveSessions: async (userId, currentSessionId) => {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return {
+        success: false,
+        message: "Unable to retrieve your sessions. Please sign in again.",
+        statusCode: 401,
+      };
+    }
+
+    const formatDate = (date) => {
+      const formatted = new Date(date).toLocaleString("en-US", {
+        weekday: "long", // "Wednesday"
+        month: "long", // "February"
+        day: "numeric", // "28"
+        year: "numeric", // "2024"
+        hour: "numeric", // "3"
+        minute: "numeric", // "45"
+        hour12: true, // true for AM/PM
+      });
+
+      // Split the date and time
+      const [dayPart, timePart] = formatted.split(",");
+      const datePart = dayPart + "," + formatted.split(",")[1]; // Includes the year
+
+      // Format with the separator
+      return `${datePart} | ${timePart.trim()}`;
+    };
+
+    const activeSessions = user.sessions
+      .filter((session) => session.isValid)
+      .map((session) => ({
+        deviceInfo: session.deviceInfo,
+        current: session._id === currentSessionId,
+        lastActive: formatDate(session.lastActive),
+      }));
+
+    return {
+      success: true,
+      message: "Your currently active sessions have been retrieved.",
+      statusCode: 200,
+      data: activeSessions,
+    };
+  },
 };
 
 module.exports = userService;
