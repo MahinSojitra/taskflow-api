@@ -414,7 +414,8 @@ const userService = {
         year: "numeric", // "2024"
         hour: "numeric", // "3"
         minute: "numeric", // "45"
-        hour12: true, // true for AM/PM
+        hour12: true, //
+        timeZone: "Asia/Kolkata",
       });
 
       // Split into components
