@@ -19,7 +19,7 @@ const generateTokens = (userId, sessionId) => {
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1h",
+      expiresIn: process.env.JWT_EXPIRE,
     }
   );
 
@@ -30,7 +30,7 @@ const generateTokens = (userId, sessionId) => {
     },
     process.env.JWT_REFRESH_SECRET,
     {
-      expiresIn: "7d",
+      expiresIn: process.env.JWT_REFRESH_EXPIRE,
     }
   );
 
