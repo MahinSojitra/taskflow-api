@@ -1,5 +1,6 @@
 const taskService = require("../services/taskService");
 const { AppError } = require("../middlewares/errorHandler");
+const { formatDate } = require("../utils/dateFormatter");
 
 // Task Controller
 const taskController = {
@@ -17,8 +18,8 @@ const taskController = {
             dueDate: task.dueDate,
             status: task.status,
             tags: task.tags,
-            createdAt: task.createdAt,
-            updatedAt: task.updatedAt,
+            createdAt: formatDate(task.createdAt),
+            updatedAt: formatDate(task.updatedAt),
           })),
           total: tasks.length,
         },
@@ -58,8 +59,8 @@ const taskController = {
           dueDate: task.dueDate,
           status: task.status,
           tags: task.tags,
-          createdAt: task.createdAt,
-          updatedAt: task.updatedAt,
+          createdAt: formatDate(task.createdAt),
+          updatedAt: formatDate(task.updatedAt),
         },
       });
     } catch (error) {
@@ -83,8 +84,8 @@ const taskController = {
           dueDate: task.dueDate,
           status: task.status,
           tags: task.tags,
-          createdAt: task.createdAt,
-          updatedAt: task.updatedAt,
+          createdAt: formatDate(task.createdAt),
+          updatedAt: formatDate(task.updatedAt),
         },
       });
     } catch (error) {
@@ -113,8 +114,8 @@ const taskController = {
           dueDate: task.dueDate,
           status: task.status,
           tags: task.tags,
-          createdAt: task.createdAt,
-          updatedAt: task.updatedAt,
+          createdAt: formatDate(task.createdAt),
+          updatedAt: formatDate(task.updatedAt),
         },
       });
     } catch (error) {
@@ -131,7 +132,7 @@ const taskController = {
       }
       res.status(200).json({
         success: true,
-        message: "Task deleted.",
+        message: "Task deleted. this action is irreversible.",
         data: {
           id: task._id,
           title: task.title,

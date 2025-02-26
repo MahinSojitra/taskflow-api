@@ -13,19 +13,14 @@ const userController = {
   },
 
   signin: async (req, res) => {
-    const deviceInfo = getDeviceInfo(req.headers["user-agent"]);
-    const ipAddress = getClientIpDetails(req);
+    const { device } = getDeviceInfo(req);
+    const ip = getClientIpDetails(req);
 
     const result = await userService.signin({
       ...req.body,
-      deviceInfo,
-      ipAddress,
+      device,
+      ip,
     });
-
-    // Add a custom header if it's an existing session
-    if (result.data?.isExistingSession) {
-      res.setHeader("X-Session-Status", "existing");
-    }
 
     res.status(result.statusCode).json({
       success: result.success,

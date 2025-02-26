@@ -13,28 +13,30 @@ const SessionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  deviceInfo: {
-    name: {
+  device: {
+    id: {
       type: String,
-      default: "Unknown Device",
+      required: true,
     },
-    type: {
+    platform: {
       type: String,
-      default: "Unknown",
+      default: "Unknown Platform",
+    },
+    isBot: {
+      type: Boolean,
+      default: false,
     },
     os: {
-      name: { type: String, default: "Unknown" },
-      version: { type: String, default: null },
+      name: { type: String, default: "Unknown OS" },
+      version: { type: String, default: "N/A" },
     },
     client: {
-      name: { type: String, default: "Unknown" },
-      version: { type: String, default: null },
+      name: { type: String, default: "Unknown Client" },
+      version: { type: String, default: "N/A" },
       type: { type: String, default: "Unknown" },
     },
-    brand: { type: String, default: null },
-    model: { type: String, default: null },
   },
-  ipAddress: {
+  ip: {
     ipv4: {
       type: String,
       default: null,
@@ -48,6 +50,19 @@ const SessionSchema = new mongoose.Schema({
       enum: ["ipv4", "ipv6", "unknown"],
       default: "unknown",
     },
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  expiresAt: {
+    type: Date,
+    required: true,
+  },
+  status: {
+    type: String,
+    enum: ["active", "expired", "revoked"],
+    default: "active",
   },
   lastActive: {
     type: Date,

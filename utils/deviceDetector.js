@@ -1,134 +1,143 @@
-const DeviceDetector = require("device-detector-js");
-const detector = new DeviceDetector();
+const useragent = require("express-useragent");
+const crypto = require("crypto");
+const { getClientIpDetails } = require("./clientIpUtils");
 
 const getDefaultDeviceInfo = () => ({
-  name: "Generic Device",
-  type: "Unknown Device Type",
-  os: { name: "Unknown OS", version: "N/A" },
-  client: {
-    name: "Unknown Application",
+  id: generateFallbackDeviceId(),
+  os: {
+    name: "Unknown OS",
     version: "N/A",
-    type: "Unknown Client",
   },
-  brand: "Unknown Brand",
-  model: "Unknown Model",
+  client: {
+    name: "Unknown Client",
+    version: "N/A",
+    type: "Unknown",
+  },
+  platform: "Unknown Platform",
+  isBot: false,
 });
 
-const getDeviceInfo = (userAgent) => {
+const generateDeviceId = (deviceInfo, ipDetails) => {
+  const uniqueString = JSON.stringify({
+    browser: deviceInfo.client.name,
+    browserVersion: deviceInfo.client.version,
+    os: deviceInfo.os.name,
+    osVersion: deviceInfo.os.version,
+    platform: deviceInfo.platform,
+    ip: ipDetails.ipv4 || ipDetails.ipv6,
+  });
+
+  return crypto.createHash("sha256").update(uniqueString).digest("hex");
+};
+
+const generateFallbackDeviceId = () => {
+  return crypto
+    .createHash("sha256")
+    .update(`fallback-${Date.now()}-${Math.random()}`)
+    .digest("hex");
+};
+
+const getDeviceInfo = (req) => {
+  const userAgent = req.headers["user-agent"];
+  const ipDetails = getClientIpDetails(req);
+
   if (!userAgent) {
-    return getDefaultDeviceInfo();
+    const defaultInfo = getDefaultDeviceInfo();
+    return {
+      device: {
+        ...defaultInfo,
+        ip: ipDetails,
+      },
+    };
   }
 
   try {
-    const device = detector.parse(userAgent);
+    const ua = useragent.parse(userAgent);
 
-    const brand =
-      device.device?.brand ||
-      device.vendor ||
-      extractBrand(userAgent) ||
-      "Generic Brand";
-    const model =
-      device.device?.model || extractModel(userAgent) || "Generic Model";
-    const osName = device.os?.name || extractOS(userAgent) || "Unknown OS";
-    const osVersion = device.os?.version || "N/A";
-    const clientName = device.client?.name || "Unknown Application";
-    const clientVersion = device.client?.version || "N/A";
-    const clientType = device.client?.type || "Unknown Client";
-    const deviceType = device.device?.type || "Unknown Device Type";
+    // Determine platform
+    let platform = "Desktop";
+    if (ua.isMobile) platform = "Mobile";
+    else if (ua.isTablet) platform = "Tablet";
 
-    return {
-      name: formatDeviceName(brand, model, osName),
-      type: deviceType,
-      os: {
-        name: osName,
-        version: osVersion,
+    // Get browser name and type
+    let browserName = ua.browser;
+    let clientType = "browser";
+
+    if (ua.isChrome) browserName = "Chrome";
+    else if (ua.isFirefox) browserName = "Firefox";
+    else if (ua.isSafari) browserName = "Safari";
+    else if (ua.isEdge) browserName = "Edge";
+    else if (ua.isIE) browserName = "Internet Explorer";
+    else if (ua.isOpera) browserName = "Opera";
+
+    // Get OS details
+    let osName = ua.os;
+    let osVersion = null;
+
+    if (ua.isMac) {
+      osName = "macOS";
+      osVersion = ua.platform.includes("10_")
+        ? `10.${ua.platform.split("10_")[1].split("_")[0]}`
+        : ua.platform;
+    } else if (ua.isWindows) {
+      osName = "Windows";
+      if (ua.platform.includes("Windows NT")) {
+        const ntVersion = {
+          "10.0": "10/11",
+          6.3: "8.1",
+          6.2: "8",
+          6.1: "7",
+          "6.0": "Vista",
+          5.2: "Server 2003/XP x64",
+          5.1: "XP",
+          "5.0": "2000",
+        };
+        osVersion =
+          ntVersion[ua.platform.split("Windows NT ")[1]] || ua.platform;
+      }
+    } else if (ua.isLinux) {
+      osName = "Linux";
+      if (ua.platform.includes("Android")) {
+        osName = "Android";
+        osVersion = ua.platform.split("Android ")[1]?.split(";")[0] || null;
+      }
+    } else if (ua.isiPad || ua.isiPhone || ua.isiPod) {
+      osName = "iOS";
+      const match = ua.platform.match(/OS (\d+_\d+)/);
+      osVersion = match ? match[1].replace("_", ".") : null;
+    }
+
+    const deviceInfo = {
+      device: {
+        os: {
+          name: osName,
+          version: osVersion,
+        },
+        client: {
+          name: browserName,
+          version: ua.version || null,
+          type: clientType,
+        },
+        platform: platform,
+        isBot: ua.isBot,
+        ip: ipDetails,
       },
-      client: {
-        name: clientName,
-        version: clientVersion,
-        type: clientType,
-      },
-      brand: brand,
-      model: model,
     };
+
+    // Generate and add device ID
+    deviceInfo.device.id = generateDeviceId(deviceInfo.device, ipDetails);
+
+    return deviceInfo;
   } catch (error) {
     console.error("Error detecting device:", error);
-    return getDefaultDeviceInfo();
+    const defaultInfo = getDefaultDeviceInfo();
+    return {
+      device: {
+        ...defaultInfo,
+        ip: ipDetails,
+      },
+    };
   }
-};
-
-const formatDeviceName = (brand, model, osName) => {
-  if (brand !== "Generic Brand" && model !== "Generic Model")
-    return `${brand} ${model}`.trim();
-  if (osName !== "Unknown OS") return `${osName} Device`.trim();
-  return "Generic Device";
-};
-
-const extractBrand = (userAgent) => {
-  const knownBrands = [
-    "Apple",
-    "Samsung",
-    "Google",
-    "OnePlus",
-    "Huawei",
-    "Xiaomi",
-    "Sony",
-    "LG",
-    "Nokia",
-    "Motorola",
-    "Asus",
-    "HTC",
-    "Lenovo",
-    "Realme",
-    "Oppo",
-    "Vivo",
-    "BlackBerry",
-    "ZTE",
-    "Alcatel",
-    "Meizu",
-    "Micromax",
-    "Panasonic",
-    "Sharp",
-    "TCL",
-    "Tecno",
-    "Infinix",
-    "Nothing",
-    "Honor",
-    "Fairphone",
-    "Gionee",
-    "Essential",
-    "Coolpad",
-    "LeEco",
-    "Blu",
-    "Poco",
-    "iQOO",
-    "Redmi",
-  ];
-  for (const brand of knownBrands) {
-    if (userAgent.includes(brand)) return brand;
-  }
-  return "Generic Brand";
-};
-
-const extractModel = (userAgent) => {
-  const match = userAgent.match(/\(([^;]+);/);
-  return match ? match[1].split(" ").slice(1).join(" ") : "Generic Model";
-};
-
-const extractOS = (userAgent) => {
-  const knownOS = [
-    "Windows",
-    "Mac OS",
-    "Android",
-    "iOS",
-    "Linux",
-    "Ubuntu",
-    "Chrome OS",
-  ];
-  for (const os of knownOS) {
-    if (userAgent.includes(os)) return os;
-  }
-  return "Unknown OS";
 };
 
 module.exports = { getDeviceInfo };

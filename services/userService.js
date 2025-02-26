@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const User = require("../models/User");
 const { sendPasswordResetEmail } = require("./emailService");
-const mongoose = require("mongoose");
 const { formatDate } = require("../utils/dateFormatter");
 
 const generateSessionId = () => {
@@ -37,6 +36,11 @@ const generateTokens = (userId, sessionId) => {
   return { accessToken, refreshToken };
 };
 
+// Add new helper function to calculate token expiration
+const calculateTokenExpiration = () => {
+  return new Date(Date.now() + parseInt(process.env.JWT_REFRESH_EXPIRE) * 1000);
+};
+
 const userService = {
   // User signup
   signup: async ({ email, password, name }) => {
@@ -65,7 +69,7 @@ const userService = {
   },
 
   // User signin
-  signin: async ({ email, password, deviceInfo, ipAddress }) => {
+  signin: async ({ email, password, device, ip }) => {
     const user = await User.findOne({ email });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -77,56 +81,57 @@ const userService = {
       };
     }
 
-    // Simplified device matching using the standardized device info and IP
+    // Simplified session matching using only device ID
     const existingSession = user.sessions.find(
       (session) =>
-        session.deviceInfo.name === deviceInfo.name &&
-        session.deviceInfo.client.name === deviceInfo.client.name &&
-        session.deviceInfo.os.name === deviceInfo.os.name &&
-        session.ipAddress.type === ipAddress.type &&
-        ((ipAddress.type === "ipv4" &&
-          session.ipAddress.ipv4 === ipAddress.ipv4) ||
-          (ipAddress.type === "ipv6" &&
-            session.ipAddress.ipv6 === ipAddress.ipv6)) &&
-        session.isValid
+        session.device.id === device.id &&
+        session.isValid &&
+        session.status === "active"
     );
 
     if (existingSession) {
-      // Update last active time for existing session
+      // Update last active time and check session expiration
       existingSession.lastActive = new Date(Date.now());
-      await user.save();
-
-      return {
-        success: true,
-        message:
-          "Looks like you're already signed in! No need to knock twice, your session is still active.",
-        statusCode: 200,
-        data: {
-          user: {
-            name: user.name,
-            email: user.email,
+      if (existingSession.expiresAt < new Date()) {
+        existingSession.status = "expired";
+        existingSession.isValid = false;
+      } else {
+        await user.save();
+        return {
+          success: true,
+          message:
+            "Looks like you're already signed in! No need to knock twice, your session is still active.",
+          statusCode: 200,
+          data: {
+            user: {
+              name: user.name,
+              email: user.email,
+            },
+            tokens: {
+              accessToken: existingSession.accessToken,
+              refreshToken: existingSession.refreshToken,
+            },
+            isExistingSession: true,
           },
-          tokens: {
-            accessToken: existingSession.accessToken,
-            refreshToken: existingSession.refreshToken,
-          },
-          isExistingSession: true,
-        },
-      };
+        };
+      }
     }
 
     // Create a new session with secure session ID
     const sessionId = generateSessionId();
     const { accessToken, refreshToken } = generateTokens(user._id, sessionId);
 
-    // Add new session with the deviceInfo and ipAddress
+    // Add new session with updated schema structure
     user.sessions.push({
       _id: sessionId,
       refreshToken,
       accessToken,
-      deviceInfo,
-      ipAddress,
+      device,
+      ip,
       lastActive: new Date(Date.now()),
+      createdAt: new Date(Date.now()),
+      expiresAt: calculateTokenExpiration(),
+      status: "active",
       isValid: true,
     });
     await user.save();
@@ -165,7 +170,11 @@ const userService = {
       const user = await User.findById(decoded.id);
 
       const session = user.sessions.find(
-        (s) => s.refreshToken === oldRefreshToken && s.isValid
+        (s) =>
+          s.refreshToken === oldRefreshToken &&
+          s.isValid &&
+          s.status === "active" &&
+          s.expiresAt > new Date()
       );
 
       if (!session) {
@@ -223,10 +232,9 @@ const userService = {
     // Find and invalidate specific session
     const session = user.sessions.find((s) => s._id === sessionId);
     if (session) {
-      // Keep the session but mark it as invalid and clear sensitive data
       session.isValid = false;
+      session.status = "revoked";
       session.lastActive = new Date(Date.now());
-      // Keep the tokens but invalidate them by setting to a constant value
       session.accessToken = "SIGNED_OUT";
       session.refreshToken = "SIGNED_OUT";
       await user.save();
@@ -251,9 +259,10 @@ const userService = {
       };
     }
 
-    // Invalidate all sessions but keep them for history
+    // Invalidate all sessions
     user.sessions.forEach((session) => {
       session.isValid = false;
+      session.status = "revoked";
       session.lastActive = new Date(Date.now());
       session.accessToken = "SIGNED_OUT";
       session.refreshToken = "SIGNED_OUT";
@@ -419,12 +428,15 @@ const userService = {
     }
 
     const activeSessions = user.sessions
-      .filter((session) => session.isValid)
+      .filter((session) => session.isValid && session.status === "active")
       .map((session) => ({
         deviceInfo: session.deviceInfo,
         ipAddress: session.ipAddress,
         current: session._id === currentSessionId,
         lastActive: formatDate(session.lastActive, clientTimeZone),
+        createdAt: formatDate(session.createdAt, clientTimeZone),
+        expiresAt: formatDate(session.expiresAt, clientTimeZone),
+        status: session.status,
       }));
 
     return {
