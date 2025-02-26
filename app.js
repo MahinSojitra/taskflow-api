@@ -127,34 +127,50 @@ app.use((req, res, next) => {
     return matrix[len1][len2];
   };
 
-  // Find the most similar route
-  let bestMatch = null;
-  let bestSimilarity = Infinity;
+  // Find routes with similar paths
+  const similarRoutes = availableRoutes
+    .map((route) => ({
+      ...route,
+      similarity: calculateSimilarity(requestedPath, route.path.toLowerCase()),
+      // Check if paths share common segments
+      commonSegments: requestedPath
+        .split("/")
+        .filter((segment) =>
+          route.path.toLowerCase().includes(segment.toLowerCase())
+        ).length,
+    }))
+    .sort((a, b) => {
+      // Prioritize routes with more common segments
+      if (a.commonSegments !== b.commonSegments) {
+        return b.commonSegments - a.commonSegments;
+      }
+      // Then by similarity score
+      return a.similarity - b.similarity;
+    });
 
-  availableRoutes.forEach((route) => {
-    const similarity = calculateSimilarity(
-      requestedPath,
-      route.path.toLowerCase()
-    );
-    if (similarity < bestSimilarity) {
-      bestSimilarity = similarity;
-      bestMatch = route;
-    }
-  });
+  const bestMatch = similarRoutes[0];
 
-  // If we found a similar route
-  if (bestMatch) {
+  if (
+    bestMatch &&
+    (bestMatch.similarity <= 3 || bestMatch.commonSegments >= 2)
+  ) {
     let message = `Route ${requestedMethod} ${requestedPath} not found`;
     let suggestion = "";
 
-    if (requestedMethod === bestMatch.method) {
+    // Check if it's just a method mismatch
+    if (bestMatch.path.toLowerCase() === requestedPath) {
+      suggestion = `Use ${bestMatch.method} instead of ${requestedMethod}`;
+    }
+    // Check if it's a very close path match (1-2 characters difference)
+    else if (bestMatch.similarity <= 2) {
       suggestion = `Did you mean ${bestMatch.method} ${bestMatch.path} ?`;
-    } else {
-      suggestion = `Use ${bestMatch.method} instead ${requestedMethod}`;
+    }
+    // For other similar paths
+    else {
+      suggestion = `The most similar endpoint is ${bestMatch.method} ${bestMatch.path} ?`;
     }
 
     return res.status(404).json({
-      success: false,
       message: message,
       suggestion: suggestion,
     });
@@ -162,7 +178,6 @@ app.use((req, res, next) => {
 
   // If no similar route found
   return res.status(404).json({
-    success: false,
     message: `Route ${requestedMethod} ${requestedPath} not found`,
     suggestion: "Check API documentation at https://taskflowapi.vercel.app/",
   });
