@@ -25,114 +25,103 @@ const taskRoutes = require("./routes/task");
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
 
-// Smart Route Suggestion System
+// ✅ 404 Handler - Improved Route Suggestion
 app.use((req, res, next) => {
   if (req.path === "/api") {
     return res.redirect("/");
   }
 
   const availableRoutes = [
-    { method: "POST", path: "/api/users/signup" },
-    { method: "POST", path: "/api/users/signin" },
-    { method: "GET", path: "/api/users/profile" },
-    { method: "PUT", path: "/api/users/profile" },
-    { method: "POST", path: "/api/users/forgot-password" },
-    { method: "POST", path: "/api/users/reset-password" },
-    { method: "POST", path: "/api/users/refresh" },
-    { method: "POST", path: "/api/users/signout" },
-    { method: "POST", path: "/api/users/signout-all" },
-    { method: "GET", path: "/api/users/sessions" },
-    { method: "GET", path: "/api/users/all" },
+    {
+      method: "POST",
+      path: "/api/users/signup",
+      description: "Create new account",
+    },
+    {
+      method: "POST",
+      path: "/api/users/signin",
+      description: "Sign in to account",
+    },
+    {
+      method: "GET",
+      path: "/api/users/profile",
+      description: "Get user profile",
+    },
+    {
+      method: "PUT",
+      path: "/api/users/profile",
+      description: "Update profile",
+    },
+    {
+      method: "POST",
+      path: "/api/users/signout",
+      description: "Sign out",
+    },
+    {
+      method: "POST",
+      path: "/api/users/forgot-password",
+      description: "Request password reset",
+    },
+    {
+      method: "POST",
+      path: "/api/users/reset-password",
+      description: "Reset password with OTP",
+    },
+    {
+      method: "POST",
+      path: "/api/users/refresh",
+      description: "Refresh access token",
+    },
+    {
+      method: "POST",
+      path: "/api/users/signout-all",
+      description: "Sign out from all devices",
+    },
+    {
+      method: "GET",
+      path: "/api/users/sessions",
+      description: "Get all active sessions",
+    },
+    {
+      method: "GET",
+      path: "/api/users/all",
+      description: "List all users (admin only)",
+    },
     // Task routes
-    { method: "GET", path: "/api/tasks" },
-    { method: "POST", path: "/api/tasks" },
-    { method: "GET", path: "/api/tasks/:id" },
-    { method: "PUT", path: "/api/tasks/:id" },
-    { method: "DELETE", path: "/api/tasks/:id" },
-    { method: "GET", path: "/api/tasks/all" },
+    { method: "GET", path: "/api/tasks", description: "List all tasks" },
+    { method: "POST", path: "/api/tasks", description: "Create new task" },
+    { method: "GET", path: "/api/tasks/:id", description: "Get task details" },
+    { method: "PUT", path: "/api/tasks/:id", description: "Update task" },
+    { method: "DELETE", path: "/api/tasks/:id", description: "Delete task" },
+    {
+      method: "GET",
+      path: "/api/tasks/all",
+      description: "List all tasks (admin only)",
+    },
   ];
 
-  const requestedPath = req.path.toLowerCase();
-  const requestedMethod = req.method;
-
-  // Exact match check
-  const exactRoute = availableRoutes.find(
-    (r) =>
-      r.path.toLowerCase() === requestedPath && r.method === requestedMethod
+  const requestedRoute = `${req.method} ${req.path}`;
+  const similarRoute = availableRoutes.find(
+    (r) => r.path.toLowerCase() === req.path.toLowerCase()
   );
 
-  if (exactRoute) {
-    next();
-    return;
-  }
-
-  // Find similar routes
-  const similarRoutes = availableRoutes.filter((r) => {
-    const routePath = r.path.toLowerCase();
-    const pathSegments = requestedPath.split("/");
-    const routeSegments = routePath.split("/");
-
-    const similarity =
-      routeSegments.filter((seg) =>
-        pathSegments.some(
-          (pathSeg) => pathSeg.includes(seg) || seg.includes(pathSeg)
-        )
-      ).length / Math.max(routeSegments.length, pathSegments.length);
-
-    return similarity > 0.5;
-  });
-
-  if (similarRoutes.length > 0) {
-    // Check method
-    const samePathDifferentMethod = similarRoutes.find(
-      (r) => r.path.toLowerCase() === requestedPath
-    );
-    if (samePathDifferentMethod) {
-      return res.status(405).json({
-        success: false,
-        message: `Invalid method for this endpoint. Use ${samePathDifferentMethod.method} instead of ${requestedMethod}`,
-        correct: {
-          method: samePathDifferentMethod.method,
-          path: samePathDifferentMethod.path,
-        },
-      });
-    }
-
-    // Group similar endpoints
-    const suggestions = similarRoutes.reduce((acc, route) => {
-      const category = route.path.split("/")[3];
-      if (!acc[category]) acc[category] = [];
-      acc[category].push({
-        method: route.method,
-        path: route.path,
-      });
-      return acc;
-    }, {});
-
+  if (!similarRoute) {
     return res.status(404).json({
       success: false,
-      message: `Endpoint not found: ${requestedMethod} ${req.path}`,
-      suggestions,
+      message: `Route ${requestedRoute} not found`,
+      suggestion: "Check API documentation at https://taskflowapi.vercel.app/",
     });
   }
 
-  // List all available endpoints
-  return res.status(404).json({
-    success: false,
-    message: `Endpoint not found: ${requestedMethod} ${req.path}`,
-    help: {
-      message: "Here are all available endpoints.",
-      endpoints: availableRoutes.reduce((acc, route) => {
-        const category = route.path.split("/")[3];
-        if (!acc[category]) acc[category] = [];
-        acc[category].push({
-          method: route.method,
-          path: route.path,
-        });
-        return acc;
-      }, {}),
-    },
-  });
+  if (req.method !== similarRoute.method) {
+    return res.status(405).json({
+      success: false,
+      message: `Method ${req.method} not allowed for ${req.path}`,
+      suggestion: `Use ${similarRoute.method} instead`,
+    });
+  }
+
+  next();
 });
 
 // ✅ Global Error Handler
