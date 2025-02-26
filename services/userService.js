@@ -430,13 +430,13 @@ const userService = {
     const activeSessions = user.sessions
       .filter((session) => session.isValid && session.status === "active")
       .map((session) => ({
-        deviceInfo: session.deviceInfo,
-        ipAddress: session.ipAddress,
-        current: session._id === currentSessionId,
+        device: session.device,
+        ip: session.ip,
         lastActive: formatDate(session.lastActive, clientTimeZone),
         createdAt: formatDate(session.createdAt, clientTimeZone),
         expiresAt: formatDate(session.expiresAt, clientTimeZone),
         status: session.status,
+        current: session._id === currentSessionId,
       }));
 
     return {

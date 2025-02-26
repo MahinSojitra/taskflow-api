@@ -104,7 +104,7 @@ const userController = {
     res.status(result.statusCode).json({
       success: result.success,
       message: result.message,
-      data: { sessions: result.data },
+      data: { sessions: result.data, count: result.data.length },
     });
   },
 
