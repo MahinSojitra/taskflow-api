@@ -36,9 +36,24 @@ const generateTokens = (userId, sessionId) => {
   return { accessToken, refreshToken };
 };
 
-// Add new helper function to calculate token expiration
+// Fix token expiration calculation
 const calculateTokenExpiration = () => {
-  return new Date(Date.now() + parseInt(process.env.JWT_REFRESH_EXPIRE) * 1000);
+  const expireString = process.env.JWT_REFRESH_EXPIRE;
+  let milliseconds;
+
+  if (expireString.endsWith("d")) {
+    milliseconds = parseInt(expireString) * 24 * 60 * 60 * 1000;
+  } else if (expireString.endsWith("h")) {
+    milliseconds = parseInt(expireString) * 60 * 60 * 1000;
+  } else if (expireString.endsWith("m")) {
+    milliseconds = parseInt(expireString) * 60 * 1000;
+  } else if (expireString.endsWith("s")) {
+    milliseconds = parseInt(expireString) * 1000;
+  } else {
+    milliseconds = parseInt(expireString);
+  }
+
+  return new Date(Date.now() + milliseconds);
 };
 
 const userService = {
@@ -433,8 +448,6 @@ const userService = {
         device: session.device,
         ip: session.ip,
         lastActive: formatDate(session.lastActive, clientTimeZone),
-        createdAt: formatDate(session.createdAt, clientTimeZone),
-        expiresAt: formatDate(session.expiresAt, clientTimeZone),
         status: session.status,
         current: session._id === currentSessionId,
       }));
