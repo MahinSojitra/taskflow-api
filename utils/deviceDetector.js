@@ -60,7 +60,7 @@ const getDeviceInfo = (req) => {
     else if (ua.isTablet) platform = "Tablet";
 
     // Get browser name and type
-    let browserName = ua.browser;
+    let browserName = ua.browser || "Unknown Client";
     let clientType = "browser";
 
     if (ua.isChrome) browserName = "Chrome";
@@ -71,8 +71,8 @@ const getDeviceInfo = (req) => {
     else if (ua.isOpera) browserName = "Opera";
 
     // Get OS details
-    let osName = ua.os;
-    let osVersion = null;
+    let osName = ua.os || "Unknown OS";
+    let osVersion = "N/A";
 
     if (ua.isMac) {
       osName = "macOS";
@@ -99,27 +99,27 @@ const getDeviceInfo = (req) => {
       osName = "Linux";
       if (ua.platform.includes("Android")) {
         osName = "Android";
-        osVersion = ua.platform.split("Android ")[1]?.split(";")[0] || null;
+        osVersion = ua.platform.split("Android ")[1]?.split(";")[0] || "N/A";
       }
     } else if (ua.isiPad || ua.isiPhone || ua.isiPod) {
       osName = "iOS";
       const match = ua.platform.match(/OS (\d+_\d+)/);
-      osVersion = match ? match[1].replace("_", ".") : null;
+      osVersion = match ? match[1].replace("_", ".") : "N/A";
     }
 
     const deviceInfo = {
       device: {
         os: {
-          name: osName,
-          version: osVersion,
+          name: String(osName),
+          version: String(osVersion || "N/A"),
         },
         client: {
-          name: browserName,
-          version: ua.version || null,
-          type: clientType,
+          name: String(browserName),
+          version: String(ua.version || "N/A"),
+          type: String(clientType),
         },
-        platform: platform,
-        isBot: ua.isBot,
+        platform: String(platform),
+        isBot: Boolean(ua.isBot),
         ip: ipDetails,
       },
     };
