@@ -25,7 +25,7 @@ const taskRoutes = require("./routes/task");
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
 
-// AI-Powered Smart Route Suggestion
+// Smart Route Suggestion System
 app.use((req, res, next) => {
   if (req.path === "/api") {
     return res.redirect("/");
@@ -55,7 +55,7 @@ app.use((req, res, next) => {
   const requestedPath = req.path.toLowerCase();
   const requestedMethod = req.method;
 
-  // Find exact match
+  // Exact match check
   const exactRoute = availableRoutes.find(
     (r) =>
       r.path.toLowerCase() === requestedPath && r.method === requestedMethod
@@ -66,7 +66,7 @@ app.use((req, res, next) => {
     return;
   }
 
-  // Intelligent route matching
+  // Find similar routes
   const similarRoutes = availableRoutes.filter((r) => {
     const routePath = r.path.toLowerCase();
     const pathSegments = requestedPath.split("/");
@@ -83,23 +83,23 @@ app.use((req, res, next) => {
   });
 
   if (similarRoutes.length > 0) {
-    // Method validation
+    // Check method
     const samePathDifferentMethod = similarRoutes.find(
       (r) => r.path.toLowerCase() === requestedPath
     );
     if (samePathDifferentMethod) {
       return res.status(405).json({
         success: false,
-        message: `AI detected incorrect method. Use ${samePathDifferentMethod.method} instead of ${requestedMethod}`,
-        smartSuggestion: {
+        message: `Invalid method for this endpoint. Use ${samePathDifferentMethod.method} instead of ${requestedMethod}`,
+        correct: {
           method: samePathDifferentMethod.method,
           path: samePathDifferentMethod.path,
         },
       });
     }
 
-    // Smart categorization
-    const groupedEndpoints = similarRoutes.reduce((acc, route) => {
+    // Group similar endpoints
+    const suggestions = similarRoutes.reduce((acc, route) => {
       const category = route.path.split("/")[3];
       if (!acc[category]) acc[category] = [];
       acc[category].push({
@@ -111,17 +111,17 @@ app.use((req, res, next) => {
 
     return res.status(404).json({
       success: false,
-      message: `AI Analysis: Unable to locate ${requestedMethod} ${req.path}`,
-      intelligentSuggestions: groupedEndpoints,
+      message: `Endpoint not found: ${requestedMethod} ${req.path}`,
+      suggestions,
     });
   }
 
-  // Comprehensive endpoint listing
+  // List all available endpoints
   return res.status(404).json({
     success: false,
-    message: `AI Assistant: Endpoint not found ${requestedMethod} ${req.path}`,
-    aiAnalysis: {
-      suggestion: "Available endpoints detected:",
+    message: `Endpoint not found: ${requestedMethod} ${req.path}`,
+    help: {
+      message: "Here are all available endpoints.",
       endpoints: availableRoutes.reduce((acc, route) => {
         const category = route.path.split("/")[3];
         if (!acc[category]) acc[category] = [];
