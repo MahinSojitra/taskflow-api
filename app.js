@@ -100,28 +100,72 @@ app.use((req, res, next) => {
     },
   ];
 
-  const requestedRoute = `${req.method} ${req.path}`;
-  const similarRoute = availableRoutes.find(
-    (r) => r.path.toLowerCase() === req.path.toLowerCase()
-  );
+  const requestedPath = req.path.toLowerCase();
+  const requestedMethod = req.method;
 
-  if (!similarRoute) {
+  // Function to calculate similarity between two strings
+  const calculateSimilarity = (str1, str2) => {
+    const len1 = str1.length;
+    const len2 = str2.length;
+    const matrix = Array(len1 + 1)
+      .fill()
+      .map(() => Array(len2 + 1).fill(0));
+
+    for (let i = 0; i <= len1; i++) matrix[i][0] = i;
+    for (let j = 0; j <= len2; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= len1; i++) {
+      for (let j = 1; j <= len2; j++) {
+        const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j - 1] + cost
+        );
+      }
+    }
+    return matrix[len1][len2];
+  };
+
+  // Find the most similar route
+  let bestMatch = null;
+  let bestSimilarity = Infinity;
+
+  availableRoutes.forEach((route) => {
+    const similarity = calculateSimilarity(
+      requestedPath,
+      route.path.toLowerCase()
+    );
+    if (similarity < bestSimilarity) {
+      bestSimilarity = similarity;
+      bestMatch = route;
+    }
+  });
+
+  // If we found a similar route
+  if (bestMatch) {
+    let message = `Route ${requestedMethod} ${requestedPath} not found`;
+    let suggestion = "";
+
+    if (requestedMethod === bestMatch.method) {
+      suggestion = `Did you mean ${bestMatch.method} ${bestMatch.path} ?`;
+    } else {
+      suggestion = `Use ${bestMatch.method} instead ${requestedMethod}`;
+    }
+
     return res.status(404).json({
       success: false,
-      message: `Route ${requestedRoute} not found`,
-      suggestion: "Check API documentation at https://taskflowapi.vercel.app/",
+      message: message,
+      suggestion: suggestion,
     });
   }
 
-  if (req.method !== similarRoute.method) {
-    return res.status(405).json({
-      success: false,
-      message: `Method ${req.method} not allowed for ${req.path}`,
-      suggestion: `Use ${similarRoute.method} instead`,
-    });
-  }
-
-  next();
+  // If no similar route found
+  return res.status(404).json({
+    success: false,
+    message: `Route ${requestedMethod} ${requestedPath} not found`,
+    suggestion: "Check API documentation at https://taskflowapi.vercel.app/",
+  });
 });
 
 // ✅ Global Error Handler
