@@ -104,8 +104,7 @@
                 <div class="px-3 pt-2">
                   <code class="text-muted text-start d-block small mb-2">
                     <i class="bi bi-arrow-right me-2"></i>
-                    Create a new user account with name, email, and password. No
-                    authentication required.
+                    Create a new user account with name, email, and password.
                   </code>
                 </div>
               </div>
@@ -265,8 +264,7 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Get current user's profile information. Requires
-                        authentication.
+                        Get current user's profile information.
                       </code>
                     </div>
                   </div>
@@ -316,8 +314,7 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Update user profile information. Requires
-                        authentication.
+                        Update user profile information.
                       </code>
                     </div>
                   </div>
@@ -367,8 +364,7 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Request a password reset link. Sends reset instructions
-                        to registered email.
+                        Request a password reset.
                       </code>
                     </div>
                   </div>
@@ -418,7 +414,7 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Reset password using the token received via email.
+                        Reset password using the OTP received via email.
                       </code>
                     </div>
                   </div>
@@ -440,7 +436,7 @@
                         data-bs-title="Information"
                         data-bs-html="true"
                         data-bs-content="
-                          <p class='mb-0'>Get a new access token using the refresh token. <br /><br /> <span class='fw-medium'>Authentication required.</span></p>
+                          <p class='mb-0'>Taking a break? We'll securely wrap up your session and keep everything safe until you return. It's like putting a bookmark in your favorite book! <br /><br /> <span class='fw-medium'>Authentication required.</span></p>
                         "
                       ></i>
                     </div>
@@ -468,14 +464,63 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Get a new access token using the refresh token. Requires
-                        authentication.
+                        Get a new access token using the refresh token.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Get Active Sessions Endpoint -->
+                  <div class="endpoint-container mb-4 w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-primary me-2 px-2 py-1"
+                        >GET</span
+                      >
+                      <span class="text-muted small">Active Sessions</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>View all your active sessions across different devices. See device details, IP addresses, and last active timestamps for each session. <br /><br /> <span class='fw-medium'>Authentication required.</span></p>
+                        "
+                      ></i>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/users/sessions"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/users/sessions
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/sessions')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Get all active sessions for the current user.
                       </code>
                     </div>
                   </div>
 
                   <!-- Sign Out Endpoint -->
-                  <div class="endpoint-container w-100">
+                  <div class="endpoint-container mb-4 w-100">
                     <div
                       class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
                     >
@@ -491,7 +536,7 @@
                         data-bs-title="Information"
                         data-bs-html="true"
                         data-bs-content="
-                          <p class='mb-0'>Sign out the current user and invalidate tokens. <br /><br /> <span class='fw-medium'>Authentication required.</span></p>
+                          <p class='mb-0'>Taking a break? We'll securely wrap up your session and keep everything safe until you return. <br /><br /> <span class='fw-medium'>Authentication required.</span></p>
                         "
                       ></i>
                     </div>
@@ -519,8 +564,57 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Sign out the current user and invalidate tokens.
-                        Requires authentication.
+                        Sign out the current user session.
+                      </code>
+                    </div>
+                  </div>
+
+                  <!-- Sign Out All Devices Endpoint -->
+                  <div class="endpoint-container w-100">
+                    <div
+                      class="d-flex align-items-center justify-content-between endpoint-header px-3 py-2 border-bottom"
+                    >
+                      <span class="badge text-bg-success me-2 px-2 py-1"
+                        >POST</span
+                      >
+                      <span class="text-muted small">Sign Out All Devices</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>Want to close all your sessions at once? Think of this as your emergency exit button - it instantly logs you out from every device. Perfect for when you spot any suspicious activity or just want a fresh start! <br /><br /> <span class='fw-medium'>Authentication required.</span></p>
+                        "
+                      ></i>
+                    </div>
+                    <div
+                      class="endpoint-url d-flex align-items-center px-3 py-2"
+                    >
+                      <code class="flex-grow-1 text-break text-start">
+                        <a
+                          href="api/users/signout/all"
+                          class="text-decoration-none endpoint-link"
+                        >
+                          https://taskflowapi.vercel.app/api/users/signout/all
+                        </a>
+                      </code>
+                      <button
+                        class="btn btn-sm btn-copy ms-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Copy to clipboard"
+                        onclick="copyToClipboard(this, 'https://taskflowapi.vercel.app/api/users/signout/all')"
+                      >
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <div class="px-3 pt-2">
+                      <code class="text-muted text-start d-block small mb-2">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Sign out from all devices including current device.
                       </code>
                     </div>
                   </div>
@@ -624,8 +718,7 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Create a new task with title, description, priority, and
-                        due date. Requires authentication.
+                        Create a new task.
                       </code>
                     </div>
                   </div>
@@ -675,8 +768,7 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Get details of a specific task by ID. Requires
-                        authentication.
+                        Get details of a specific task by ID.
                       </code>
                     </div>
                   </div>
@@ -726,8 +818,7 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Update task details including title, description,
-                        status, and priority. Requires authentication.
+                        Update task details.
                       </code>
                     </div>
                   </div>
@@ -778,7 +869,6 @@
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
                         Permanently delete a task. This action cannot be undone.
-                        Requires authentication.
                       </code>
                     </div>
                   </div>
@@ -793,6 +883,17 @@
                         >GET</span
                       >
                       <span class="text-muted small">Get All Users</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>Access the complete user directory with essential details like names and emails (don't worry, sensitive data like passwords are never exposed). Perfect for administrative oversight and user management. Remember, with great power comes great responsibility! <br /><br /> <span class='fw-medium'>Admin access required.</span></p>
+                        "
+                      ></i>
                     </div>
                     <div
                       class="endpoint-url d-flex align-items-center px-3 py-2"
@@ -818,8 +919,7 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Get a list of all registered users. Requires admin
-                        authentication.
+                        Get a list of all registered users.
                       </code>
                     </div>
                   </div>
@@ -832,6 +932,17 @@
                         >GET</span
                       >
                       <span class="text-muted small">Get All Users Tasks</span>
+                      <i
+                        class="bi bi-info-circle-fill text-success ms-2"
+                        data-bs-toggle="popover"
+                        data-bs-placement="left"
+                        data-bs-trigger="click"
+                        data-bs-title="Information"
+                        data-bs-html="true"
+                        data-bs-content="
+                          <p class='mb-0'>Get a bird's-eye view of all tasks across the platform. Monitor task activity, track usage patterns, and ensure everything's running smoothly. It's like having a control tower for all task operations! <br /><br /> <span class='fw-medium'>Admin access required.</span></p>
+                        "
+                      ></i>
                     </div>
                     <div
                       class="endpoint-url d-flex align-items-center px-3 py-2"
@@ -857,8 +968,7 @@
                     <div class="px-3 pt-2">
                       <code class="text-muted text-start d-block small mb-2">
                         <i class="bi bi-arrow-right me-2"></i>
-                        Get all tasks from all users. Requires admin
-                        authentication.
+                        Get all tasks of all users.
                       </code>
                     </div>
                   </div>

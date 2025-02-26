@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const User = require("../models/User");
 const { sendPasswordResetEmail } = require("./emailService");
 const mongoose = require("mongoose");
+const { formatDate } = require("../utils/dateFormatter");
 
 const generateSessionId = () => {
   return crypto.randomBytes(32).toString("hex");
@@ -384,17 +385,28 @@ const userService = {
   },
 
   getAllUsers: async () => {
-    const users = await User.find().select("-password -refreshToken");
+    const users = await User.find({ role: "user" }).select(
+      "-password -refreshToken"
+    );
     return {
       success: true,
       message:
-        "User's data has been retrieved. Manage responsibly to safeguard sensitive user information.",
+        "Here's your admin dashboard view of all users! Remember to handle user data with care - it's like having the keys to everyone's digital lockers.",
       statusCode: 200,
-      data: users,
+      data: {
+        users: users.map((user) => ({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          isVerified: user.isVerified,
+          createdAt: formatDate(user.createdAt),
+          updatedAt: formatDate(user.updatedAt),
+        })),
+        total: users.length,
+      },
     };
   },
 
-  // Add this new method to userService
   getActiveSessions: async (userId, currentSessionId, clientTimeZone) => {
     const user = await User.findById(userId);
 
@@ -405,37 +417,6 @@ const userService = {
         statusCode: 401,
       };
     }
-
-    const formatDate = (date, timeZone = "Asia/Kolkata") => {
-      try {
-        const options = {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-          hour12: true,
-          timeZone,
-        };
-
-        const formatted = new Date(date).toLocaleString("en-US", options);
-
-        // Split into components
-        const [weekdayAndDate, timeStr] = formatted.split(" at ");
-        const [weekday, month, day, year] = weekdayAndDate
-          .split(/[,\s]+/)
-          .filter(Boolean);
-        const time = timeStr ? timeStr.trim() : "";
-
-        // Reconstruct in desired format
-        return `${weekday}, ${month} ${day}, ${year} | ${time}`;
-      } catch (error) {
-        // Fallback to IST if timezone is invalid
-        console.error(`Invalid timezone: ${timeZone}, falling back to IST`);
-        return formatDate(date, "Asia/Kolkata");
-      }
-    };
 
     const activeSessions = user.sessions
       .filter((session) => session.isValid)
