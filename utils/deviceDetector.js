@@ -53,22 +53,38 @@ const getDeviceInfo = (req) => {
 
   try {
     const ua = useragent.parse(userAgent);
+    const userAgentLower = userAgent.toLowerCase();
+
+    // Determine if it's an API client
+    const isApiClient =
+      userAgentLower.includes("postman") ||
+      userAgentLower.includes("insomnia") ||
+      userAgentLower.includes("curl");
 
     // Determine platform
     let platform = "Desktop";
     if (ua.isMobile) platform = "Mobile";
     else if (ua.isTablet) platform = "Tablet";
+    else if (isApiClient) platform = "API Client";
 
     // Get browser name and type
     let browserName = ua.browser || "Unknown Client";
     let clientType = "browser";
 
-    if (ua.isChrome) browserName = "Chrome";
-    else if (ua.isFirefox) browserName = "Firefox";
-    else if (ua.isSafari) browserName = "Safari";
-    else if (ua.isEdge) browserName = "Edge";
-    else if (ua.isIE) browserName = "Internet Explorer";
-    else if (ua.isOpera) browserName = "Opera";
+    // Handle API clients
+    if (isApiClient) {
+      clientType = "api_client";
+      if (userAgentLower.includes("postman")) browserName = "Postman";
+      else if (userAgentLower.includes("insomnia")) browserName = "Insomnia";
+      else if (userAgentLower.includes("curl")) browserName = "cURL";
+    } else {
+      if (ua.isChrome) browserName = "Chrome";
+      else if (ua.isFirefox) browserName = "Firefox";
+      else if (ua.isSafari) browserName = "Safari";
+      else if (ua.isEdge) browserName = "Edge";
+      else if (ua.isIE) browserName = "Internet Explorer";
+      else if (ua.isOpera) browserName = "Opera";
+    }
 
     // Get OS details
     let osName = ua.os || "Unknown OS";
@@ -119,7 +135,7 @@ const getDeviceInfo = (req) => {
           type: String(clientType),
         },
         platform: String(platform),
-        isBot: Boolean(ua.isBot),
+        isBot: Boolean(ua.isBot && !isApiClient), // API clients are not bots
         ip: ipDetails,
       },
     };
