@@ -159,7 +159,7 @@ app.use((req, res, next) => {
 
     // Check if it's just a method mismatch
     if (bestMatch.path.toLowerCase() === requestedPath) {
-      suggestion = `Use ${bestMatch.method} instead of ${requestedMethod}`;
+      suggestion = `Use ${bestMatch.method} instead of ${requestedMethod}.`;
     }
     // Check if it's a very close path match (1-2 characters difference)
     else if (bestMatch.similarity <= 2) {
@@ -167,7 +167,7 @@ app.use((req, res, next) => {
     }
     // For other similar paths
     else {
-      suggestion = `The most similar endpoint is ${bestMatch.method} ${bestMatch.path} ?`;
+      suggestion = `Did you mean ${bestMatch.method} ${bestMatch.path} ?`;
     }
 
     return res.status(404).json({
