@@ -117,12 +117,14 @@ const taskSchemas = {
         "any.required": "Description is required",
       }),
     dueDate: Joi.date()
+      .required()
       .min("now")
       .max(new Date(Date.now() + 63072000000))
       .messages({
         "date.base": "Please provide a valid date",
         "date.min": "Due date cannot be in the past",
         "date.max": "Due date cannot be more than 2 years in the future",
+        "any.required": "Due date is required",
       }),
     tags: Joi.array()
       .items(Joi.string())
@@ -148,11 +150,13 @@ const taskSchemas = {
           "All tags must start with # and contain only letters and numbers",
       }),
     status: Joi.string()
+      .required()
       .valid("pending", "active", "completed", "cancelled")
       .messages({
         "string.empty": "Status cannot be empty",
         "any.only":
           "Status must be either 'pending', 'active', 'completed', or 'cancelled'",
+        "any.required": "Status is required",
       }),
   }),
 
@@ -178,12 +182,14 @@ const taskSchemas = {
         "any.required": "Description is required",
       }),
     dueDate: Joi.date()
+      .required()
       .min("now")
       .max(new Date(Date.now() + 63072000000))
       .messages({
         "date.base": "Please provide a valid date",
         "date.min": "Due date cannot be in the past",
         "date.max": "Due date cannot be more than 2 years in the future",
+        "any.required": "Due date is required",
       }),
     tags: Joi.array()
       .items(Joi.string())
@@ -207,11 +213,13 @@ const taskSchemas = {
           "All tags must start with # and contain only letters and numbers",
       }),
     status: Joi.string()
+      .required()
       .valid("pending", "active", "completed", "cancelled")
       .messages({
         "string.empty": "Status cannot be empty",
         "any.only":
           "Status must be either 'pending', 'active', 'completed', or 'cancelled'",
+        "any.required": "Status is required",
       }),
   }),
 };
