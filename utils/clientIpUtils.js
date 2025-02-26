@@ -1,38 +1,28 @@
 const net = require("net");
-const requestIp = require("request-ip");
 
 const getClientIpDetails = (req) => {
-  // Get client IP using request-ip package
-  const clientIp = requestIp.getClientIp(req);
+  // Get IP from various possible headers or connection
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.headers["x-real-ip"] ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    "Unknown";
 
-  if (!clientIp) return { type: "unknown" };
+  // Clean the IP address
+  const cleanIp = ip.replace(/^::ffff:/, "");
 
-  // Remove any prefix for IPv4-mapped IPv6 addresses
-  const cleanIP = clientIp.replace(/^::ffff:/, "");
+  // Determine IP type
+  const ipType =
+    net.isIP(cleanIp) === 4
+      ? "ipv4"
+      : net.isIP(cleanIp) === 6
+      ? "ipv6"
+      : "unknown";
 
-  // Check if it's a valid IPv4 address
-  if (net.isIPv4(cleanIP)) {
-    return {
-      ipv4: cleanIP,
-      ipv6: null,
-      type: "ipv4",
-    };
-  }
-
-  // Check if it's a valid IPv6 address
-  if (net.isIPv6(clientIp)) {
-    return {
-      ipv4: null,
-      ipv6: clientIp,
-      type: "ipv6",
-    };
-  }
-
-  // Return unknown if neither IPv4 nor IPv6
   return {
-    ipv4: null,
-    ipv6: null,
-    type: "unknown",
+    address: cleanIp,
+    type: ipType,
   };
 };
 

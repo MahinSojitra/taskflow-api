@@ -24,7 +24,7 @@ const generateDeviceId = (deviceInfo, ipDetails) => {
     os: deviceInfo.os.name,
     osVersion: deviceInfo.os.version,
     platform: deviceInfo.platform,
-    ip: ipDetails.ipv4 || ipDetails.ipv6,
+    ip: ipDetails.address,
   });
 
   return crypto.createHash("sha256").update(uniqueString).digest("hex");

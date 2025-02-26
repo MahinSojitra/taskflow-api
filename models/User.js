@@ -37,18 +37,14 @@ const SessionSchema = new mongoose.Schema({
     },
   },
   ip: {
-    ipv4: {
+    address: {
       type: String,
-      default: null,
-    },
-    ipv6: {
-      type: String,
-      default: null,
+      required: true,
     },
     type: {
       type: String,
-      enum: ["ipv4", "ipv6", "unknown"],
-      default: "unknown",
+      enum: ["ipv4", "ipv6"],
+      required: true,
     },
   },
   createdAt: {
