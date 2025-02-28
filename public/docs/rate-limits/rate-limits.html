@@ -19,9 +19,7 @@
     />
     <link rel="stylesheet" href="rate-limits.css" />
   </head>
-  <body
-    class="d-flex flex-column justify-content-center align-items-center min-vh-100 text-center px-3 py-4 theme-pending"
-  >
+  <body class="container-fluid px-3 py-4">
     <!-- Main Content Wrapper -->
     <div class="d-flex flex-column min-vh-100">
       <!-- Theme Toggle Button -->
@@ -37,7 +35,7 @@
       </button>
 
       <!-- Main Content -->
-      <main class="flex-grow-1 container-fluid px-md-5 py-4">
+      <main class="flex-grow-1 container px-0 px-sm-3">
         <div class="row justify-content-center">
           <div class="col-12 col-sm-11 col-md-10 col-lg-8 col-xl-7">
             <!-- Navigation -->
@@ -46,19 +44,12 @@
                 <a href="/" class="text-decoration-none text-success fw-bold">
                   <i class="bi bi-house-door me-1"></i>Home
                 </a>
-                |
-                <a
-                  href="/docs"
-                  class="text-decoration-none text-success fw-bold"
-                >
-                  <i class="bi bi-journal-text me-1"></i>Documentation
-                </a>
               </code>
             </div>
 
             <!-- Rate Limits Info -->
-            <div class="card p-4 p-sm-5 mb-3 border-2">
-              <code class="fw-bold mb-0 fs-2 fs-md-1 text-success"
+            <div class="card p-3 p-sm-4 mb-3 border-2">
+              <code class="fw-bold mb-0 fs-3 fs-sm-2 text-success"
                 >Rate Limits</code
               >
               <code class="text-muted"
@@ -85,10 +76,18 @@
                   <table class="table table-bordered">
                     <thead>
                       <tr>
-                        <th><code class="text-muted">Category</code></th>
-                        <th><code class="text-muted">Limit</code></th>
-                        <th><code class="text-muted">Window</code></th>
-                        <th><code class="text-muted">Applies To</code></th>
+                        <th scope="col">
+                          <code class="text-muted">Category</code>
+                        </th>
+                        <th scope="col">
+                          <code class="text-muted">Limit</code>
+                        </th>
+                        <th scope="col">
+                          <code class="text-muted">Window</code>
+                        </th>
+                        <th scope="col">
+                          <code class="text-muted">Applies To</code>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -176,7 +175,7 @@
                   >Best Practices</code
                 >
                 <div class="card bg-light mt-2">
-                  <div class="card-body">
+                  <div class="card-body py-3">
                     <code class="fw-bold">💡 Tips to avoid rate limiting:</code>
                     <ul class="list-unstyled mt-2 mb-0">
                       <li>
@@ -212,7 +211,7 @@
                 >
                 <code class="d-block text-muted small mt-2">
                   When you exceed the rate limit, you'll receive a
-                  <code class="text-danger">429 Too Many Requests</code>
+                  <span class="text-danger fw-bold">429 Too Many Requests</span>
                   response with a JSON payload containing:
                 </code>
                 <ul class="list-unstyled mt-2">

@@ -426,3 +426,7 @@ body.dark-mode .popover-content i.text-primary {
 body.dark-mode .popover-content i.text-success {
   color: #22c55e !important;
 }
+
+body.dark-mode .text-decoration-none {
+  color: var(--dark-text) !important;
+}
