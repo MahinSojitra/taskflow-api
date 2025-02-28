@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../assets/images/taskflow-light.png"
+    />
+    <title>Rate Limits | TaskFlow</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="rate-limits.css" />
+  </head>
+  <body
+    class="d-flex flex-column justify-content-center align-items-center min-vh-100 text-center px-3 py-4 theme-pending"
+  >
+    <!-- Main Content Wrapper -->
+    <div class="d-flex flex-column min-vh-100">
+      <!-- Theme Toggle Button -->
+      <button
+        class="theme-toggle"
+        id="themeToggle"
+        data-bs-toggle="tooltip"
+        data-bs-placement="left"
+        data-bs-title="Toggle Theme"
+        aria-label="Toggle theme"
+      >
+        <i class="bi bi-sun-fill"></i>
+      </button>
+
+      <!-- Main Content -->
+      <main class="flex-grow-1 container-fluid px-md-5 py-4">
+        <div class="row justify-content-center">
+          <div class="col-12 col-sm-11 col-md-10 col-lg-8 col-xl-7">
+            <!-- Navigation -->
+            <div class="card p-3 mb-4 border-2">
+              <code class="text-muted small">
+                <a href="/" class="text-decoration-none text-success fw-bold">
+                  <i class="bi bi-house-door me-1"></i>Home
+                </a>
+                |
+                <a
+                  href="/docs"
+                  class="text-decoration-none text-success fw-bold"
+                >
+                  <i class="bi bi-journal-text me-1"></i>Documentation
+                </a>
+              </code>
+            </div>
+
+            <!-- Rate Limits Info -->
+            <div class="card p-4 p-sm-5 mb-3 border-2">
+              <code class="fw-bold mb-0 fs-2 fs-md-1 text-success"
+                >Rate Limits</code
+              >
+              <code class="text-muted"
+                >Understanding TaskFlow API's rate limiting policies</code
+              >
+
+              <!-- Overview -->
+              <div class="text-start mt-4">
+                <code class="fw-bold text-success sub-heading">Overview</code>
+                <code class="d-block text-muted small mt-2">
+                  To ensure fair usage and maintain service stability, TaskFlow
+                  API implements rate limiting on all endpoints. Different
+                  endpoints have different rate limits based on their purpose
+                  and resource requirements.
+                </code>
+              </div>
+
+              <!-- Rate Limit Categories -->
+              <div class="text-start mt-4">
+                <code class="fw-bold text-success sub-heading"
+                  >Rate Limit Categories</code
+                >
+                <div class="table-responsive mt-2">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th><code class="text-muted">Category</code></th>
+                        <th><code class="text-muted">Limit</code></th>
+                        <th><code class="text-muted">Window</code></th>
+                        <th><code class="text-muted">Applies To</code></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code class="text-muted small">Global</code></td>
+                        <td>
+                          <code class="text-muted small">100 requests</code>
+                        </td>
+                        <td>
+                          <code class="text-muted small">15 minutes</code>
+                        </td>
+                        <td>
+                          <code class="text-muted small">All endpoints</code>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <code class="text-muted small">Authentication</code>
+                        </td>
+                        <td>
+                          <code class="text-muted small">5 requests</code>
+                        </td>
+                        <td><code class="text-muted small">1 hour</code></td>
+                        <td>
+                          <code class="text-muted small"
+                            >Sign in and Sign up endpoints</code
+                          >
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><code class="text-muted small">API</code></td>
+                        <td>
+                          <code class="text-muted small">50 requests</code>
+                        </td>
+                        <td>
+                          <code class="text-muted small">15 minutes</code>
+                        </td>
+                        <td>
+                          <code class="text-muted small"
+                            >All API endpoints</code
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Headers -->
+              <div class="text-start mt-4">
+                <code class="fw-bold text-success sub-heading"
+                  >Rate Limit Headers</code
+                >
+                <code class="d-block text-muted small mt-2"
+                  >The API returns the following headers with each
+                  response:</code
+                >
+                <ul class="list-unstyled mt-2">
+                  <li>
+                    <code class="text-success">RateLimit-Limit</code>
+                    <code class="text-muted small"
+                      >: Maximum number of requests allowed in the window</code
+                    >
+                  </li>
+                  <li>
+                    <code class="text-success">RateLimit-Remaining</code>
+                    <code class="text-muted small"
+                      >: Number of requests remaining in the current
+                      window</code
+                    >
+                  </li>
+                  <li>
+                    <code class="text-success">RateLimit-Reset</code>
+                    <code class="text-muted small"
+                      >: Time when the rate limit window resets (Unix
+                      timestamp)</code
+                    >
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Best Practices -->
+              <div class="text-start mt-4">
+                <code class="fw-bold text-success sub-heading"
+                  >Best Practices</code
+                >
+                <div class="card bg-light mt-2">
+                  <div class="card-body">
+                    <code class="fw-bold">💡 Tips to avoid rate limiting:</code>
+                    <ul class="list-unstyled mt-2 mb-0">
+                      <li>
+                        <code class="text-muted small"
+                          >• Implement caching for frequently accessed
+                          data</code
+                        >
+                      </li>
+                      <li>
+                        <code class="text-muted small"
+                          >• Batch operations when possible</code
+                        >
+                      </li>
+                      <li>
+                        <code class="text-muted small"
+                          >• Use exponential backoff for retries</code
+                        >
+                      </li>
+                      <li>
+                        <code class="text-muted small"
+                          >• Monitor the rate limit headers in responses</code
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rate Limit Errors -->
+              <div class="text-start mt-4">
+                <code class="fw-bold text-success sub-heading"
+                  >Rate Limit Errors</code
+                >
+                <code class="d-block text-muted small mt-2">
+                  When you exceed the rate limit, you'll receive a
+                  <code class="text-danger">429 Too Many Requests</code>
+                  response with a JSON payload containing:
+                </code>
+                <ul class="list-unstyled mt-2">
+                  <li>
+                    <code class="text-muted small"
+                      >• Error message explaining the limit</code
+                    >
+                  </li>
+                  <li>
+                    <code class="text-muted small"
+                      >• Suggested actions to take</code
+                    >
+                  </li>
+                  <li>
+                    <code class="text-muted small"
+                      >• Time when you can resume making requests</code
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="rate-limits.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

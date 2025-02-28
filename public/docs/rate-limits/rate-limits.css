@@ -427,7 +427,16 @@ body.dark-mode .popover-content i.text-success {
   color: #22c55e !important;
 }
 
-/* Link Styles in dark mode */
+/* Table Styling */
+body.dark-mode .table * {
+  color: var(--bs-gray-300);
+  background-color: #000000 !important;
+}
+
+body.dark-mode .table-bordered {
+  border-color: #30363d;
+}
+
 body.dark-mode .text-decoration-none {
   color: var(--dark-text) !important;
 }

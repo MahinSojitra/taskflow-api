@@ -1,36 +1,58 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const hpp = require("hpp");
 const { errorHandler } = require("./middlewares/errorHandler");
+const {
+  globalLimiter,
+  authLimiter,
+  apiLimiter,
+} = require("./middlewares/rateLimiter");
 
 const app = express();
 
-// ✅ Middleware
+// ✅ Security Middleware
 app.use(cors());
+app.use(hpp()); // Protect against HTTP Parameter Pollution attacks
+app.use(globalLimiter); // Apply global rate limiting
+
+// ✅ Body Parser Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ✅ Serve static files from the public directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ Root route - Serve index.html
+// ✅ Documentation Routes
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.get("/docs", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "docs", "docs.html"));
+});
+
+app.get("/docs/rate-limits", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "public", "docs", "rate-limits", "rate-limits.html")
+  );
 });
 
 // ✅ Import API routes
 const userRoutes = require("./routes/user");
 const taskRoutes = require("./routes/task");
 
+// Apply specific rate limiters to routes
+app.use("/api/users/signin", authLimiter); // Stricter rate limiting for auth endpoints
+app.use("/api/users/signup", authLimiter);
+app.use("/api", apiLimiter); // General API rate limiting
+
+// ✅ Routes
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
 
 // ✅ 404 Handler - Improved Route Suggestion
 app.use((req, res, next) => {
-  if (req.path === "/api") {
-    return res.redirect("/");
-  }
-
   const availableRoutes = [
     {
       method: "POST",
