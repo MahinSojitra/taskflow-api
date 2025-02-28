@@ -13,8 +13,8 @@ const app = express();
 
 // ✅ Security Middleware
 app.use(cors());
-app.use(hpp()); // Protect against HTTP Parameter Pollution attacks
-app.use(globalLimiter); // Apply global rate limiting
+app.use(hpp());
+app.use(globalLimiter);
 
 // ✅ Body Parser Middleware
 app.use(express.json());
