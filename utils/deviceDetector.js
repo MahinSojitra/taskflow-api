@@ -71,9 +71,17 @@ const getDeviceInfo = (req) => {
     let browserName = ua.browser || "Unknown Client";
     let clientType = "browser";
 
+    // Initialize OS details
+    let osName = ua.os || "Unknown OS";
+    let osVersion = "N/A";
+
     // Handle API clients
     if (isApiClient) {
       clientType = "api_client";
+      // Set default Windows 10 for API clients
+      osName = "Windows";
+      osVersion = "10";
+
       if (userAgentLower.includes("postman")) browserName = "Postman";
       else if (userAgentLower.includes("insomnia")) browserName = "Insomnia";
       else if (userAgentLower.includes("curl")) browserName = "cURL";
@@ -84,43 +92,45 @@ const getDeviceInfo = (req) => {
       else if (ua.isEdge) browserName = "Edge";
       else if (ua.isIE) browserName = "Internet Explorer";
       else if (ua.isOpera) browserName = "Opera";
-    }
 
-    // Get OS details
-    let osName = ua.os || "Unknown OS";
-    let osVersion = "N/A";
-
-    if (ua.isMac) {
-      osName = "macOS";
-      osVersion = ua.platform.includes("10_")
-        ? `10.${ua.platform.split("10_")[1].split("_")[0]}`
-        : ua.platform;
-    } else if (ua.isWindows) {
-      osName = "Windows";
-      if (ua.platform.includes("Windows NT")) {
-        const ntVersion = {
-          "10.0": "10/11",
-          6.3: "8.1",
-          6.2: "8",
-          6.1: "7",
-          "6.0": "Vista",
-          5.2: "Server 2003/XP x64",
-          5.1: "XP",
-          "5.0": "2000",
-        };
-        osVersion =
-          ntVersion[ua.platform.split("Windows NT ")[1]] || ua.platform;
+      // Get OS details for non-API clients
+      if (ua.isMac) {
+        osName = "macOS";
+        osVersion = ua.platform.includes("10_")
+          ? `10.${ua.platform.split("10_")[1].split("_")[0]}`
+          : ua.platform;
+      } else if (ua.isWindows) {
+        osName = "Windows";
+        if (ua.platform.includes("Windows NT")) {
+          const ntVersion = {
+            "10.0": "10/11",
+            6.3: "8.1",
+            6.2: "8",
+            6.1: "7",
+            "6.0": "Vista",
+            5.2: "Server 2003/XP x64",
+            5.1: "XP",
+            "5.0": "2000",
+          };
+          // Extract NT version from user agent string
+          const ntMatch = userAgent.match(/Windows NT (\d+\.\d+)/);
+          const ntNumber = ntMatch ? ntMatch[1] : null;
+          osVersion = ntNumber ? ntVersion[ntNumber] || ntNumber : "N/A";
+        } else {
+          // Fallback to platform info if NT version not found
+          osVersion = ua.platform.replace("Windows ", "");
+        }
+      } else if (ua.isLinux) {
+        osName = "Linux";
+        if (ua.platform.includes("Android")) {
+          osName = "Android";
+          osVersion = ua.platform.split("Android ")[1]?.split(";")[0] || "N/A";
+        }
+      } else if (ua.isiPad || ua.isiPhone || ua.isiPod) {
+        osName = "iOS";
+        const match = ua.platform.match(/OS (\d+_\d+)/);
+        osVersion = match ? match[1].replace("_", ".") : "N/A";
       }
-    } else if (ua.isLinux) {
-      osName = "Linux";
-      if (ua.platform.includes("Android")) {
-        osName = "Android";
-        osVersion = ua.platform.split("Android ")[1]?.split(";")[0] || "N/A";
-      }
-    } else if (ua.isiPad || ua.isiPhone || ua.isiPod) {
-      osName = "iOS";
-      const match = ua.platform.match(/OS (\d+_\d+)/);
-      osVersion = match ? match[1].replace("_", ".") : "N/A";
     }
 
     const deviceInfo = {
