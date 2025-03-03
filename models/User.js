@@ -46,6 +46,14 @@ const SessionSchema = new mongoose.Schema({
       enum: ["ipv4", "ipv6"],
       required: true,
     },
+    location: {
+      country: { type: String, default: "Unknown" },
+      region: { type: String, default: "Unknown" },
+      city: { type: String, default: "Unknown" },
+      latitude: { type: Number, default: 0 },
+      longitude: { type: Number, default: 0 },
+      status: { type: String, default: "Unknown" },
+    },
   },
   createdAt: {
     type: Date,

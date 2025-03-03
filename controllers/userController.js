@@ -14,7 +14,7 @@ const userController = {
 
   signin: async (req, res) => {
     const { device } = getDeviceInfo(req);
-    const ip = getClientIpDetails(req);
+    const ip = await getClientIpDetails(req);
 
     const result = await userService.signin({
       ...req.body,
