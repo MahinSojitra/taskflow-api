@@ -38,7 +38,7 @@ const generateTokens = (userId, sessionId) => {
 
 // Fix token expiration calculation
 const calculateTokenExpiration = () => {
-  const expireString = process.env.JWT_REFRESH_EXPIRE;
+  const expireString = process.env.JWT_EXPIRE;
   let milliseconds;
 
   if (expireString.endsWith("d")) {
