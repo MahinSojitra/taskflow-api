@@ -60,7 +60,7 @@ const taskController = {
       const task = await taskService.createTask(req.user.id, req.body);
       res.status(201).json({
         success: true,
-        message: "Task created.",
+        message: "Hooray! Your task has been added.",
         data: {
           id: task._id,
           title: task.title,
@@ -104,6 +104,7 @@ const taskController = {
 
       res.status(200).json({
         success: true,
+        message: "Here’s the task you requested!",
         data: {
           id: task._id,
           title: task.title,
@@ -152,7 +153,7 @@ const taskController = {
 
       res.status(200).json({
         success: true,
-        message: "Task updated.",
+        message: "Your task has been updated!",
         data: {
           id: task._id,
           title: task.title,
@@ -201,11 +202,7 @@ const taskController = {
 
       res.status(200).json({
         success: true,
-        message: "Task deleted. This action is irreversible.",
-        data: {
-          id: task._id,
-          title: task.title,
-        },
+        message: "The task has been deleted. This action is irreversible.",
       });
     } catch (error) {
       next(
