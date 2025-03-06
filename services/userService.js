@@ -477,11 +477,13 @@ const userService = {
       message: "We've fetched your profile details. Everything's up to date!",
       statusCode: 200,
       data: {
-        name: user.name,
-        email: user.email,
-        isVerified: user.isVerified,
-        createdAt: formatDate(user.createdAt),
-        updatedAt: formatDate(user.updatedAt),
+        profile: {
+          name: user.name,
+          email: user.email,
+          isVerified: user.isVerified,
+          createdAt: formatDate(user.createdAt),
+          updatedAt: formatDate(user.updatedAt),
+        },
       },
     };
   },
