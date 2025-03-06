@@ -20,25 +20,16 @@ const updateTask = async (userId, taskId, updateData) => {
     { new: true, runValidators: true }
   );
 
-  if (!task) {
-    throw new Error("Task not found.");
-  }
   return task;
 };
 
 const deleteTask = async (userId, taskId) => {
   const task = await Task.findOneAndDelete({ _id: taskId, user: userId });
-  if (!task) {
-    throw new Error("Task not found.");
-  }
   return task;
 };
 
 const getTask = async (userId, taskId) => {
   const task = await Task.findOne({ _id: taskId, user: userId });
-  if (!task) {
-    throw new Error("Task not found.");
-  }
   return task;
 };
 
