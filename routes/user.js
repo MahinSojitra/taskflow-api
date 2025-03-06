@@ -47,7 +47,6 @@ router.put(
   "/profile",
   protect,
   authorize("user", "admin"),
-  validateRequest(userSchemas.update),
   userController.updateUserProfile
 );
 
