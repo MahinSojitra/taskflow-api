@@ -459,6 +459,32 @@ const userService = {
       data: activeSessions,
     };
   },
+
+  getUserProfile: async (userId) => {
+    const user = await User.findById(userId).select("-password -refreshToken");
+
+    if (!user) {
+      return {
+        success: false,
+        message:
+          "We couldn't find your profile. It looks like you might not be signed up yet. How about signing up to get started?",
+        statusCode: 404,
+      };
+    }
+
+    return {
+      success: true,
+      message: "We've fetched your profile details. Everything's up to date!",
+      statusCode: 200,
+      data: {
+        name: user.name,
+        email: user.email,
+        isVerified: user.isVerified,
+        createdAt: formatDate(user.createdAt),
+        updatedAt: formatDate(user.updatedAt),
+      },
+    };
+  },
 };
 
 module.exports = userService;

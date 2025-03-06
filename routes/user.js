@@ -40,7 +40,7 @@ router.get(
   "/profile",
   protect,
   authorize("user", "admin"),
-  userController.getProfile
+  userController.getUserProfile
 );
 
 router.put(
@@ -48,7 +48,7 @@ router.put(
   protect,
   authorize("user", "admin"),
   validateRequest(userSchemas.update),
-  userController.updateProfile
+  userController.updateUserProfile
 );
 
 router.post("/refresh", userController.refreshToken);
@@ -62,7 +62,7 @@ router.post(
 
 // New session management routes
 router.post(
-  "/signout-all",
+  "/signout/all",
   protect,
   authorize("user", "admin"),
   userController.signoutAllDevices

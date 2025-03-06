@@ -29,8 +29,8 @@ const userController = {
     });
   },
 
-  getProfile: async (req, res) => {
-    const result = await userService.getProfile(req.user.id);
+  getUserProfile: async (req, res) => {
+    const result = await userService.getUserProfile(req.user.id);
     res.status(result.statusCode).json({
       success: result.success,
       message: result.message,
@@ -38,13 +38,18 @@ const userController = {
     });
   },
 
-  updateProfile: async (req, res) => {
-    const result = await userService.updateProfile(req.user.id, req.body);
-    res.status(result.statusCode).json({
-      success: result.success,
-      message: result.message,
-      data: result.data,
+  updateUserProfile: async (req, res) => {
+    res.status(200).json({
+      message:
+        "Hang tight! This feature is under maintenance, but we'll have it up and running soon!",
     });
+
+    // const result = await userService.updateProfile(req.user.id, req.body);
+    // res.status(result.statusCode).json({
+    //   success: result.success,
+    //   message: result.message,
+    //   data: result.data,
+    // });
   },
 
   refreshToken: async (req, res) => {
