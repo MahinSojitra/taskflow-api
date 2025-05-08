@@ -7,6 +7,7 @@ const {
   globalLimiter,
   authLimiter,
   apiLimiter,
+  toggleRateLimit,
 } = require("./middlewares/rateLimiter");
 
 const app = express();
@@ -14,7 +15,12 @@ const app = express();
 // ✅ Security Middleware
 app.use(cors());
 app.use(hpp());
-// app.use(globalLimiter);
+
+// Toggle rate limiting as needed
+toggleRateLimit(true);
+
+// Apply global rate limiter
+app.use(globalLimiter);
 
 // ✅ Body Parser Middleware
 app.use(express.json());
@@ -43,9 +49,9 @@ const userRoutes = require("./routes/user");
 const taskRoutes = require("./routes/task");
 
 // Apply specific rate limiters to routes
-// app.use("/api/users/signin", authLimiter);
-// app.use("/api/users/signup", authLimiter);
-// app.use("/api", apiLimiter);
+app.use("/api/users/signin", authLimiter);
+app.use("/api/users/signup", authLimiter);
+app.use("/api", apiLimiter);
 
 // ✅ Routes
 app.use("/api/users", userRoutes);
