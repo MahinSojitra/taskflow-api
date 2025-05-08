@@ -14,7 +14,7 @@ const app = express();
 // ✅ Security Middleware
 app.use(cors());
 app.use(hpp());
-app.use(globalLimiter);
+// app.use(globalLimiter);
 
 // ✅ Body Parser Middleware
 app.use(express.json());
@@ -43,9 +43,9 @@ const userRoutes = require("./routes/user");
 const taskRoutes = require("./routes/task");
 
 // Apply specific rate limiters to routes
-app.use("/api/users/signin", authLimiter); // Stricter rate limiting for auth endpoints
-app.use("/api/users/signup", authLimiter);
-app.use("/api", apiLimiter); // General API rate limiting
+// app.use("/api/users/signin", authLimiter);
+// app.use("/api/users/signup", authLimiter);
+// app.use("/api", apiLimiter);
 
 // ✅ Routes
 app.use("/api/users", userRoutes);
