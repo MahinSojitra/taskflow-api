@@ -144,8 +144,8 @@ const userController = {
     const result = await userService.checkEmailAvailability(req.body.email);
     res.status(result.statusCode).json({
       success: result.success,
+      isAvailable: result.isAvailable,
       message: result.message,
-      data: result.data,
     });
   },
 };
