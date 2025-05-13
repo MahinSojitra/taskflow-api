@@ -74,6 +74,12 @@ router.get(
   userController.getActiveSessions
 );
 
+router.post(
+  "/email-availability",
+  validateRequest(userSchemas.emailAvailability),
+  userController.checkEmailAvailability
+);
+
 // Error handler
 router.use(errorHandler);
 

@@ -487,6 +487,25 @@ const userService = {
       },
     };
   },
+
+  checkEmailAvailability: async (email) => {
+    const user = await User.findOne({ email });
+
+    if (user) {
+      return {
+        success: true,
+        isAvailable: false,
+        message: `${email} is not available.`,
+        statusCode: 200,
+      };
+    }
+    return {
+      success: true,
+      isAvailable: true,
+      message: `${email} is available.`,
+      statusCode: 200,
+    };
+  },
 };
 
 module.exports = userService;

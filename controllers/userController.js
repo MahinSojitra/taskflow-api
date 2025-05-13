@@ -139,6 +139,15 @@ const userController = {
       data: result.data,
     });
   },
+
+  checkEmailAvailability: async (req, res) => {
+    const result = await userService.checkEmailAvailability(req.body.email);
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+      data: result.data,
+    });
+  },
 };
 
 module.exports = userController;

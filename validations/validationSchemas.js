@@ -89,6 +89,14 @@ const userSchemas = {
         "any.required": "New password is required",
       }),
   }),
+
+  emailAvailability: Joi.object({
+    email: Joi.string().required().email().messages({
+      "string.empty": "Email cannot be empty",
+      "string.email": "Please provide a valid email address",
+      "any.required": "Email is required",
+    }),
+  }),
 };
 
 // Task validation schemas
