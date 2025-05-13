@@ -111,6 +111,11 @@ app.use((req, res, next) => {
       description: "Get all active sessions",
     },
     {
+      method: "POST",
+      path: "/api/users/email-available",
+      description: "Check email availability",
+    },
+    {
       method: "GET",
       path: "/api/users/all",
       description: "List all users (admin only)",

@@ -75,7 +75,7 @@ router.get(
 );
 
 router.post(
-  "/email-availability",
+  "/email-available",
   validateRequest(userSchemas.emailAvailability),
   userController.checkEmailAvailability
 );
