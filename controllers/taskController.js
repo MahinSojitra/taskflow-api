@@ -22,8 +22,8 @@ const taskController = {
             dueDate: task.dueDate,
             status: task.status,
             tags: task.tags,
-            createdAt: formatDate(task.createdAt),
-            updatedAt: formatDate(task.updatedAt),
+            createdAt: task.createdAt,
+            updatedAt: task.updatedAt,
           })),
           total: tasks.length,
         },
@@ -68,8 +68,8 @@ const taskController = {
           dueDate: task.dueDate,
           status: task.status,
           tags: task.tags,
-          createdAt: formatDate(task.createdAt),
-          updatedAt: formatDate(task.updatedAt),
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
         },
       });
     } catch (error) {
@@ -112,8 +112,8 @@ const taskController = {
           dueDate: task.dueDate,
           status: task.status,
           tags: task.tags,
-          createdAt: formatDate(task.createdAt),
-          updatedAt: formatDate(task.updatedAt),
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
         },
       });
     } catch (error) {
@@ -161,8 +161,8 @@ const taskController = {
           dueDate: task.dueDate,
           status: task.status,
           tags: task.tags,
-          createdAt: formatDate(task.createdAt),
-          updatedAt: formatDate(task.updatedAt),
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
         },
       });
     } catch (error) {
