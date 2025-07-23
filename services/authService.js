@@ -56,7 +56,7 @@ const calculateTokenExpiration = () => {
   return new Date(Date.now() + milliseconds);
 };
 
-const userService = {
+const authService = {
   // User signup
   signup: async ({ email, password, name }) => {
     const existingUser = await User.findOne({ email });
@@ -508,4 +508,4 @@ const userService = {
   },
 };
 
-module.exports = userService;
+module.exports = authService;

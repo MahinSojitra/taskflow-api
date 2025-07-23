@@ -1,5 +1,5 @@
 const express = require("express");
-const userController = require("../controllers/userController");
+const authController = require("../controllers/authController");
 const validateRequest = require("../middlewares/validateRequest");
 const { userSchemas } = require("../validations/validationSchemas");
 const { protect } = require("../middlewares/auth");
@@ -9,54 +9,54 @@ const authorize = require("../middlewares/authorize");
 const router = express.Router();
 
 // Admin routes
-router.get("/all", protect, authorize("admin"), userController.getAllUsers);
+router.get("/all", protect, authorize("admin"), authController.getAllUsers);
 
 // Public routes
 router.post(
   "/signup",
   validateRequest(userSchemas.signup),
-  userController.signup
+  authController.signup
 );
 
 router.post(
   "/signin",
   validateRequest(userSchemas.signin),
-  userController.signin
+  authController.signin
 );
 
 router.post(
   "/forgot-password",
   validateRequest(userSchemas.forgotPassword),
-  userController.forgotPassword
+  authController.forgotPassword
 );
 
 router.post(
   "/reset-password",
   validateRequest(userSchemas.resetPassword),
-  userController.resetPassword
+  authController.resetPassword
 );
 
 router.get(
   "/profile",
   protect,
   authorize("user", "admin"),
-  userController.getUserProfile
+  authController.getUserProfile
 );
 
 router.put(
   "/profile",
   protect,
   authorize("user", "admin"),
-  userController.updateUserProfile
+  authController.updateUserProfile
 );
 
-router.post("/refresh", userController.refreshToken);
+router.post("/refresh", authController.refreshToken);
 
 router.post(
   "/signout",
   protect,
   authorize("user", "admin"),
-  userController.signout
+  authController.signout
 );
 
 // New session management routes
@@ -64,20 +64,20 @@ router.post(
   "/signout/all",
   protect,
   authorize("user", "admin"),
-  userController.signoutAllDevices
+  authController.signoutAllDevices
 );
 
 router.get(
   "/sessions",
   protect,
   authorize("user", "admin"),
-  userController.getActiveSessions
+  authController.getActiveSessions
 );
 
 router.post(
   "/email-available",
   validateRequest(userSchemas.emailAvailability),
-  userController.checkEmailAvailability
+  authController.checkEmailAvailability
 );
 
 // Error handler

@@ -45,16 +45,16 @@ app.get("/docs/rate-limits", (req, res) => {
 });
 
 // ✅ Import API routes
-const userRoutes = require("./routes/user");
+const userRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/task");
 
 // Apply specific rate limiters to routes
-app.use("/api/users/signin", authLimiter);
-app.use("/api/users/signup", authLimiter);
+app.use("/api/auth/signin", authLimiter);
+app.use("/api/auth/signup", authLimiter);
 app.use("/api", apiLimiter);
 
 // ✅ Routes
-app.use("/api/users", userRoutes);
+app.use("/api/auth", userRoutes);
 app.use("/api/tasks", taskRoutes);
 
 // ✅ 404 Handler - Improved Route Suggestion
@@ -62,62 +62,62 @@ app.use((req, res, next) => {
   const availableRoutes = [
     {
       method: "POST",
-      path: "/api/users/signup",
+      path: "/api/auth/signup",
       description: "Create new account",
     },
     {
       method: "POST",
-      path: "/api/users/signin",
+      path: "/api/auth/signin",
       description: "Sign in to account",
     },
     {
       method: "GET",
-      path: "/api/users/profile",
+      path: "/api/auth/profile",
       description: "Get user profile",
     },
     {
       method: "PUT",
-      path: "/api/users/profile",
+      path: "/api/auth/profile",
       description: "Update profile",
     },
     {
       method: "POST",
-      path: "/api/users/signout",
+      path: "/api/auth/signout",
       description: "Sign out",
     },
     {
       method: "POST",
-      path: "/api/users/forgot-password",
+      path: "/api/auth/forgot-password",
       description: "Request password reset",
     },
     {
       method: "POST",
-      path: "/api/users/reset-password",
+      path: "/api/auth/reset-password",
       description: "Reset password with OTP",
     },
     {
       method: "POST",
-      path: "/api/users/refresh",
+      path: "/api/auth/refresh",
       description: "Refresh access token",
     },
     {
       method: "POST",
-      path: "/api/users/signout-all",
+      path: "/api/auth/signout-all",
       description: "Sign out from all devices",
     },
     {
       method: "GET",
-      path: "/api/users/sessions",
+      path: "/api/auth/sessions",
       description: "Get all active sessions",
     },
     {
       method: "POST",
-      path: "/api/users/email-available",
+      path: "/api/auth/email-available",
       description: "Check email availability",
     },
     {
       method: "GET",
-      path: "/api/users/all",
+      path: "/api/auth/all",
       description: "List all users (admin only)",
     },
     // Task routes
