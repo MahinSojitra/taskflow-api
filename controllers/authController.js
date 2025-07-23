@@ -148,6 +148,23 @@ const authController = {
       message: result.message,
     });
   },
+
+  sendEmailVerification: async (req, res) => {
+    const result = await authService.sendEmailVerification(req.body.email);
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+    });
+  },
+
+  verifyEmail: async (req, res) => {
+    const { token } = req.query;
+    const result = await authService.verifyEmail(token);
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+    });
+  },
 };
 
 module.exports = authController;

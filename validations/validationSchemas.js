@@ -65,11 +65,11 @@ const userSchemas = {
     }),
     otp: Joi.string()
       .required()
-      .length(6)
+      .length(process.env.PASSWORD_RESET_OTP_LENGTH)
       .pattern(/^[0-9]+$/)
       .messages({
         "string.empty": "OTP cannot be empty",
-        "string.length": "OTP must be 6 digits",
+        "string.length": `OTP must be ${process.env.PASSWORD_RESET_OTP_LENGTH} digits`,
         "string.pattern.base": "OTP must contain only numbers",
         "any.required": "OTP is required",
       }),
@@ -90,12 +90,33 @@ const userSchemas = {
       }),
   }),
 
+  emailVerification: Joi.object({
+    email: Joi.string().required().email().messages({
+      "string.empty": "Email cannot be empty",
+      "string.email": "Please provide a valid email address",
+      "any.required": "Email is required",
+    }),
+  }),
+
   emailAvailability: Joi.object({
     email: Joi.string().required().email().messages({
       "string.empty": "Email cannot be empty",
       "string.email": "Please provide a valid email address",
       "any.required": "Email is required",
     }),
+  }),
+
+  verifyEmail: Joi.object({
+    token: Joi.string()
+      .required()
+      .length(process.env.EMAIL_VERIFICATION_TOKEN_BYTES * 2)
+      .hex()
+      .messages({
+        "string.empty": "Verification token is required",
+        "string.length": `Verification token must be ${process.env.EMAIL_VERIFICATION_TOKEN_BYTES} characters`,
+        "string.hex": "Verification token must be a valid hex string",
+        "any.required": "Verification token is required",
+      }),
   }),
 };
 

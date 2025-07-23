@@ -80,6 +80,23 @@ router.post(
   authController.checkEmailAvailability
 );
 
+router.post(
+  "/email-verification",
+  validateRequest(userSchemas.emailVerification),
+  authController.sendEmailVerification
+);
+
+router.post(
+  "/email-verification",
+  validateRequest(userSchemas.emailVerification),
+  authController.sendEmailVerification
+);
+router.get(
+  "/verify-email",
+  validateRequest(userSchemas.verifyEmail),
+  authController.verifyEmail
+);
+
 // Error handler
 router.use(errorHandler);
 

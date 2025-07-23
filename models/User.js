@@ -113,6 +113,8 @@ const UserSchema = new mongoose.Schema(
       default: false,
     },
     sessions: [SessionSchema],
+    emailVerificationToken: String,
+    emailVerificationExpires: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
     passwordResetOTP: String,

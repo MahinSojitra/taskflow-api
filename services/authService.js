@@ -2,8 +2,15 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const User = require("../models/User");
-const { sendPasswordResetEmail } = require("./emailService");
+const {
+  sendPasswordResetEmail,
+  sendEmailVerification,
+} = require("./emailService");
 const { formatDate } = require("../utils/dateFormatter");
+const {
+  generateToken,
+  generateOTP,
+} = require("../utils/codeGenerationHelpers");
 
 const generateSessionId = () => {
   return crypto.randomBytes(32).toString("hex");
@@ -339,7 +346,7 @@ const authService = {
     }
 
     // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = generateOTP(process.env.PASSWORD_RESET_OTP_LENGTH);
 
     // Try to send email and get response
     const emailResult = await sendPasswordResetEmail(email, otp);
@@ -519,6 +526,59 @@ const authService = {
       success: true,
       isAvailable: true,
       message: `${email} is available.`,
+      statusCode: 200,
+    };
+  },
+
+  // Email verification request
+  sendEmailVerification: async (email) => {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return {
+        success: false,
+        message:
+          "We couldn't find an account with this email address. Please verify and try again.",
+        statusCode: 404,
+      };
+    }
+    if (user.isVerified) {
+      return {
+        success: false,
+        message: "Email is already verified.",
+        statusCode: 400,
+      };
+    }
+
+    const token = generateToken(process.env.EMAIL_VERIFICATION_TOKEN_BYTES);
+    user.emailVerificationToken = token;
+    user.emailVerificationExpires = Date.now() + 30 * 60 * 1000;
+    await user.save();
+
+    const link = `${process.env.API_PRODUCTION_URL}/api/auth/verify-email?token=${token}`;
+
+    return await sendEmailVerification(user.email, link);
+  },
+
+  verifyEmail: async (token) => {
+    const user = await User.findOne({
+      emailVerificationToken: token,
+      emailVerificationExpires: { $gt: Date.now() },
+    });
+    if (!user) {
+      return {
+        success: false,
+        message:
+          "Invalid or expired email verification link. Please request a new verification email to continue.",
+        statusCode: 400,
+      };
+    }
+    user.isVerified = true;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpires = undefined;
+    await user.save();
+    return {
+      success: true,
+      message: "Your email has been verified.",
       statusCode: 200,
     };
   },
