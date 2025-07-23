@@ -12,8 +12,10 @@ const {
   generateOTP,
 } = require("../utils/codeGenerationHelpers");
 
-const EMAIL_VERIFICATION_TOKEN_LENGTH =
-  parseInt(process.env.EMAIL_VERIFICATION_TOKEN_BYTES, 10) * 2;
+const EMAIL_VERIFICATION_TOKEN_BYTES = parseInt(
+  process.env.EMAIL_VERIFICATION_TOKEN_BYTES,
+  10
+);
 const PASSWORD_RESET_OTP_LENGTH = parseInt(
   process.env.PASSWORD_RESET_OTP_LENGTH,
   10
@@ -553,7 +555,7 @@ const authService = {
       };
     }
 
-    const token = generateToken(EMAIL_VERIFICATION_TOKEN_LENGTH);
+    const token = generateToken(EMAIL_VERIFICATION_TOKEN_BYTES);
     user.emailVerificationToken = token;
     user.emailVerificationExpires = Date.now() + 30 * 60 * 1000;
     await user.save();
