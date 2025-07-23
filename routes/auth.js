@@ -93,7 +93,7 @@ router.post(
 );
 router.get(
   "/verify-email",
-  validateRequest(userSchemas.verifyEmail),
+  validateRequest(userSchemas.verifyEmail, "query"),
   authController.verifyEmail
 );
 

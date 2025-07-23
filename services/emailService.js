@@ -154,7 +154,7 @@ const sendEmailVerification = async (email, link) => {
     const mailOptions = {
       from: `"TaskFlow" <${process.env.ORGANIZATION_EMAIL}>`,
       to: email,
-      subject: "Verify Your TaskFlow Email",
+      subject: "Verify Your Email Address",
       html: getEmailVerificationTemplate(link),
     };
     try {

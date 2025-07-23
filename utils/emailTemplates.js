@@ -170,10 +170,10 @@ const getEmailVerificationTemplate = (link) => {
         .logo { width: 50px; height: auto; margin-right: 4px; }
         .brand-name { font-size: 24px; font-weight: bold; color: black; font-family: "Atkinson Hyperlegible Next", "Arial", sans-serif; }
         .content { background: white; padding: 30px; border-radius: 8px; }
-        .verify-btn { display: block; width: 100%; max-width: 250px; margin: 30px auto; padding: 15px 0; background: #2563eb; color: white; text-align: center; border-radius: 4px; text-decoration: none; font-size: 18px; font-weight: bold; }
+        .verify-btn { display: block; width: 100%; max-width: 150px; margin: 30px auto; padding: 10px; background: black; color: white; text-align: center; border-radius: 4px; text-decoration: none; font-size: 16px; font-weight: bold; }
         .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
         .copyright { font-size: 14px; margin-top: 0px; color: black; }
-        @media (prefers-color-scheme: dark) { body { background-color: #121212; color: #e8eaed; } .container { background-color: #1f1f1f; } .content { background-color: #333; color: #e8eaed; } .verify-btn { background: #1a73e8; color: #fff; } .footer { color: #9aa0a6; } .copyright { color: white; } .logo-light { display: none; } .logo-dark { display: block; } .brand-name { color: #e8eaed; } } @media (prefers-color-scheme: light) { .logo-light { display: block; } .logo-dark { display: none; } .brand-name { color: black; } }
+        @media (prefers-color-scheme: dark) { body { background-color: #121212; color: #e8eaed; } .container { background-color: #1f1f1f; } .content { background-color: #333; color: #e8eaed; } .verify-btn { background: #000000; color: #fff; } .footer { color: #9aa0a6; } .copyright { color: white; } .logo-light { display: none; } .logo-dark { display: block; } .brand-name { color: #e8eaed; } } @media (prefers-color-scheme: light) { .logo-light { display: block; } .logo-dark { display: none; } .brand-name { color: black; } }
       </style>
     </head>
     <body>
@@ -183,11 +183,9 @@ const getEmailVerificationTemplate = (link) => {
           <span class="brand-name">Task Flow</span>
         </div>
         <div class="content">
-          <p>Hello there,</p>
+          <p>Hey there,</p>
           <p>Welcome to <strong>TaskFlow</strong>! To finish setting up your account, please verify your email address by clicking the button below.</p>
           <a href="${link}" class="verify-btn">Verify Email</a>
-          <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
-          <p><a href="${link}">${link}</a></p>
           <p>This verification link will expire in 30 minutes. If you didn’t sign up for TaskFlow, just ignore this email.</p>
           <p>For any help, feel free to contact our support team anytime.</p>
         </div>
