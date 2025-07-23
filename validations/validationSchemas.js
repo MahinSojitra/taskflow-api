@@ -1,5 +1,12 @@
 const Joi = require("joi");
 
+const EMAIL_VERIFICATION_TOKEN_LENGTH =
+  parseInt(process.env.EMAIL_VERIFICATION_TOKEN_BYTES, 10) * 2;
+const PASSWORD_RESET_OTP_LENGTH = parseInt(
+  process.env.PASSWORD_RESET_OTP_LENGTH,
+  10
+);
+
 // User validation schemas
 const userSchemas = {
   signup: Joi.object({
@@ -65,11 +72,11 @@ const userSchemas = {
     }),
     otp: Joi.string()
       .required()
-      .length(process.env.PASSWORD_RESET_OTP_LENGTH)
+      .length(PASSWORD_RESET_OTP_LENGTH)
       .pattern(/^[0-9]+$/)
       .messages({
         "string.empty": "OTP cannot be empty",
-        "string.length": `OTP must be ${process.env.PASSWORD_RESET_OTP_LENGTH} digits`,
+        "string.length": `OTP must be ${PASSWORD_RESET_OTP_LENGTH} digits`,
         "string.pattern.base": "OTP must contain only numbers",
         "any.required": "OTP is required",
       }),
@@ -109,11 +116,11 @@ const userSchemas = {
   verifyEmail: Joi.object({
     token: Joi.string()
       .required()
-      .length(process.env.EMAIL_VERIFICATION_TOKEN_BYTES * 2)
+      .length(EMAIL_VERIFICATION_TOKEN_LENGTH)
       .hex()
       .messages({
         "string.empty": "Verification token is required",
-        "string.length": `Verification token must be ${process.env.EMAIL_VERIFICATION_TOKEN_BYTES} characters`,
+        "string.length": `Verification token must be ${EMAIL_VERIFICATION_TOKEN_LENGTH} characters`,
         "string.hex": "Verification token must be a valid hex string",
         "any.required": "Verification token is required",
       }),

@@ -12,9 +12,13 @@ const {
   generateOTP,
 } = require("../utils/codeGenerationHelpers");
 
-const generateSessionId = () => {
-  return crypto.randomBytes(32).toString("hex");
-};
+const EMAIL_VERIFICATION_TOKEN_LENGTH =
+  parseInt(process.env.EMAIL_VERIFICATION_TOKEN_BYTES, 10) * 2;
+const PASSWORD_RESET_OTP_LENGTH = parseInt(
+  process.env.PASSWORD_RESET_OTP_LENGTH,
+  10
+);
+const SESSION_ID_BYTES = parseInt(process.env.SESSION_ID_BYTES, 10);
 
 // Helper function to generate tokens
 const generateTokens = (userId, sessionId) => {
@@ -140,7 +144,7 @@ const authService = {
     }
 
     // Create a new session with secure session ID
-    const sessionId = generateSessionId();
+    const sessionId = generateToken(SESSION_ID_BYTES);
     const { accessToken, refreshToken } = generateTokens(user._id, sessionId);
 
     // Add new session with updated schema structure
@@ -346,7 +350,7 @@ const authService = {
     }
 
     // Generate 6-digit OTP
-    const otp = generateOTP(process.env.PASSWORD_RESET_OTP_LENGTH);
+    const otp = generateOTP(PASSWORD_RESET_OTP_LENGTH);
 
     // Try to send email and get response
     const emailResult = await sendPasswordResetEmail(email, otp);
@@ -549,7 +553,7 @@ const authService = {
       };
     }
 
-    const token = generateToken(process.env.EMAIL_VERIFICATION_TOKEN_BYTES);
+    const token = generateToken(EMAIL_VERIFICATION_TOKEN_LENGTH);
     user.emailVerificationToken = token;
     user.emailVerificationExpires = Date.now() + 30 * 60 * 1000;
     await user.save();
