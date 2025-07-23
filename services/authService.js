@@ -447,7 +447,7 @@ const authService = {
       .map((session) => ({
         device: session.device,
         ip: session.ip,
-        lastActive: formatDate(session.lastActive, clientTimeZone),
+        lastActive: formatDate(session.lastActive, clientTimeZone, true),
         status: session.status,
         current: session._id === currentSessionId,
       }));
