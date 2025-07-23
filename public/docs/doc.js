@@ -184,8 +184,8 @@ document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tab) => {
     // Add fill to active tab icon
     const icon = event.target.querySelector("i");
     if (icon) {
-      if (event.target.id === "users-tab") {
-        icon.classList.replace("bi-people", "bi-people-fill");
+      if (event.target.id === "auth-tab") {
+        icon.classList.replace("bi-shield-lock", "bi-shield-lock-fill");
       } else if (event.target.id === "tasks-tab") {
         icon.classList.replace(
           "bi-journal-bookmark",
