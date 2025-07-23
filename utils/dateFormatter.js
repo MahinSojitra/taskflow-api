@@ -1,9 +1,11 @@
-const formatDate = (date, timeZone = "Asia/Kolkata", shouldFormat = true) => {
+const formatDate = ({
+  date,
+  timeZone = "Asia/Kolkata",
+  shouldFormatToAppStandard = true,
+}) => {
   try {
     const d = new Date(date);
-    if (!shouldFormat) {
-      return d.toISOString();
-    }
+    if (!shouldFormatToAppStandard) return d.toISOString();
 
     const options = {
       weekday: "long",
@@ -17,7 +19,6 @@ const formatDate = (date, timeZone = "Asia/Kolkata", shouldFormat = true) => {
     };
 
     const formatted = d.toLocaleString("en-US", options);
-
     const [weekdayAndDate, timeStr] = formatted.split(" at ");
     const [weekday, month, day, year] = weekdayAndDate
       .split(/[,\s]+/)
@@ -25,9 +26,9 @@ const formatDate = (date, timeZone = "Asia/Kolkata", shouldFormat = true) => {
     const time = timeStr ? timeStr.trim() : "";
 
     return `${weekday}, ${month} ${day}, ${year} | ${time}`;
-  } catch (error) {
+  } catch (err) {
     console.error(`Invalid timezone: ${timeZone}, falling back to IST`);
-    return formatDate(date, "Asia/Kolkata", shouldFormat);
+    return formatDate({ date, timeZone: "Asia/Kolkata", format });
   }
 };
 

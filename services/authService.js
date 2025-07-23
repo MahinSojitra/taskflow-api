@@ -423,8 +423,14 @@ const authService = {
           name: user.name,
           email: user.email,
           isVerified: user.isVerified,
-          createdAt: formatDate(user.createdAt, false),
-          updatedAt: formatDate(user.updatedAt, false),
+          createdAt: formatDate({
+            date: user.createdAt,
+            shouldFormatToAppStandard: false,
+          }),
+          updatedAt: formatDate({
+            date: user.updatedAt,
+            shouldFormatToAppStandard: false,
+          }),
         })),
         total: users.length,
       },
@@ -447,7 +453,11 @@ const authService = {
       .map((session) => ({
         device: session.device,
         ip: session.ip,
-        lastActive: formatDate(session.lastActive, clientTimeZone, true),
+        lastActive: formatDate({
+          date: session.lastActive,
+          timeZone: clientTimeZone,
+          shouldFormatToAppStandard: true,
+        }),
         status: session.status,
         current: session._id === currentSessionId,
       }));
@@ -481,8 +491,14 @@ const authService = {
           name: user.name,
           email: user.email,
           isVerified: user.isVerified,
-          createdAt: formatDate(user.createdAt, false),
-          updatedAt: formatDate(user.updatedAt, false),
+          createdAt: formatDate({
+            date: user.createdAt,
+            shouldFormatToAppStandard: false,
+          }),
+          updatedAt: formatDate({
+            date: user.updatedAt,
+            shouldFormatToAppStandard: false,
+          }),
         },
       },
     };
