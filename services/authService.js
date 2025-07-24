@@ -571,22 +571,13 @@ const authService = {
       emailVerificationExpires: { $gt: Date.now() },
     });
     if (!user) {
-      return {
-        success: false,
-        message:
-          "Invalid or expired email verification link. Please request a new verification email to continue.",
-        statusCode: 400,
-      };
+      return { verified: false };
     }
     user.isVerified = true;
     user.emailVerificationToken = undefined;
     user.emailVerificationExpires = undefined;
     await user.save();
-    return {
-      success: true,
-      message: "Your email has been verified.",
-      statusCode: 200,
-    };
+    return { verified: true };
   },
 };
 

@@ -157,13 +157,52 @@ const authController = {
     });
   },
 
-  verifyEmail: async (req, res) => {
-    const { token } = req.query;
-    const result = await authService.verifyEmail(token);
-    res.status(result.statusCode).json({
-      success: result.success,
-      message: result.message,
-    });
+  verifyEmail: async (req, res, next) => {
+    try {
+      const { token } = req.query;
+      const result = await authService.verifyEmail(token);
+      if (result.verified) {
+        return res.send(`
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <title>Email Verified</title>
+              <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+              <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+            </head>
+            <body class="d-flex align-items-center justify-content-center min-vh-100 bg-light text-center">
+              <div>
+                <i class="bi bi-patch-check-fill text-success display-2"></i>
+                <h3 class="mt-4 text-success">Email Verified</h1>
+                <p class="small text-muted">You can close this window at your convenience.</p>
+              </div>
+            </body>
+          </html>
+        `);
+      } else {
+        return res.status(400).send(`
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <title>Invalid or Expired Link</title>
+              <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+              <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+            </head>
+            <body class="d-flex align-items-center justify-content-center min-vh-100 bg-light text-center">
+              <div>
+                <i class="bi bi-exclamation-octagon-fill text-danger display-2"></i>
+                <h3 class="mt-4 text-danger">Invalid or Expired Link</h1>
+                <p class="small text-muted">This email verification link is invalid or has expired.<br>Please request a new verification email.</p>
+              </div>
+            </body>
+          </html>
+        `);
+      }
+    } catch (err) {
+      next(err);
+    }
   },
 };
 
