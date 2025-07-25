@@ -1,9 +1,11 @@
 const rateLimit = require("express-rate-limit");
 
-// Configuration flag to enable/disable rate limiting
+// Flag to enable/disable rate limiting globally
 let RATE_LIMIT_ENABLED = true;
 
-// Helper function to generate rate limit messages
+/**
+ * Helper to create detailed rate limit error responses.
+ */
 function createRateLimitMessage(
   code,
   message,
@@ -25,20 +27,25 @@ function createRateLimitMessage(
   };
 }
 
-// Function to create a rate limiter with optional enabling
+/**
+ * Conditional rate limiter middleware — activates only if enabled.
+ */
 function createRateLimiter(options) {
+  const limiter = rateLimit(options);
   return (req, res, next) => {
     if (RATE_LIMIT_ENABLED) {
-      return rateLimit(options)(req, res, next);
+      return limiter(req, res, next);
     }
     next();
   };
 }
 
-// Global rate limiter - General purpose protection
+/**
+ * Global limiter — protects overall traffic.
+ */
 const globalLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 100,
   message: createRateLimitMessage(
     "RATE_LIMIT_EXCEEDED",
     "Request limit exceeded",
@@ -64,13 +71,15 @@ const globalLimiter = createRateLimiter({
   ),
   standardHeaders: true,
   legacyHeaders: false,
-  skipFailedRequests: false, // Count all requests, even failed ones
+  skipFailedRequests: false,
 });
 
-// Authentication rate limiter - Strict protection against brute force
+/**
+ * Auth limiter — defends against brute-force.
+ */
 const authLimiter = createRateLimiter({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5, // Stricter limit: 5 attempts per hour per IP
+  max: 5,
   message: createRateLimitMessage(
     "AUTH_RATE_LIMIT_EXCEEDED",
     "Authentication attempt limit exceeded",
@@ -96,13 +105,15 @@ const authLimiter = createRateLimiter({
   ),
   standardHeaders: true,
   legacyHeaders: false,
-  skipFailedRequests: false, // Count all requests, even failed ones
+  skipFailedRequests: false,
 });
 
-// API endpoints rate limiter - Balanced protection for API resources
+/**
+ * API limiter — protects general API routes.
+ */
 const apiLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // Limit each IP to 50 API requests per 15 minutes
+  max: 50,
   message: createRateLimitMessage(
     "API_RATE_LIMIT_EXCEEDED",
     "API request limit exceeded",
@@ -133,10 +144,12 @@ const apiLimiter = createRateLimiter({
   ),
   standardHeaders: true,
   legacyHeaders: false,
-  skipFailedRequests: false, // Count all requests, even failed ones
+  skipFailedRequests: false,
 });
 
-// Function to toggle rate limiting
+/**
+ * Allows toggling rate limit behavior dynamically.
+ */
 function toggleRateLimit(enable) {
   RATE_LIMIT_ENABLED = enable;
 }
