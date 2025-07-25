@@ -1,14 +1,7 @@
 const rateLimit = require("express-rate-limit");
-const { RateLimiterMemory } = require("rate-limiter-flexible");
 
 // Configuration flag to enable/disable rate limiting
 let RATE_LIMIT_ENABLED = true;
-
-// Sliding window rate limiter for memory
-const rateLimiterMemory = new RateLimiterMemory({
-  points: 100, // Number of points
-  duration: 60, // Per 60 seconds
-});
 
 // Helper function to generate rate limit messages
 function createRateLimitMessage(
@@ -152,6 +145,5 @@ module.exports = {
   globalLimiter,
   authLimiter,
   apiLimiter,
-  rateLimiterMemory,
   toggleRateLimit,
 };

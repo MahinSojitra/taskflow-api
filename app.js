@@ -4,7 +4,6 @@ const path = require("path");
 const hpp = require("hpp");
 const { errorHandler } = require("./middlewares/errorHandler");
 const {
-  globalLimiter,
   authLimiter,
   apiLimiter,
   toggleRateLimit,
