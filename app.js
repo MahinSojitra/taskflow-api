@@ -49,8 +49,7 @@ const userRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/task");
 
 // Apply specific rate limiters to API routes only
-app.use("/api/auth/signin", authLimiter);
-app.use("/api/auth/signup", authLimiter);
+app.use("/api/auth", authLimiter);
 app.use("/api", apiLimiter);
 
 // ✅ Routes
