@@ -19,9 +19,6 @@ app.use(hpp());
 // Toggle rate limiting as needed
 toggleRateLimit(true);
 
-// Apply global rate limiter
-app.use(globalLimiter);
-
 // ✅ Body Parser Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -48,7 +45,7 @@ app.get("/docs/rate-limits", (req, res) => {
 const userRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/task");
 
-// Apply specific rate limiters to routes
+// Apply specific rate limiters to API routes only
 app.use("/api/auth/signin", authLimiter);
 app.use("/api/auth/signup", authLimiter);
 app.use("/api", apiLimiter);

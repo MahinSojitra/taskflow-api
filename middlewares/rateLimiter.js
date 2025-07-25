@@ -71,7 +71,7 @@ const globalLimiter = createRateLimiter({
   ),
   standardHeaders: true,
   legacyHeaders: false,
-  skipFailedRequests: true, // Do not count failed requests against the rate limit
+  skipFailedRequests: false, // Count all requests, even failed ones
 });
 
 // Authentication rate limiter - Strict protection against brute force
@@ -103,7 +103,7 @@ const authLimiter = createRateLimiter({
   ),
   standardHeaders: true,
   legacyHeaders: false,
-  skipFailedRequests: true, // Do not count failed requests against the rate limit
+  skipFailedRequests: false, // Count all requests, even failed ones
 });
 
 // API endpoints rate limiter - Balanced protection for API resources
@@ -140,7 +140,7 @@ const apiLimiter = createRateLimiter({
   ),
   standardHeaders: true,
   legacyHeaders: false,
-  skipFailedRequests: true, // Do not count failed requests against the rate limit
+  skipFailedRequests: false, // Count all requests, even failed ones
 });
 
 // Function to toggle rate limiting
