@@ -12,6 +12,9 @@ const {
 
 const app = express();
 
+// Trust proxy for correct IP detection (important for rate limiting)
+app.set("trust proxy", true);
+
 // ✅ Security Middleware
 app.use(cors());
 app.use(hpp());
