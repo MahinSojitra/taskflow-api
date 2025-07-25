@@ -1,4 +1,5 @@
 const rateLimit = require("express-rate-limit");
+const { formatDate } = require("../utils/dateFormatter");
 
 // Flag to enable/disable rate limiting globally
 let RATE_LIMIT_ENABLED = true;
@@ -21,7 +22,10 @@ function createRateLimitMessage(
     message,
     details,
     recommendations,
-    nextAllowedRequest: new Date(Date.now() + nextAllowedTime).toISOString(),
+    nextAllowedRequest: formatDate({
+      date: nextAllowedTime,
+      shouldFormatToAppStandard: true,
+    }),
     documentation,
     support,
   };
@@ -62,7 +66,7 @@ const globalLimiter = createRateLimiter({
       "Reduce polling frequency for real-time updates",
       "Batch multiple requests into single API calls where possible",
     ],
-    15 * 60 * 1000,
+    new Date(Date.now() + 15 * 60 * 1000),
     "https://taskflowapi.vercel.app/docs/rate-limits",
     {
       email: "taskflow.api@gmail.com",
@@ -96,7 +100,7 @@ const authLimiter = createRateLimiter({
       "Use the password reset function if you're having trouble accessing your account",
       "Enable two-factor authentication for enhanced security",
     ],
-    60 * 60 * 1000,
+    new Date(Date.now() + 60 * 60 * 1000),
     "https://taskflowapi.vercel.app/docs/rate-limits",
     {
       email: "taskflow.api@gmail.com",
@@ -131,7 +135,7 @@ const apiLimiter = createRateLimiter({
       "Implement exponential backoff for failed requests",
       "Consider using webhooks for real-time updates instead of polling",
     ],
-    15 * 60 * 1000,
+    new Date(Date.now() + 15 * 60 * 1000),
     "https://taskflowapi.vercel.app/docs/rate-limits",
     {
       description: "Need higher limits? Consider our premium plans:",
