@@ -50,9 +50,22 @@ app.get("/docs/rate-limits", (req, res) => {
   );
 });
 
+// OAuth consent page
+app.get("/oauth/consent", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "oauth-consent.html"));
+});
+
+// OAuth integration guide
+app.get("/docs/oauth", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "public", "docs", "oauth-integration.html")
+  );
+});
+
 // ✅ Import API routes
 const userRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/task");
+const oauthRoutes = require("./routes/oauth");
 
 // Apply specific rate limiters to API routes only
 app.use("/api/auth", authLimiter);
@@ -61,6 +74,7 @@ app.use("/api", apiLimiter);
 // ✅ Routes
 app.use("/api/auth", userRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/oauth", oauthRoutes);
 
 // ✅ 404 Handler - Improved Route Suggestion
 app.use((req, res, next) => {

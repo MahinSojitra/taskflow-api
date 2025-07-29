@@ -357,6 +357,160 @@ const options = {
             request_id: { type: "string", example: "uuid-v4-string" },
           },
         },
+        // OAuth schemas
+        OAuthApp: {
+          type: "object",
+          properties: {
+            _id: { type: "string", example: "507f1f77bcf86cd799439011" },
+            name: { type: "string", example: "My Task Manager" },
+            description: {
+              type: "string",
+              example:
+                "A task management application that integrates with TaskFlow",
+            },
+            clientId: { type: "string", example: "tf_client_abc123def456" },
+            clientSecret: { type: "string", example: "tf_secret_xyz789..." },
+            maskedClientSecret: { type: "string", example: "tf_secret_...xyz" },
+            redirectUris: {
+              type: "array",
+              items: { type: "string" },
+              example: [
+                "https://myapp.com/callback",
+                "https://myapp.com/auth/callback",
+              ],
+            },
+            scopes: {
+              type: "array",
+              items: {
+                type: "string",
+                enum: ["profile", "email", "tasks:read", "tasks:write"],
+              },
+              example: ["profile", "email", "tasks:read"],
+            },
+            ownerId: { type: "string", example: "507f1f77bcf86cd799439011" },
+            isActive: { type: "boolean", example: true },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
+        OAuthAuthorizationCode: {
+          type: "object",
+          properties: {
+            _id: { type: "string", example: "507f1f77bcf86cd799439011" },
+            code: { type: "string", example: "tf_auth_code_abc123def456" },
+            clientId: { type: "string", example: "tf_client_abc123def456" },
+            userId: { type: "string", example: "507f1f77bcf86cd799439011" },
+            redirectUri: {
+              type: "string",
+              example: "https://myapp.com/callback",
+            },
+            scopes: {
+              type: "array",
+              items: {
+                type: "string",
+                enum: ["profile", "email", "tasks:read", "tasks:write"],
+              },
+              example: ["profile", "email"],
+            },
+            expiresAt: { type: "string", format: "date-time" },
+            isUsed: { type: "boolean", example: false },
+            codeChallenge: {
+              type: "string",
+              example: "E9Melhoa2OwvFrEMTguCXJX_2TM",
+            },
+            codeChallengeMethod: {
+              type: "string",
+              enum: ["S256", "plain"],
+              example: "S256",
+            },
+            createdAt: { type: "string", format: "date-time" },
+          },
+        },
+        OAuthAccessToken: {
+          type: "object",
+          properties: {
+            _id: { type: "string", example: "507f1f77bcf86cd799439011" },
+            accessToken: {
+              type: "string",
+              example: "tf_access_token_abc123def456",
+            },
+            refreshToken: {
+              type: "string",
+              example: "tf_refresh_token_xyz789ghi012",
+            },
+            clientId: { type: "string", example: "tf_client_abc123def456" },
+            userId: { type: "string", example: "507f1f77bcf86cd799439011" },
+            scopes: {
+              type: "array",
+              items: {
+                type: "string",
+                enum: ["profile", "email", "tasks:read", "tasks:write"],
+              },
+              example: ["profile", "email", "tasks:read"],
+            },
+            expiresAt: { type: "string", format: "date-time" },
+            isRevoked: { type: "boolean", example: false },
+            createdAt: { type: "string", format: "date-time" },
+          },
+        },
+        OAuthTokenResponse: {
+          type: "object",
+          properties: {
+            access_token: {
+              type: "string",
+              example: "tf_access_token_abc123def456",
+            },
+            token_type: { type: "string", example: "Bearer" },
+            expires_in: { type: "integer", example: 3600 },
+            refresh_token: {
+              type: "string",
+              example: "tf_refresh_token_xyz789ghi012",
+            },
+            scope: { type: "string", example: "profile email tasks:read" },
+          },
+        },
+        OAuthUserInfo: {
+          type: "object",
+          properties: {
+            sub: {
+              type: "string",
+              description: "User ID",
+              example: "507f1f77bcf86cd799439011",
+            },
+            name: {
+              type: "string",
+              description: "User name (if profile scope)",
+              example: "John Doe",
+            },
+            email: {
+              type: "string",
+              format: "email",
+              description: "User email (if email scope)",
+              example: "john@example.com",
+            },
+            email_verified: {
+              type: "boolean",
+              description: "Email verification status (if email scope)",
+              example: true,
+            },
+            updated_at: {
+              type: "string",
+              format: "date-time",
+              description: "Last update time (if profile scope)",
+            },
+          },
+        },
+        OAuthErrorResponse: {
+          type: "object",
+          properties: {
+            error: { type: "string", example: "invalid_request" },
+            error_description: {
+              type: "string",
+              example: "Invalid request parameters",
+            },
+            state: { type: "string", example: "random_state_string" },
+          },
+        },
       },
     },
     security: [
