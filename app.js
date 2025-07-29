@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const hpp = require("hpp");
-const swaggerUi = require("swagger-ui-express");
 const swaggerSpecs = require("./utils/swaggerConfig");
 const { errorHandler } = require("./middlewares/errorHandler");
 const {
@@ -29,24 +28,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // ✅ Serve static files from the public directory
 app.use(express.static(path.join(__dirname, "public")));
-
-// ✅ Swagger Documentation
-app.use(
-  "/swagger",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpecs, {
-    customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "TaskFlow API Documentation",
-    customfavIcon: "/assets/images/taskflow-light.png",
-    swaggerOptions: {
-      persistAuthorization: true,
-      displayRequestDuration: true,
-      filter: true,
-      showExtensions: true,
-      showCommonExtensions: true,
-    },
-  })
-);
 
 // ✅ Swagger JSON endpoint
 app.get("/swagger.json", (req, res) => {
